@@ -1,15 +1,12 @@
 {***************************************************
 Granular Kalimba Script
 Author: Miguel González del Río
-Modified: June 23rd, 2025
+Modified: July 16th, 2025
 ****************************************************}
 
 {
     Tasks:                              
-    - Change kalimba position knob to be position independent pg the rest of the instruments
-
-
-    - Add reverse button for rain effect    DO THE POSITION INDEPENDENT OF THE REVERSE BUTTON
+    - Make position and random (kalimba) work when reversed
 
     - Add volume knob per instrument
 
@@ -61,7 +58,6 @@ on init
     %instrument_reverse[0] := 0  {Kalimba Reverse}
     %instrument_reverse[1] := 0  {Rain Effect Reverse}
 
-    declare $position
 
     {Kalimba Group}
     declare ui_button $kalimba_toggle_button           {Button to toggle kalimba}
@@ -78,7 +74,7 @@ on init
     declare ui_slider $kalimba_position_random(0, 1000000 )         {kalimba_position slider for grain playback}
     declare ui_label $kalimba_position_random_label( 1, 1 )
         set_control_par_str( get_ui_id( $kalimba_position_random_label ), $CONTROL_PAR_TEXT, "RANDOM" )
-    declare ~randomness := 0.0 {Randomness for the kalimba position} 
+    declare ~kalimba_randomness := 0.0 {kalimba_randomness for the kalimba position} 
 
     declare ui_panel $kalimba_panel
     set_control_par( get_ui_id( $kalimba_panel ), $CONTROL_PAR_POS_X, 70 )
@@ -291,6 +287,7 @@ on init
     make_persistent( $kalimba_toggle_button )
     make_persistent( $kalimba_reverse_button )
     make_persistent( $kalimba_position )
+    make_persistent( $kalimba_position_random )
 
     make_persistent( $rain_effect_toggle_button )
     make_persistent( $rain_effect_reverse_button )
@@ -305,6 +302,8 @@ on persistence_changed
     set_control_par_str( get_ui_id( $grainDuration_label ), $CONTROL_PAR_TEXT, get_engine_par_disp( $ENGINE_PAR_HOLD, 0, 0, -1 ) & " ms" )
 
     $timebetweenGrains := 1000000 / get_control_par(get_ui_id($grainAmount), $CONTROL_PAR_VALUE) {update time between grains}
+
+    ~kalimba_randomness := real($kalimba_position_random ) / 1000000.0
 
     if($kalimba_toggle_button = 1) {Activate Kalimba if the toggle button is active}
         %instrument_active[0] := 1
@@ -369,11 +368,8 @@ on note
             end while
 
             {Set random position per sample}
-            $position := $kalimba_position + int( real( random( - $kalimba_position, 1000000 - $kalimba_position ) ) * ~randomness )
-            message( $position )
-            set_engine_par( $ENGINE_PAR_MOD_TARGET_INTENSITY, $position, %group[0], get_mod_idx( %group[0], "SAMPLE START" ), -1 )
+            set_engine_par( $ENGINE_PAR_MOD_TARGET_INTENSITY, $kalimba_position + int( real( random( - $kalimba_position, 1000000 - $kalimba_position ) ) * ~kalimba_randomness ), %group[0], get_mod_idx( %group[0], "SAMPLE START" ), -1 )
 
-           
 
             play_note($EVENT_NOTE, $EVENT_VELOCITY, $offset, 0)
             message( "PLAYING " & $EVENT_NOTE & " with ID: " & $EVENT_ID )
@@ -483,7 +479,7 @@ on ui_control( $kalimba_position )
 end on
 
 on ui_control( $kalimba_position_random )
-    ~randomness := real($kalimba_position_random ) / 1000000.0
+    ~kalimba_randomness := real($kalimba_position_random ) / 1000000.0
 end on
 
 
