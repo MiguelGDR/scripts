@@ -1,0 +1,504 @@
+{***************************************************
+Granular Kalimba Script
+Author: Miguel González del Río
+Modified: June 23rd, 2025
+****************************************************}
+
+{
+    Tasks:                              
+    - Change kalimba position knob to be position independent pg the rest of the instruments
+
+
+    - Add reverse button for rain effect    DO THE POSITION INDEPENDENT OF THE REVERSE BUTTON
+
+    - Add volume knob per instrument
+
+    - Add reverb and delay functions
+}
+
+on init
+    load_performance_view( "perfView.nckp" )
+    {message( "Granular Kalimba Loaded" )}
+    set_script_title( "Granular Synth Script" )
+
+    set_snapshot_type( 0 ) {0 = load the entire init callback, 1 = loads only the on persistence_changed callback}
+
+
+
+    {Useful Variables}
+    declare const $ui_wait := 1500000
+    declare %callback_ids[4]
+
+
+
+    {Background Animation Declaration}
+    declare ui_slider $animation(0,124)
+    set_control_par( get_ui_id( $animation ), $CONTROL_PAR_Z_LAYER, -1 )
+    set_control_par(get_ui_id($animation), $CONTROL_PAR_POS_X, 390)
+    set_control_par(get_ui_id($animation), $CONTROL_PAR_POS_Y, 50)
+    set_control_par_str(get_ui_id($animation), $CONTROL_PAR_PICTURE, "animation")
+    set_listener($NI_SIGNAL_TIMER_MS, 15000) {25 frames per second}
+
+
+
+
+    {Group Declarations}
+    declare $instrument_number := 2
+    declare $a
+    declare $b
+
+    declare %group[4]
+    %group[0] := 0              {Kalimba Group}
+    %group[1] := 1              {Reverse Kalimba Group}
+    %group[2] := 2              {Rain Effect Group}
+    %group[3] := 3              {Reverse Rain Effect Group}
+ 
+    declare %instrument_active[2]
+    %instrument_active[0] := 1  {Kalimba Active}
+    %instrument_active[1] := 0  {Rain Effect Active}
+
+    declare %instrument_reverse[2]
+    %instrument_reverse[0] := 0  {Kalimba Reverse}
+    %instrument_reverse[1] := 0  {Rain Effect Reverse}
+
+
+
+    {Kalimba Group}
+    declare ui_button $kalimba_toggle_button           {Button to toggle kalimba}
+    set_control_par( get_ui_id( $kalimba_toggle_button ), $CONTROL_PAR_WIDTH, 50 )
+    set_control_par_str( get_ui_id( $kalimba_toggle_button ), $CONTROL_PAR_TEXT, "Kalimba" )
+    declare ui_button $kalimba_reverse_button              {Button to toggle reversed grains}
+    set_control_par( get_ui_id( $kalimba_reverse_button ), $CONTROL_PAR_WIDTH, 55 )
+    set_control_par_str( get_ui_id( $kalimba_reverse_button ), $CONTROL_PAR_TEXT, "Reversed" )
+
+    declare ui_slider $kalimba_position(0, 1249999 )         {kalimba_position slider for grain playback}
+    declare ui_label $kalimba_position_label( 1, 1 )
+        set_control_par_str( get_ui_id( $kalimba_position_label ), $CONTROL_PAR_TEXT, "POSITION" ) 
+
+    declare ui_panel $kalimba_panel
+    set_control_par( get_ui_id( $kalimba_panel ), $CONTROL_PAR_POS_X, 70 )
+    set_control_par( get_ui_id( $kalimba_panel ), $CONTROL_PAR_POS_Y, 50 )
+
+    set_control_par( get_ui_id( $kalimba_toggle_button ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $kalimba_panel ) )
+    set_control_par( get_ui_id( $kalimba_toggle_button ), $CONTROL_PAR_POS_X, 0 )
+    set_control_par( get_ui_id( $kalimba_toggle_button ), $CONTROL_PAR_POS_Y, 25 )
+
+    set_control_par( get_ui_id( $kalimba_reverse_button ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $kalimba_panel ) )
+    set_control_par( get_ui_id( $kalimba_reverse_button ), $CONTROL_PAR_POS_X, 60 )
+    set_control_par( get_ui_id( $kalimba_reverse_button ), $CONTROL_PAR_POS_Y, 25 )
+    
+    set_control_par( get_ui_id( $kalimba_position ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $kalimba_panel ) )
+    set_control_par( get_ui_id( $kalimba_position ), $CONTROL_PAR_POS_X, 155 )
+    set_control_par( get_ui_id( $kalimba_position ), $CONTROL_PAR_POS_Y, 15 )
+
+    set_control_par( get_ui_id( $kalimba_position_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $kalimba_panel ) )
+    hide_part( $kalimba_position_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $kalimba_position_label ), $CONTROL_PAR_POS_X, 146)
+    set_control_par( get_ui_id( $kalimba_position_label ), $CONTROL_PAR_POS_Y, 50 )
+
+
+    {Rain Effect Group}
+    declare ui_button $rain_effect_toggle_button
+    set_control_par( get_ui_id( $rain_effect_toggle_button ), $CONTROL_PAR_WIDTH, 60 )
+    set_control_par_str( get_ui_id( $rain_effect_toggle_button ), $CONTROL_PAR_TEXT, "Rain Effect" )
+    declare ui_button $rain_effect_reverse_button
+    set_control_par( get_ui_id( $rain_effect_reverse_button ), $CONTROL_PAR_WIDTH, 55 )
+    set_control_par_str( get_ui_id( $rain_effect_reverse_button ), $CONTROL_PAR_TEXT, "Reversed" )
+
+    declare ui_slider $rain_position(0, 1249999 )         {kalimba_position slider for grain playback}
+    declare ui_label $rain_position_label( 1, 1 )
+        set_control_par_str( get_ui_id( $rain_position_label ), $CONTROL_PAR_TEXT, "POSITION" ) 
+
+    declare ui_panel $rain_effect_panel
+    set_control_par( get_ui_id( $rain_effect_panel ), $CONTROL_PAR_POS_X, 60 )
+    set_control_par( get_ui_id( $rain_effect_panel ), $CONTROL_PAR_POS_Y, 120 )
+
+    set_control_par( get_ui_id( $rain_effect_toggle_button ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $rain_effect_panel ) )
+    set_control_par( get_ui_id( $rain_effect_toggle_button ), $CONTROL_PAR_POS_X, 5 )
+    set_control_par( get_ui_id( $rain_effect_toggle_button ), $CONTROL_PAR_POS_Y, 25 )
+
+    set_control_par( get_ui_id( $rain_effect_reverse_button ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $rain_effect_panel ) )
+    set_control_par( get_ui_id( $rain_effect_reverse_button ), $CONTROL_PAR_POS_X, 70 )
+    set_control_par( get_ui_id( $rain_effect_reverse_button ), $CONTROL_PAR_POS_Y, 25 )
+
+    set_control_par( get_ui_id( $rain_position ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $rain_effect_panel ) )
+    set_control_par( get_ui_id( $rain_position ), $CONTROL_PAR_POS_X, 165 )
+    set_control_par( get_ui_id( $rain_position ), $CONTROL_PAR_POS_Y, 15 )
+
+    set_control_par( get_ui_id( $rain_position_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $rain_effect_panel ) )
+    hide_part( $rain_position_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $rain_position_label ), $CONTROL_PAR_POS_X, 156)
+    set_control_par( get_ui_id( $rain_position_label ), $CONTROL_PAR_POS_Y, 50 )
+
+
+    {Granular Engine Parameters}
+    declare ui_slider $grainAmount(1,100)               {Grains per second}
+    declare $timebetweenGrains                          {time between grains in microseconds}
+    declare $offset := 0                                {Offset for grain playback (Can be used for randomization later)}
+    declare $grainID := 0                               {ID for the grain being played}
+    declare ui_slider $grainDuration(45442, 696711)     {HOLD values for 1ms to 1000ms}
+    declare $note_playing := 0                          {Flag to check if a note is playing}
+
+    declare $count := 0
+
+    declare ui_label $grainAmount_label(1,1)
+        set_control_par_str( get_ui_id( $grainAmount_label ), $CONTROL_PAR_TEXT, "" ) 
+    declare ui_label $grainDuration_label(1,1)
+        set_control_par_str( get_ui_id( $grainDuration_label ), $CONTROL_PAR_TEXT, "" )
+
+
+
+
+    {Poliphony Settings}
+    declare %note_active[128]
+    declare %evento_id[128]
+    
+
+    {Effect Settings}
+    declare ui_slider $reverb_amount(0, 100) {Reverb amount}
+
+
+    {Envelope Parameters}
+    declare ui_slider $amp_env_attack(0, 440650)        {Attack time. 440650 corresponds to 1000ms}
+    declare ui_slider $amp_env_decay(0, 416791)         {Decay time. 416791 corresponds to 1000ms}
+
+    declare ui_label $amp_env_attack_label(1,1)
+    set_control_par_str( get_ui_id( $amp_env_attack_label ), $CONTROL_PAR_TEXT, "Attack" )
+    declare ui_label $amp_env_decay_label(1,1)
+    set_control_par_str( get_ui_id( $amp_env_decay_label ), $CONTROL_PAR_TEXT, "Decay" )
+
+
+
+
+    {Default Values}
+    set_control_par( get_ui_id( $grainAmount ), $CONTROL_PAR_DEFAULT_VALUE, 10 ) {Default grains per second}
+    $timebetweenGrains := 1000000 / get_control_par(get_ui_id($grainAmount), $CONTROL_PAR_DEFAULT_VALUE) {Default time between grains in microseconds}
+    set_control_par(get_ui_id($grainDuration), $CONTROL_PAR_DEFAULT_VALUE, 440650) {Default grain duration in milliseconds}
+    
+    set_control_par( get_ui_id( $amp_env_attack ), $CONTROL_PAR_DEFAULT_VALUE, 200807 ) {Default attack value (200807 corresponds to 10ms)}
+    set_control_par( get_ui_id( $amp_env_decay ), $CONTROL_PAR_DEFAULT_VALUE, 189935 ) {Default decay value (189935 corresponds to 10ms)}
+
+
+
+
+    {Granular Settings Panel}
+    set_control_par( get_ui_id( $grainAmount ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $GrainSettingsPanel ) )
+    set_control_par( get_ui_id( $grainDuration ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $GrainSettingsPanel ) )
+
+    set_control_par( get_ui_id( $grainAmount ), $CONTROL_PAR_POS_X, 0 )
+    set_control_par( get_ui_id( $grainDuration ), $CONTROL_PAR_POS_Y, 60 )
+
+    set_control_par( get_ui_id( $grainAmount_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $GrainSettingsPanel ) )
+    hide_part( $grainAmount_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $grainAmount_label ), $CONTROL_PAR_POS_X, 65)
+    set_control_par( get_ui_id( $grainAmount_label ), $CONTROL_PAR_POS_Y, 25 )
+
+    set_control_par( get_ui_id( $grainDuration_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $GrainSettingsPanel ) )
+    hide_part( $grainDuration_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $grainDuration_label ), $CONTROL_PAR_POS_X, 65 )
+    set_control_par( get_ui_id( $grainDuration_label ), $CONTROL_PAR_POS_Y, 85 )
+
+
+
+
+    {Effects Panel}
+    declare ui_panel $EffectsSettingsPanel
+    set_control_par( get_ui_id( $reverb_amount ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $EffectsSettingsPanel ) )
+    set_control_par( get_ui_id( $reverb_amount ), $CONTROL_PAR_POS_X, 700 )
+    set_control_par( get_ui_id( $reverb_amount ), $CONTROL_PAR_POS_Y, 345 )
+
+
+
+
+    {Envelope Settings Panel}
+    set_control_par( get_ui_id( $amp_env_attack ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $EnvelopeSettingsPanel ) )
+    set_control_par( get_ui_id( $amp_env_decay ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $EnvelopeSettingsPanel ) )
+
+    set_control_par( get_ui_id( $amp_env_attack ), $CONTROL_PAR_POS_X, 3 )
+    set_control_par( get_ui_id( $amp_env_attack ), $CONTROL_PAR_POS_Y, 28 )
+    set_control_par( get_ui_id( $amp_env_decay ), $CONTROL_PAR_POS_X, 48 )
+    set_control_par( get_ui_id( $amp_env_decay ), $CONTROL_PAR_POS_Y, 28 )
+
+    set_control_par( get_ui_id( $amp_env_attack_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $EnvelopeSettingsPanel ) )
+    set_control_par( get_ui_id( $amp_env_decay_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $EnvelopeSettingsPanel ) )
+
+    hide_part ($amp_env_attack_label,$HIDE_PART_BG)
+    set_control_par( get_ui_id( $amp_env_attack_label ), $CONTROL_PAR_POS_X, 0 )
+    set_control_par( get_ui_id( $amp_env_attack_label ), $CONTROL_PAR_POS_Y, 68 )
+
+    hide_part ($amp_env_decay_label,$HIDE_PART_BG) 
+    set_control_par( get_ui_id( $amp_env_decay_label ), $CONTROL_PAR_POS_X, 46 )
+    set_control_par( get_ui_id( $amp_env_decay_label ), $CONTROL_PAR_POS_Y, 68 )
+
+
+
+
+    {Changing pictures}
+    set_control_par_str(get_ui_id($grainAmount), $CONTROL_PAR_PICTURE, "knob")
+    set_control_par_str( get_ui_id( $grainDuration ), $CONTROL_PAR_PICTURE, "knob" )
+
+    set_control_par_str(get_ui_id( $amp_env_attack ), $CONTROL_PAR_PICTURE, "attack_decay_knob")
+    set_control_par_str(get_ui_id($amp_env_decay), $CONTROL_PAR_PICTURE, "attack_decay_knob")
+
+    set_control_par_str(get_ui_id($kalimba_position), $CONTROL_PAR_PICTURE, "attack_decay_knob")
+    set_control_par_str(get_ui_id($rain_position), $CONTROL_PAR_PICTURE, "attack_decay_knob")
+
+    set_control_par_str(get_ui_id($reverb_amount), $CONTROL_PAR_PICTURE, "knob")
+
+
+
+    {Mouse Controls}
+    declare const $mouse_behaviour := -2050
+    set_control_par(get_ui_id($grainAmount), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+    set_control_par(get_ui_id($grainDuration), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+
+    set_control_par(get_ui_id($amp_env_attack), $CONTROL_PAR_MOUSE_BEHAVIOUR, -1050)
+    set_control_par(get_ui_id($amp_env_decay), $CONTROL_PAR_MOUSE_BEHAVIOUR, -1050)
+    set_control_par(get_ui_id($kalimba_position), $CONTROL_PAR_MOUSE_BEHAVIOUR, -1050)
+
+    set_control_par(get_ui_id($reverb_amount), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+
+
+
+    {Persistency}
+    make_persistent( $grainAmount )
+    make_persistent( $grainDuration )
+    
+    make_persistent( $grainAmount_label)
+    make_persistent( $grainDuration_label)
+
+    make_persistent( $amp_env_attack )
+    make_persistent( $amp_env_decay )
+
+    make_persistent( $kalimba_toggle_button )
+    make_persistent( $kalimba_reverse_button )
+    make_persistent( $kalimba_position )
+
+    make_persistent( $rain_effect_toggle_button )
+    make_persistent( $rain_effect_reverse_button )
+    make_persistent( $rain_position )    
+end on
+
+
+
+
+on persistence_changed
+    set_control_par_str(get_ui_id( $grainAmount_label ), $CONTROL_PAR_TEXT, get_control_par(get_ui_id( $grainAmount ), $CONTROL_PAR_VALUE) & " GRAINS")
+    set_control_par_str( get_ui_id( $grainDuration_label ), $CONTROL_PAR_TEXT, get_engine_par_disp( $ENGINE_PAR_HOLD, 0, 0, -1 ) & " ms" )
+
+    $timebetweenGrains := 1000000 / get_control_par(get_ui_id($grainAmount), $CONTROL_PAR_VALUE) {update time between grains}
+
+    if($kalimba_toggle_button = 1) {Activate Kalimba if the toggle button is active}
+        %instrument_active[0] := 1
+    else
+        %instrument_active[0] := 0
+    end if
+
+    if($kalimba_reverse_button = 1)     {Update the offset if the reverse button is active}
+        %instrument_reverse[0] := 1
+        $offset := 0{1249999 - get_control_par(get_ui_id($kalimba_position), $CONTROL_PAR_VALUE)}
+    else
+        %instrument_reverse[0] := 0
+        $offset := 0{get_control_par(get_ui_id($kalimba_position), $CONTROL_PAR_VALUE)}
+    end if
+
+    if($rain_effect_toggle_button = 1) {Activate Rain Effect if the toggle button is active}
+        %instrument_active[1] := 1
+    else
+        %instrument_active[1] := 0
+    end if
+
+    if($rain_effect_reverse_button = 1) {Update the offset if the reverse button is active}
+        %instrument_reverse[1] := 1
+        $offset := 0
+    else
+        %instrument_reverse[1] := 0
+        $offset := 0
+    end if
+
+end on
+
+
+
+
+on note
+    ignore_event($EVENT_ID)
+
+    %note_active[$EVENT_NOTE] := 1
+    %evento_id[$EVENT_NOTE] := $EVENT_ID {Store the event ID for the note}
+
+    while(%evento_id[$EVENT_NOTE] = $EVENT_ID and %note_active[$EVENT_NOTE] = 1)
+
+            {First active/deactive the groups}
+            $a := 0
+            $b := 0
+            while ( $a < $instrument_number )
+                $b := $a * 2
+                if(%instrument_active[$a] = 1)
+                    if (%instrument_reverse[$a] = 0)
+                        allow_group( %group[$b])
+                        disallow_group( %group[$b + 1] ) 
+                    else
+                        allow_group( %group[$b + 1])
+                        disallow_group( %group[$b] ) 
+                    end if
+                else
+                    disallow_group( %group[$b] )
+                    disallow_group( %group[$b + 1] )
+                end if
+
+                inc($a)
+            end while
+
+            play_note($EVENT_NOTE, $EVENT_VELOCITY, $offset, 0)
+            message( "PLAYING " & $EVENT_NOTE & " with ID: " & $EVENT_ID )
+            wait($timebetweenGrains)
+    end while
+end on
+
+
+
+
+on release
+    %note_active[$EVENT_NOTE] := 0
+    if(%evento_id[$EVENT_NOTE] = $EVENT_ID)
+        %evento_id[$EVENT_NOTE] := 0 {Reset the event ID for the note}
+    end if
+end on
+
+
+
+
+on ui_control( $grainAmount )
+    %callback_ids[0] := $NI_CALLBACK_ID
+    $timebetweenGrains := 1000000 / get_control_par(get_ui_id($grainAmount), $CONTROL_PAR_VALUE) {update time between grains}
+    set_control_par_str( get_ui_id( $grainAmount_label ), $CONTROL_PAR_TEXT, get_control_par(get_ui_id($grainAmount), $CONTROL_PAR_VALUE) & " GRAINS" )
+end on
+
+
+
+
+on ui_control( $grainDuration )
+    %callback_ids[1] := $NI_CALLBACK_ID
+    $count := 0
+    while ( $count < $instrument_number * 2 )
+        set_engine_par($ENGINE_PAR_HOLD, $grainDuration, $count, 0, -1)
+        inc($count)
+    end while
+    
+    set_control_par_str( get_ui_id( $grainDuration_label ), $CONTROL_PAR_TEXT, get_engine_par_disp($ENGINE_PAR_HOLD, 0, 0, -1) & " ms" )
+end on
+
+
+
+
+on ui_control( $amp_env_attack )
+    %callback_ids[2] := $NI_CALLBACK_ID
+
+    $count := 0
+    while ( $count < $instrument_number * 2 )
+        set_engine_par($ENGINE_PAR_ATTACK, $amp_env_attack, $count, 0, -1)
+        inc($count)
+    end while
+
+    set_control_par_str( get_ui_id( $amp_env_attack_label ), $CONTROL_PAR_TEXT, get_engine_par_disp($ENGINE_PAR_ATTACK, 0, 0, -1) & " ms" )
+
+    wait($ui_wait)
+    if(%callback_ids[2] = $NI_CALLBACK_ID)
+        set_control_par_str(get_ui_id($amp_env_attack_label), $CONTROL_PAR_TEXT, "Attack")
+    end if
+end on
+
+
+
+
+on ui_control( $amp_env_decay )
+    %callback_ids[3] := $NI_CALLBACK_ID
+
+    $count := 0
+    while ( $count < $instrument_number * 2)
+        set_engine_par($ENGINE_PAR_DECAY, $amp_env_decay, $count, 0, -1)
+        inc($count)
+    end while
+
+    set_control_par_str( get_ui_id( $amp_env_decay_label ), $CONTROL_PAR_TEXT, get_engine_par_disp($ENGINE_PAR_DECAY, 0, 0, -1) & " ms" )
+
+    wait($ui_wait)
+    if(%callback_ids[3] = $NI_CALLBACK_ID)
+        set_control_par_str(get_ui_id($amp_env_decay_label), $CONTROL_PAR_TEXT, "Decay")
+    end if
+end on
+
+
+
+{Kalimba Related}
+
+on ui_control( $kalimba_toggle_button )
+    %instrument_active[0] := $kalimba_toggle_button
+    message( %instrument_active[0] )
+end on
+
+on ui_control( $kalimba_reverse_button )
+    if($kalimba_reverse_button = 1)
+        %instrument_reverse[0] := 1
+        $offset := 0{1249999 - $offset}
+    else
+        %instrument_reverse[0] := 0
+        $offset := 0{1249999 - $offset}
+    end if
+end on
+
+on ui_control( $kalimba_position )
+    $offset := 0{get_control_par(get_ui_id($kalimba_position), $CONTROL_PAR_VALUE)}
+
+    set_engine_par( $ENGINE_PAR_S, value, group, slot, generic )
+
+    if ( %instrument_reverse[0] = 1 )
+        $offset := 0{1249999 - $offset}
+    end if
+end on
+
+{Rain Effect Related}
+
+on ui_control( $rain_effect_toggle_button )
+    %instrument_active[1] := $rain_effect_toggle_button
+    message( %instrument_active[1] )
+end on
+
+on ui_control( $rain_effect_reverse_button )
+    if($rain_effect_reverse_button = 1)
+        %instrument_reverse[1] := 1
+        {.......}
+    else
+        %instrument_reverse[1] := 0
+        {.......}
+    end if
+end on
+
+on ui_control( $rain_position )
+    {.......}
+
+    if ( %instrument_reverse[1] = 1 )
+        {.......}
+    end if
+end on
+
+
+{Effects Related}
+on ui_control( $reverb_amount )
+    $count := 0
+    while ( $count < $instrument_number * 2)
+        inc($count)
+    end while
+end on
+
+
+
+
+on listener
+    if($animation = get_control_par( get_ui_id($animation), $CONTROL_PAR_MAX_VALUE ))
+        $animation := 0
+    else
+        $animation := $animation + 1
+    end if
+end on 
