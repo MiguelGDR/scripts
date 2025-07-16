@@ -61,7 +61,7 @@ on init
     %instrument_reverse[0] := 0  {Kalimba Reverse}
     %instrument_reverse[1] := 0  {Rain Effect Reverse}
 
-
+    declare $position
 
     {Kalimba Group}
     declare ui_button $kalimba_toggle_button           {Button to toggle kalimba}
@@ -71,9 +71,14 @@ on init
     set_control_par( get_ui_id( $kalimba_reverse_button ), $CONTROL_PAR_WIDTH, 55 )
     set_control_par_str( get_ui_id( $kalimba_reverse_button ), $CONTROL_PAR_TEXT, "Reversed" )
 
-    declare ui_slider $kalimba_position(0, 1249999 )         {kalimba_position slider for grain playback}
+    declare ui_slider $kalimba_position(0, 1000000 )         {kalimba_position slider for grain playback}
     declare ui_label $kalimba_position_label( 1, 1 )
         set_control_par_str( get_ui_id( $kalimba_position_label ), $CONTROL_PAR_TEXT, "POSITION" ) 
+
+    declare ui_slider $kalimba_position_random(0, 1000000 )         {kalimba_position slider for grain playback}
+    declare ui_label $kalimba_position_random_label( 1, 1 )
+        set_control_par_str( get_ui_id( $kalimba_position_random_label ), $CONTROL_PAR_TEXT, "RANDOM" )
+    declare ~randomness := 0.0 {Randomness for the kalimba position} 
 
     declare ui_panel $kalimba_panel
     set_control_par( get_ui_id( $kalimba_panel ), $CONTROL_PAR_POS_X, 70 )
@@ -95,6 +100,15 @@ on init
     hide_part( $kalimba_position_label, $HIDE_PART_BG )
     set_control_par( get_ui_id( $kalimba_position_label ), $CONTROL_PAR_POS_X, 146)
     set_control_par( get_ui_id( $kalimba_position_label ), $CONTROL_PAR_POS_Y, 50 )
+
+    set_control_par( get_ui_id( $kalimba_position_random ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $kalimba_panel ) )
+    set_control_par( get_ui_id( $kalimba_position_random ), $CONTROL_PAR_POS_X, 225 )
+    set_control_par( get_ui_id( $kalimba_position_random ), $CONTROL_PAR_POS_Y, 15 )
+
+    set_control_par( get_ui_id( $kalimba_position_random_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $kalimba_panel ) )
+    hide_part( $kalimba_position_random_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $kalimba_position_random_label ), $CONTROL_PAR_POS_X, 216)
+    set_control_par( get_ui_id( $kalimba_position_random_label ), $CONTROL_PAR_POS_Y, 50 )
 
 
     {Rain Effect Group}
@@ -243,6 +257,8 @@ on init
     set_control_par_str(get_ui_id($kalimba_position), $CONTROL_PAR_PICTURE, "attack_decay_knob")
     set_control_par_str(get_ui_id($rain_position), $CONTROL_PAR_PICTURE, "attack_decay_knob")
 
+    set_control_par_str(get_ui_id($kalimba_position_random), $CONTROL_PAR_PICTURE, "attack_decay_knob")
+
     set_control_par_str(get_ui_id($reverb_amount), $CONTROL_PAR_PICTURE, "knob")
 
 
@@ -254,7 +270,9 @@ on init
 
     set_control_par(get_ui_id($amp_env_attack), $CONTROL_PAR_MOUSE_BEHAVIOUR, -1050)
     set_control_par(get_ui_id($amp_env_decay), $CONTROL_PAR_MOUSE_BEHAVIOUR, -1050)
+
     set_control_par(get_ui_id($kalimba_position), $CONTROL_PAR_MOUSE_BEHAVIOUR, -1050)
+    set_control_par(get_ui_id($kalimba_position_random), $CONTROL_PAR_MOUSE_BEHAVIOUR, -1050)
 
     set_control_par(get_ui_id($reverb_amount), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
 
@@ -349,6 +367,13 @@ on note
 
                 inc($a)
             end while
+
+            {Set random position per sample}
+            $position := $kalimba_position + int( real( random( - $kalimba_position, 1000000 - $kalimba_position ) ) * ~randomness )
+            message( $position )
+            set_engine_par( $ENGINE_PAR_MOD_TARGET_INTENSITY, $position, %group[0], get_mod_idx( %group[0], "SAMPLE START" ), -1 )
+
+           
 
             play_note($EVENT_NOTE, $EVENT_VELOCITY, $offset, 0)
             message( "PLAYING " & $EVENT_NOTE & " with ID: " & $EVENT_ID )
@@ -449,14 +474,18 @@ on ui_control( $kalimba_reverse_button )
 end on
 
 on ui_control( $kalimba_position )
-    $offset := 0{get_control_par(get_ui_id($kalimba_position), $CONTROL_PAR_VALUE)}
 
-    set_engine_par( $ENGINE_PAR_S, value, group, slot, generic )
+    set_engine_par( $ENGINE_PAR_MOD_TARGET_INTENSITY, $kalimba_position, %group[0], get_mod_idx( %group[0], "SAMPLE START" ), -1 )
 
     if ( %instrument_reverse[0] = 1 )
-        $offset := 0{1249999 - $offset}
+        {.......}
     end if
 end on
+
+on ui_control( $kalimba_position_random )
+    ~randomness := real($kalimba_position_random ) / 1000000.0
+end on
+
 
 {Rain Effect Related}
 
