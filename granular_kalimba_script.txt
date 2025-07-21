@@ -6,8 +6,6 @@ Modified: July 16th, 2025
 
 {
     Tasks:                              
-    - Make position and random (kalimba) work when reversed
-
     - Add volume knob per instrument
 
     - Add reverb and delay functions
@@ -18,7 +16,7 @@ on init
     {message( "Granular Kalimba Loaded" )}
     set_script_title( "Granular Synth Script" )
 
-    set_snapshot_type( 0 ) {0 = load the entire init callback, 1 = loads only the on persistence_changed callback}
+    set_snapshot_type( 1 ) {0 = load the entire init callback, 1 = loads only the on persistence_changed callback}
 
 
 
@@ -58,6 +56,14 @@ on init
     %instrument_reverse[0] := 0  {Kalimba Reverse}
     %instrument_reverse[1] := 0  {Rain Effect Reverse}
 
+    declare %instrument_position[2]
+    %instrument_position[0] := 0 {Kalimba Position}
+    %instrument_position[1] := 0 {Rain Effect Position}
+
+    declare ?instrument_position_randomness[2]
+    ?instrument_position_randomness[0] := 0.0 {Kalimba Position Randomness}
+    ?instrument_position_randomness[1] := 0.0 {Rain Effect Position Randomness}
+
 
     {Kalimba Group}
     declare ui_button $kalimba_toggle_button           {Button to toggle kalimba}
@@ -74,7 +80,6 @@ on init
     declare ui_slider $kalimba_position_random(0, 1000000 )         {kalimba_position slider for grain playback}
     declare ui_label $kalimba_position_random_label( 1, 1 )
         set_control_par_str( get_ui_id( $kalimba_position_random_label ), $CONTROL_PAR_TEXT, "RANDOM" )
-    declare ~kalimba_randomness := 0.0 {kalimba_randomness for the kalimba position} 
 
     declare ui_panel $kalimba_panel
     set_control_par( get_ui_id( $kalimba_panel ), $CONTROL_PAR_POS_X, 70 )
@@ -107,38 +112,53 @@ on init
     set_control_par( get_ui_id( $kalimba_position_random_label ), $CONTROL_PAR_POS_Y, 50 )
 
 
-    {Rain Effect Group}
-    declare ui_button $rain_effect_toggle_button
-    set_control_par( get_ui_id( $rain_effect_toggle_button ), $CONTROL_PAR_WIDTH, 60 )
-    set_control_par_str( get_ui_id( $rain_effect_toggle_button ), $CONTROL_PAR_TEXT, "Rain Effect" )
-    declare ui_button $rain_effect_reverse_button
-    set_control_par( get_ui_id( $rain_effect_reverse_button ), $CONTROL_PAR_WIDTH, 55 )
-    set_control_par_str( get_ui_id( $rain_effect_reverse_button ), $CONTROL_PAR_TEXT, "Reversed" )
+    {Rain Stick Group}
+    declare ui_button $rain_stick_toggle_button
+    set_control_par( get_ui_id( $rain_stick_toggle_button ), $CONTROL_PAR_WIDTH, 60 )
+    set_control_par_str( get_ui_id( $rain_stick_toggle_button ), $CONTROL_PAR_TEXT, "Rain Stick" )
+    declare ui_button $rain_stick_reverse_button
+    set_control_par( get_ui_id( $rain_stick_reverse_button ), $CONTROL_PAR_WIDTH, 55 )
+    set_control_par_str( get_ui_id( $rain_stick_reverse_button ), $CONTROL_PAR_TEXT, "Reversed" )
 
-    declare ui_slider $rain_position(0, 1249999 )         {kalimba_position slider for grain playback}
+    declare ui_slider $rain_stick_position(0, 1000000 )         { slider for grain playback}
     declare ui_label $rain_position_label( 1, 1 )
-        set_control_par_str( get_ui_id( $rain_position_label ), $CONTROL_PAR_TEXT, "POSITION" ) 
+        set_control_par_str( get_ui_id( $rain_position_label ), $CONTROL_PAR_TEXT, "POSITION" )
 
-    declare ui_panel $rain_effect_panel
-    set_control_par( get_ui_id( $rain_effect_panel ), $CONTROL_PAR_POS_X, 60 )
-    set_control_par( get_ui_id( $rain_effect_panel ), $CONTROL_PAR_POS_Y, 120 )
+    declare ui_slider $rain_stick_position_random(0, 1000000 )         {kalimba_position slider for grain playback}
+    declare ui_label $rain_stick_position_random_label( 1, 1 )
+        set_control_par_str( get_ui_id( $rain_stick_position_random_label ), $CONTROL_PAR_TEXT, "RANDOM" )
 
-    set_control_par( get_ui_id( $rain_effect_toggle_button ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $rain_effect_panel ) )
-    set_control_par( get_ui_id( $rain_effect_toggle_button ), $CONTROL_PAR_POS_X, 5 )
-    set_control_par( get_ui_id( $rain_effect_toggle_button ), $CONTROL_PAR_POS_Y, 25 )
+    declare ui_panel $rain_stick_panel
+    set_control_par( get_ui_id( $rain_stick_panel ), $CONTROL_PAR_POS_X, 60 )
+    set_control_par( get_ui_id( $rain_stick_panel ), $CONTROL_PAR_POS_Y, 120 )
 
-    set_control_par( get_ui_id( $rain_effect_reverse_button ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $rain_effect_panel ) )
-    set_control_par( get_ui_id( $rain_effect_reverse_button ), $CONTROL_PAR_POS_X, 70 )
-    set_control_par( get_ui_id( $rain_effect_reverse_button ), $CONTROL_PAR_POS_Y, 25 )
+    set_control_par( get_ui_id( $rain_stick_toggle_button ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $rain_stick_panel ) )
+    set_control_par( get_ui_id( $rain_stick_toggle_button ), $CONTROL_PAR_POS_X, 5 )
+    set_control_par( get_ui_id( $rain_stick_toggle_button ), $CONTROL_PAR_POS_Y, 25 )
 
-    set_control_par( get_ui_id( $rain_position ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $rain_effect_panel ) )
-    set_control_par( get_ui_id( $rain_position ), $CONTROL_PAR_POS_X, 165 )
-    set_control_par( get_ui_id( $rain_position ), $CONTROL_PAR_POS_Y, 15 )
+    set_control_par( get_ui_id( $rain_stick_reverse_button ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $rain_stick_panel ) )
+    set_control_par( get_ui_id( $rain_stick_reverse_button ), $CONTROL_PAR_POS_X, 70 )
+    set_control_par( get_ui_id( $rain_stick_reverse_button ), $CONTROL_PAR_POS_Y, 25 )
 
-    set_control_par( get_ui_id( $rain_position_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $rain_effect_panel ) )
+    set_control_par( get_ui_id( $rain_stick_position ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $rain_stick_panel ) )
+    set_control_par( get_ui_id( $rain_stick_position ), $CONTROL_PAR_POS_X, 165 )
+    set_control_par( get_ui_id( $rain_stick_position ), $CONTROL_PAR_POS_Y, 15 )
+
+    set_control_par( get_ui_id( $rain_position_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $rain_stick_panel ) )
     hide_part( $rain_position_label, $HIDE_PART_BG )
     set_control_par( get_ui_id( $rain_position_label ), $CONTROL_PAR_POS_X, 156)
     set_control_par( get_ui_id( $rain_position_label ), $CONTROL_PAR_POS_Y, 50 )
+
+    set_control_par( get_ui_id( $rain_stick_position_random ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $rain_stick_panel ) )
+    set_control_par( get_ui_id( $rain_stick_position_random ), $CONTROL_PAR_POS_X, 235 )
+    set_control_par( get_ui_id( $rain_stick_position_random ), $CONTROL_PAR_POS_Y, 15 )
+
+    set_control_par( get_ui_id( $rain_stick_position_random_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $rain_stick_panel ) )
+    hide_part( $rain_stick_position_random_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $rain_stick_position_random_label ), $CONTROL_PAR_POS_X, 226)
+    set_control_par( get_ui_id( $rain_stick_position_random_label ), $CONTROL_PAR_POS_Y, 50 )
+
+
 
 
     {Granular Engine Parameters}
@@ -148,6 +168,11 @@ on init
     declare $grainID := 0                               {ID for the grain being played}
     declare ui_slider $grainDuration(45442, 696711)     {HOLD values for 1ms to 1000ms}
     declare $note_playing := 0                          {Flag to check if a note is playing}
+
+    declare ui_slider $width_knob (0, 1000)              {width_knob for the grains}
+    declare ui_label $width_label(1,1)
+        set_control_par_str( get_ui_id( $width_label ), $CONTROL_PAR_TEXT, "" )
+    declare $new_id
 
     declare $count := 0
 
@@ -195,6 +220,9 @@ on init
     set_control_par( get_ui_id( $grainAmount ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $GrainSettingsPanel ) )
     set_control_par( get_ui_id( $grainDuration ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $GrainSettingsPanel ) )
 
+    set_control_par( get_ui_id( $width_knob ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $GrainSettingsPanel ) )
+    set_control_par( get_ui_id( $width_knob ), $CONTROL_PAR_POS_X, 138 )
+
     set_control_par( get_ui_id( $grainAmount ), $CONTROL_PAR_POS_X, 0 )
     set_control_par( get_ui_id( $grainDuration ), $CONTROL_PAR_POS_Y, 60 )
 
@@ -207,6 +235,11 @@ on init
     hide_part( $grainDuration_label, $HIDE_PART_BG )
     set_control_par( get_ui_id( $grainDuration_label ), $CONTROL_PAR_POS_X, 65 )
     set_control_par( get_ui_id( $grainDuration_label ), $CONTROL_PAR_POS_Y, 85 )
+
+    set_control_par( get_ui_id( $width_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $GrainSettingsPanel ) )
+    hide_part( $width_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $width_label ), $CONTROL_PAR_POS_X, 205 )
+    set_control_par( get_ui_id( $width_label ), $CONTROL_PAR_POS_Y, 25 )
 
 
 
@@ -246,14 +279,16 @@ on init
     {Changing pictures}
     set_control_par_str(get_ui_id($grainAmount), $CONTROL_PAR_PICTURE, "knob")
     set_control_par_str( get_ui_id( $grainDuration ), $CONTROL_PAR_PICTURE, "knob" )
+    set_control_par_str( get_ui_id($width_knob), $CONTROL_PAR_PICTURE, "knob")
 
     set_control_par_str(get_ui_id( $amp_env_attack ), $CONTROL_PAR_PICTURE, "attack_decay_knob")
     set_control_par_str(get_ui_id($amp_env_decay), $CONTROL_PAR_PICTURE, "attack_decay_knob")
 
     set_control_par_str(get_ui_id($kalimba_position), $CONTROL_PAR_PICTURE, "attack_decay_knob")
-    set_control_par_str(get_ui_id($rain_position), $CONTROL_PAR_PICTURE, "attack_decay_knob")
+    set_control_par_str(get_ui_id($rain_stick_position), $CONTROL_PAR_PICTURE, "attack_decay_knob")
 
     set_control_par_str(get_ui_id($kalimba_position_random), $CONTROL_PAR_PICTURE, "attack_decay_knob")
+    set_control_par_str(get_ui_id($rain_stick_position_random), $CONTROL_PAR_PICTURE, "attack_decay_knob")
 
     set_control_par_str(get_ui_id($reverb_amount), $CONTROL_PAR_PICTURE, "knob")
 
@@ -263,12 +298,16 @@ on init
     declare const $mouse_behaviour := -2050
     set_control_par(get_ui_id($grainAmount), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
     set_control_par(get_ui_id($grainDuration), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+    set_control_par(get_ui_id($width_knob), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
 
     set_control_par(get_ui_id($amp_env_attack), $CONTROL_PAR_MOUSE_BEHAVIOUR, -1050)
     set_control_par(get_ui_id($amp_env_decay), $CONTROL_PAR_MOUSE_BEHAVIOUR, -1050)
 
     set_control_par(get_ui_id($kalimba_position), $CONTROL_PAR_MOUSE_BEHAVIOUR, -1050)
     set_control_par(get_ui_id($kalimba_position_random), $CONTROL_PAR_MOUSE_BEHAVIOUR, -1050)
+
+    set_control_par( get_ui_id($rain_stick_position), $CONTROL_PAR_MOUSE_BEHAVIOUR, -1050)
+    set_control_par( get_ui_id($rain_stick_position_random), $CONTROL_PAR_MOUSE_BEHAVIOUR, -1050)
 
     set_control_par(get_ui_id($reverb_amount), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
 
@@ -277,9 +316,11 @@ on init
     {Persistency}
     make_persistent( $grainAmount )
     make_persistent( $grainDuration )
+    make_persistent( $width_knob )
     
     make_persistent( $grainAmount_label)
     make_persistent( $grainDuration_label)
+    make_persistent( $width_label )
 
     make_persistent( $amp_env_attack )
     make_persistent( $amp_env_decay )
@@ -289,9 +330,9 @@ on init
     make_persistent( $kalimba_position )
     make_persistent( $kalimba_position_random )
 
-    make_persistent( $rain_effect_toggle_button )
-    make_persistent( $rain_effect_reverse_button )
-    make_persistent( $rain_position )    
+    make_persistent( $rain_stick_toggle_button )
+    make_persistent( $rain_stick_reverse_button )
+    make_persistent( $rain_stick_position )    
 end on
 
 
@@ -301,36 +342,40 @@ on persistence_changed
     set_control_par_str(get_ui_id( $grainAmount_label ), $CONTROL_PAR_TEXT, get_control_par(get_ui_id( $grainAmount ), $CONTROL_PAR_VALUE) & " GRAINS")
     set_control_par_str( get_ui_id( $grainDuration_label ), $CONTROL_PAR_TEXT, get_engine_par_disp( $ENGINE_PAR_HOLD, 0, 0, -1 ) & " ms" )
 
+    set_control_par_str( get_ui_id( $width_label ), $CONTROL_PAR_TEXT, $width_knob/10 & "%" )
+
     $timebetweenGrains := 1000000 / get_control_par(get_ui_id($grainAmount), $CONTROL_PAR_VALUE) {update time between grains}
 
-    ~kalimba_randomness := real($kalimba_position_random ) / 1000000.0
 
+    %instrument_position[0] := $kalimba_position
+    %instrument_position[1] := $rain_stick_position
+
+    ?instrument_position_randomness[0] := real($kalimba_position_random ) / 1000000.0
+    ?instrument_position_randomness[1] := real($rain_stick_position_random ) / 1000000.0
+
+    {Activation of Instruments}
     if($kalimba_toggle_button = 1) {Activate Kalimba if the toggle button is active}
         %instrument_active[0] := 1
     else
         %instrument_active[0] := 0
     end if
 
-    if($kalimba_reverse_button = 1)     {Update the offset if the reverse button is active}
+    if($kalimba_reverse_button = 1) {Activate Kalimba Reverse if the toggle button is active}
         %instrument_reverse[0] := 1
-        $offset := 0{1249999 - get_control_par(get_ui_id($kalimba_position), $CONTROL_PAR_VALUE)}
     else
         %instrument_reverse[0] := 0
-        $offset := 0{get_control_par(get_ui_id($kalimba_position), $CONTROL_PAR_VALUE)}
     end if
 
-    if($rain_effect_toggle_button = 1) {Activate Rain Effect if the toggle button is active}
+    if($rain_stick_toggle_button = 1) {Activate Rain Effect if the toggle button is active}
         %instrument_active[1] := 1
     else
         %instrument_active[1] := 0
     end if
 
-    if($rain_effect_reverse_button = 1) {Update the offset if the reverse button is active}
+    if($rain_stick_reverse_button = 1) {Activate Rain Effect Reverse if the toggle button is active}
         %instrument_reverse[1] := 1
-        $offset := 0
     else
         %instrument_reverse[1] := 0
-        $offset := 0
     end if
 
 end on
@@ -352,12 +397,16 @@ on note
             while ( $a < $instrument_number )
                 $b := $a * 2
                 if(%instrument_active[$a] = 1)
-                    if (%instrument_reverse[$a] = 0)
+                    if (%instrument_reverse[$a] = 0)        {If normal}
                         allow_group( %group[$b])
                         disallow_group( %group[$b + 1] ) 
-                    else
+
+                        set_engine_par( $ENGINE_PAR_MOD_TARGET_INTENSITY, %instrument_position[$a] + int( real( random( - %instrument_position[$a], 1000000 - %instrument_position[$a] ) ) * ?instrument_position_randomness[$a] ), %group[$b], get_mod_idx( %group[$b], "SAMPLE START" ), -1 )
+                    else                                    {If reversed}
                         allow_group( %group[$b + 1])
                         disallow_group( %group[$b] ) 
+
+                        set_engine_par( $ENGINE_PAR_MOD_TARGET_INTENSITY, (1000000) - (%instrument_position[$a] + int( real( random( - %instrument_position[$a], 1000000 - %instrument_position[$a] ) ) * ?instrument_position_randomness[$a] )), %group[$b + 1], get_mod_idx( %group[$b + 1], "SAMPLE START" ), -1 )
                     end if
                 else
                     disallow_group( %group[$b] )
@@ -367,11 +416,14 @@ on note
                 inc($a)
             end while
 
-            {Set random position per sample}
-            set_engine_par( $ENGINE_PAR_MOD_TARGET_INTENSITY, $kalimba_position + int( real( random( - $kalimba_position, 1000000 - $kalimba_position ) ) * ~kalimba_randomness ), %group[0], get_mod_idx( %group[0], "SAMPLE START" ), -1 )
+            {Set position (+ random) per isntrumnet}
+            
+            
+            
+        
+            $new_id := play_note($EVENT_NOTE, $EVENT_VELOCITY, $offset, 0)
+            change_pan( $new_id, random( - $width_knob, $width_knob), 0 )
 
-
-            play_note($EVENT_NOTE, $EVENT_VELOCITY, $offset, 0)
             message( "PLAYING " & $EVENT_NOTE & " with ID: " & $EVENT_ID )
             wait($timebetweenGrains)
     end while
@@ -389,15 +441,13 @@ end on
 
 
 
+{Granular Settings}
 
 on ui_control( $grainAmount )
     %callback_ids[0] := $NI_CALLBACK_ID
     $timebetweenGrains := 1000000 / get_control_par(get_ui_id($grainAmount), $CONTROL_PAR_VALUE) {update time between grains}
     set_control_par_str( get_ui_id( $grainAmount_label ), $CONTROL_PAR_TEXT, get_control_par(get_ui_id($grainAmount), $CONTROL_PAR_VALUE) & " GRAINS" )
 end on
-
-
-
 
 on ui_control( $grainDuration )
     %callback_ids[1] := $NI_CALLBACK_ID
@@ -410,8 +460,9 @@ on ui_control( $grainDuration )
     set_control_par_str( get_ui_id( $grainDuration_label ), $CONTROL_PAR_TEXT, get_engine_par_disp($ENGINE_PAR_HOLD, 0, 0, -1) & " ms" )
 end on
 
-
-
+on ui_control( $width_knob )
+     set_control_par_str( get_ui_id( $width_label ), $CONTROL_PAR_TEXT, $width_knob/10 & "%" )
+end on
 
 on ui_control( $amp_env_attack )
     %callback_ids[2] := $NI_CALLBACK_ID
@@ -429,9 +480,6 @@ on ui_control( $amp_env_attack )
         set_control_par_str(get_ui_id($amp_env_attack_label), $CONTROL_PAR_TEXT, "Attack")
     end if
 end on
-
-
-
 
 on ui_control( $amp_env_decay )
     %callback_ids[3] := $NI_CALLBACK_ID
@@ -452,62 +500,51 @@ end on
 
 
 
+
 {Kalimba Related}
 
 on ui_control( $kalimba_toggle_button )
     %instrument_active[0] := $kalimba_toggle_button
-    message( %instrument_active[0] )
 end on
 
 on ui_control( $kalimba_reverse_button )
     if($kalimba_reverse_button = 1)
         %instrument_reverse[0] := 1
-        $offset := 0{1249999 - $offset}
     else
         %instrument_reverse[0] := 0
-        $offset := 0{1249999 - $offset}
     end if
 end on
 
 on ui_control( $kalimba_position )
-
-    set_engine_par( $ENGINE_PAR_MOD_TARGET_INTENSITY, $kalimba_position, %group[0], get_mod_idx( %group[0], "SAMPLE START" ), -1 )
-
-    if ( %instrument_reverse[0] = 1 )
-        {.......}
-    end if
+    %instrument_position[0] := $kalimba_position
 end on
 
 on ui_control( $kalimba_position_random )
-    ~kalimba_randomness := real($kalimba_position_random ) / 1000000.0
+    ?instrument_position_randomness[0] := real($kalimba_position_random ) / 1000000.0
 end on
 
 
-{Rain Effect Related}
+{Rain Stick Related}
 
-on ui_control( $rain_effect_toggle_button )
-    %instrument_active[1] := $rain_effect_toggle_button
-    message( %instrument_active[1] )
+on ui_control( $rain_stick_toggle_button )
+    %instrument_active[1] := $rain_stick_toggle_button
 end on
 
-on ui_control( $rain_effect_reverse_button )
-    if($rain_effect_reverse_button = 1)
+on ui_control( $rain_stick_reverse_button )
+    if($rain_stick_reverse_button = 1)
         %instrument_reverse[1] := 1
-        {.......}
     else
         %instrument_reverse[1] := 0
-        {.......}
     end if
 end on
 
-on ui_control( $rain_position )
-    {.......}
-
-    if ( %instrument_reverse[1] = 1 )
-        {.......}
-    end if
+on ui_control( $rain_stick_position )
+    %instrument_position[1] := $rain_stick_position
 end on
 
+on ui_control( $rain_stick_position_random )
+    ?instrument_position_randomness[1] := real($rain_stick_position_random ) / 1000000.0
+end on
 
 {Effects Related}
 on ui_control( $reverb_amount )
