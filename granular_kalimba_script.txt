@@ -5,9 +5,7 @@ Modified: July 16th, 2025
 ****************************************************}
 
 {
-    Tasks:                              
-    - Add volume knob per instrument
-
+    Tasks:                          
     - Add reverb and delay functions
 }
 
@@ -16,13 +14,13 @@ on init
     {message( "Granular Kalimba Loaded" )}
     set_script_title( "Granular Synth Script" )
 
-    set_snapshot_type( 1 ) {0 = load the entire init callback, 1 = loads only the on persistence_changed callback}
+    set_snapshot_type( 0 ) {0 = load the entire init callback, 1 = loads only the on persistence_changed callback}
 
 
 
     {Useful Variables}
     declare const $ui_wait := 1500000
-    declare %callback_ids[4]
+    declare %callback_ids[100]
 
 
 
@@ -66,23 +64,27 @@ on init
 
 
     {Kalimba Group}
-    declare ui_button $kalimba_toggle_button           {Button to toggle kalimba}
+    declare ui_button $kalimba_toggle_button                    {Button to toggle kalimba}
     set_control_par( get_ui_id( $kalimba_toggle_button ), $CONTROL_PAR_WIDTH, 50 )
     set_control_par_str( get_ui_id( $kalimba_toggle_button ), $CONTROL_PAR_TEXT, "Kalimba" )
-    declare ui_button $kalimba_reverse_button              {Button to toggle reversed grains}
+    declare ui_button $kalimba_reverse_button                   {Button to toggle reversed grains}
     set_control_par( get_ui_id( $kalimba_reverse_button ), $CONTROL_PAR_WIDTH, 55 )
     set_control_par_str( get_ui_id( $kalimba_reverse_button ), $CONTROL_PAR_TEXT, "Reversed" )
 
-    declare ui_slider $kalimba_position(0, 1000000 )         {kalimba_position slider for grain playback}
+    declare ui_slider $kalimba_position(0, 1000000 )            {kalimba_position slider for grain playback}
     declare ui_label $kalimba_position_label( 1, 1 )
         set_control_par_str( get_ui_id( $kalimba_position_label ), $CONTROL_PAR_TEXT, "POSITION" ) 
 
-    declare ui_slider $kalimba_position_random(0, 1000000 )         {kalimba_position slider for grain playback}
+    declare ui_slider $kalimba_position_random(0, 1000000 )     {kalimba_position slider for grain playback}
     declare ui_label $kalimba_position_random_label( 1, 1 )
         set_control_par_str( get_ui_id( $kalimba_position_random_label ), $CONTROL_PAR_TEXT, "RANDOM" )
 
+    declare ui_slider $kalimba_volume(0, 1000000)                  {Volume knob for Kalimba}
+    declare ui_label $kalimba_volume_label( 1, 1 )
+        set_control_par_str( get_ui_id( $kalimba_volume_label ), $CONTROL_PAR_TEXT, "VOLUME" )
+
     declare ui_panel $kalimba_panel
-    set_control_par( get_ui_id( $kalimba_panel ), $CONTROL_PAR_POS_X, 70 )
+    set_control_par( get_ui_id( $kalimba_panel ), $CONTROL_PAR_POS_X, 30 )
     set_control_par( get_ui_id( $kalimba_panel ), $CONTROL_PAR_POS_Y, 50 )
 
     set_control_par( get_ui_id( $kalimba_toggle_button ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $kalimba_panel ) )
@@ -111,6 +113,14 @@ on init
     set_control_par( get_ui_id( $kalimba_position_random_label ), $CONTROL_PAR_POS_X, 216)
     set_control_par( get_ui_id( $kalimba_position_random_label ), $CONTROL_PAR_POS_Y, 50 )
 
+    set_control_par( get_ui_id( $kalimba_volume ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $kalimba_panel ) )
+    set_control_par( get_ui_id( $kalimba_volume ), $CONTROL_PAR_POS_X, 295 )
+    set_control_par( get_ui_id( $kalimba_volume ), $CONTROL_PAR_POS_Y, 15 )
+
+    set_control_par( get_ui_id( $kalimba_volume_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $kalimba_panel ) )
+    hide_part( $kalimba_volume_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $kalimba_volume_label ), $CONTROL_PAR_POS_X, 286)
+    set_control_par( get_ui_id( $kalimba_volume_label ), $CONTROL_PAR_POS_Y, 50 )
 
     {Rain Stick Group}
     declare ui_button $rain_stick_toggle_button
@@ -128,8 +138,12 @@ on init
     declare ui_label $rain_stick_position_random_label( 1, 1 )
         set_control_par_str( get_ui_id( $rain_stick_position_random_label ), $CONTROL_PAR_TEXT, "RANDOM" )
 
+    declare ui_slider $rain_stick_volume(0, 1000000)                  {Volume knob for Rain Stick}
+    declare ui_label $rain_stick_volume_label( 1, 1 )
+        set_control_par_str( get_ui_id( $rain_stick_volume_label ), $CONTROL_PAR_TEXT, "VOLUME" )
+
     declare ui_panel $rain_stick_panel
-    set_control_par( get_ui_id( $rain_stick_panel ), $CONTROL_PAR_POS_X, 60 )
+    set_control_par( get_ui_id( $rain_stick_panel ), $CONTROL_PAR_POS_X, 20 )
     set_control_par( get_ui_id( $rain_stick_panel ), $CONTROL_PAR_POS_Y, 120 )
 
     set_control_par( get_ui_id( $rain_stick_toggle_button ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $rain_stick_panel ) )
@@ -158,6 +172,15 @@ on init
     set_control_par( get_ui_id( $rain_stick_position_random_label ), $CONTROL_PAR_POS_X, 226)
     set_control_par( get_ui_id( $rain_stick_position_random_label ), $CONTROL_PAR_POS_Y, 50 )
 
+    set_control_par( get_ui_id( $rain_stick_volume ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $rain_stick_panel ) ) 
+    set_control_par( get_ui_id( $rain_stick_volume ), $CONTROL_PAR_POS_X, 305 )
+    set_control_par( get_ui_id( $rain_stick_volume ), $CONTROL_PAR_POS_Y, 15 )
+
+    set_control_par( get_ui_id( $rain_stick_volume_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $rain_stick_panel ) )
+    hide_part( $rain_stick_volume_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $rain_stick_volume_label ), $CONTROL_PAR_POS_X, 296)
+    set_control_par( get_ui_id( $rain_stick_volume_label ), $CONTROL_PAR_POS_Y, 50 )
+
 
 
 
@@ -171,7 +194,7 @@ on init
 
     declare ui_slider $width_knob (0, 1000)              {width_knob for the grains}
     declare ui_label $width_label(1,1)
-        set_control_par_str( get_ui_id( $width_label ), $CONTROL_PAR_TEXT, "" )
+        set_control_par_str( get_ui_id( $width_label ), $CONTROL_PAR_TEXT, "WIDTH" )
     declare $new_id
 
     declare $count := 0
@@ -190,7 +213,163 @@ on init
     
 
     {Effect Settings}
-    declare ui_slider $reverb_amount(0, 100) {Reverb amount}
+        {Reverb}
+    declare ui_slider $reverb_amount(0, 1000000) {Reverb amount}
+    declare ui_label $reverb_amount_label(1,1)
+        set_control_par_str( get_ui_id( $reverb_amount_label ), $CONTROL_PAR_TEXT, "AMOUNT" )
+    
+    declare ui_slider $reverb_pre_delay(0, 1000000) {Reverb pre-delay}
+    declare ui_label $reverb_pre_delay_label(1,1)
+        set_control_par_str( get_ui_id( $reverb_pre_delay_label ), $CONTROL_PAR_TEXT, "PRE-DELAY" )
+
+    declare ui_slider $reverb_time(0, 1000000) {Reverb decay time}
+    declare ui_label $reverb_time_label(1,1)
+        set_control_par_str( get_ui_id( $reverb_time_label ), $CONTROL_PAR_TEXT, "TIME" )
+    
+    declare ui_slider $reverb_size(0, 1000000) {Reverb size}
+    declare ui_label $reverb_size_label(1,1)
+        set_control_par_str( get_ui_id( $reverb_size_label ), $CONTROL_PAR_TEXT, "SIZE" )
+    
+    declare ui_slider $reverb_stereo(0, 1000000) {Reverb stereo width}
+    declare ui_label $reverb_stereo_label(1,1)
+        set_control_par_str( get_ui_id( $reverb_stereo_label ), $CONTROL_PAR_TEXT, "STEREO" )
+
+    declare ui_slider $reverb_low_shelf(0, 1000000) {Reverb low shelf}
+    declare ui_label $reverb_low_shelf_label(1,1)
+        set_control_par_str( get_ui_id( $reverb_low_shelf_label ), $CONTROL_PAR_TEXT, "LOW SHELF" )
+    
+    declare ui_slider $reverb_high_cut(0, 1000000) {Reverb high cut}
+    declare ui_label $reverb_high_cut_label(1,1)
+        set_control_par_str( get_ui_id( $reverb_high_cut_label ), $CONTROL_PAR_TEXT, "HIGH CUT" )
+
+        {Filter}
+    declare ui_slider $filter_lowcut(0, 1000000) {Filter low cut}
+    declare ui_label $filter_lowcut_label(1,1)
+        set_control_par_str( get_ui_id( $filter_lowcut_label ), $CONTROL_PAR_TEXT, "LOW CUT" )
+
+    declare ui_slider $filter_lowcut_resonance(0, 1000000) {Filter low cut resonance}
+    declare ui_label $filter_lowcut_resonance_label(1,1)
+        set_control_par_str( get_ui_id( $filter_lowcut_resonance_label ), $CONTROL_PAR_TEXT, "LC RES" )
+
+    declare ui_slider $filter_highcut(0, 1000000) {Filter high cut}
+    declare ui_label $filter_highcut_label(1,1)
+        set_control_par_str( get_ui_id( $filter_highcut_label ), $CONTROL_PAR_TEXT, "HIGH CUT" )    
+
+    declare ui_slider $filter_highcut_resonance(0, 1000000) {Filter low cut resonance}
+    declare ui_label $filter_highcut_resonance_label(1,1)
+        set_control_par_str( get_ui_id( $filter_highcut_resonance_label ), $CONTROL_PAR_TEXT, "HC RES" )
+
+
+    {Effects Panel}
+    declare ui_panel $EffectsSettingsPanel
+        {Reverb}
+    set_control_par( get_ui_id( $reverb_amount ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $EffectsSettingsPanel ) )
+    set_control_par( get_ui_id( $reverb_amount ), $CONTROL_PAR_POS_X, 500 )
+    set_control_par( get_ui_id( $reverb_amount ), $CONTROL_PAR_POS_Y, 375 )
+
+    set_control_par( get_ui_id( $reverb_amount_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $EffectsSettingsPanel ) )
+    hide_part( $reverb_amount_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $reverb_amount_label ), $CONTROL_PAR_POS_X, 512 )
+    set_control_par( get_ui_id( $reverb_amount_label ), $CONTROL_PAR_POS_Y, 440 )
+
+
+    set_control_par( get_ui_id( $reverb_pre_delay ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $EffectsSettingsPanel ) )
+    set_control_par( get_ui_id( $reverb_pre_delay ), $CONTROL_PAR_POS_X, 580 )
+    set_control_par( get_ui_id( $reverb_pre_delay ), $CONTROL_PAR_POS_Y, 360 )
+
+    set_control_par( get_ui_id( $reverb_pre_delay_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $EffectsSettingsPanel ) )
+    hide_part( $reverb_pre_delay_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $reverb_pre_delay_label ), $CONTROL_PAR_POS_X, 568 )
+    set_control_par( get_ui_id( $reverb_pre_delay_label ), $CONTROL_PAR_POS_Y, 395 )
+
+
+    set_control_par( get_ui_id( $reverb_time ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $EffectsSettingsPanel ) )
+    set_control_par( get_ui_id( $reverb_time ), $CONTROL_PAR_POS_X, 580 )
+    set_control_par( get_ui_id( $reverb_time ), $CONTROL_PAR_POS_Y, 415 )
+
+    set_control_par( get_ui_id( $reverb_time_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $EffectsSettingsPanel ) )
+    hide_part( $reverb_time_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $reverb_time_label ), $CONTROL_PAR_POS_X, 580 )
+    set_control_par( get_ui_id( $reverb_time_label ), $CONTROL_PAR_POS_Y, 450 )
+
+
+    set_control_par( get_ui_id( $reverb_size ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $EffectsSettingsPanel ) )
+    set_control_par( get_ui_id( $reverb_size ), $CONTROL_PAR_POS_X, 400 )
+    set_control_par( get_ui_id( $reverb_size ), $CONTROL_PAR_POS_Y, 360 )
+
+    set_control_par( get_ui_id( $reverb_size_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $EffectsSettingsPanel ) )
+    hide_part( $reverb_size_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $reverb_size_label ), $CONTROL_PAR_POS_X, 402 )
+    set_control_par( get_ui_id( $reverb_size_label ), $CONTROL_PAR_POS_Y, 395 )
+
+
+    set_control_par( get_ui_id( $reverb_stereo ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $EffectsSettingsPanel ) )
+    set_control_par( get_ui_id( $reverb_stereo ), $CONTROL_PAR_POS_X, 400 )
+    set_control_par( get_ui_id( $reverb_stereo ), $CONTROL_PAR_POS_Y, 415 )
+
+    set_control_par( get_ui_id( $reverb_stereo_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $EffectsSettingsPanel ) )
+    hide_part( $reverb_stereo_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $reverb_stereo_label ), $CONTROL_PAR_POS_X, 395 )
+    set_control_par( get_ui_id( $reverb_stereo_label ), $CONTROL_PAR_POS_Y, 450 )
+
+
+    set_control_par( get_ui_id( $reverb_low_shelf ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $EffectsSettingsPanel ) )
+    set_control_par( get_ui_id( $reverb_low_shelf ), $CONTROL_PAR_POS_X, 452 )
+    set_control_par( get_ui_id( $reverb_low_shelf ), $CONTROL_PAR_POS_Y, 360 )
+
+    set_control_par( get_ui_id( $reverb_low_shelf_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $EffectsSettingsPanel ) )
+    hide_part( $reverb_low_shelf_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $reverb_low_shelf_label ), $CONTROL_PAR_POS_X, 440 )
+    set_control_par( get_ui_id( $reverb_low_shelf_label ), $CONTROL_PAR_POS_Y, 395 )
+
+
+    set_control_par( get_ui_id( $reverb_high_cut ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $EffectsSettingsPanel ) )
+    set_control_par( get_ui_id( $reverb_high_cut ), $CONTROL_PAR_POS_X, 452 )
+    set_control_par( get_ui_id( $reverb_high_cut ), $CONTROL_PAR_POS_Y, 415 )
+    
+    set_control_par( get_ui_id( $reverb_high_cut_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $EffectsSettingsPanel ) )
+    hide_part( $reverb_high_cut_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $reverb_high_cut_label ), $CONTROL_PAR_POS_X, 445 )
+    set_control_par( get_ui_id( $reverb_high_cut_label ), $CONTROL_PAR_POS_Y, 450 )
+
+        {Filter}
+    set_control_par( get_ui_id( $filter_lowcut ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $EffectsSettingsPanel ) )
+    set_control_par( get_ui_id( $filter_lowcut ), $CONTROL_PAR_POS_X, 800 - 40 )
+    set_control_par( get_ui_id( $filter_lowcut ), $CONTROL_PAR_POS_Y, 350 )
+
+    set_control_par( get_ui_id( $filter_lowcut_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $EffectsSettingsPanel ) )
+    hide_part( $filter_lowcut_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $filter_lowcut_label ), $CONTROL_PAR_POS_X, 855 - 40)
+    set_control_par( get_ui_id( $filter_lowcut_label ), $CONTROL_PAR_POS_Y, 368 )
+
+    set_control_par( get_ui_id( $filter_lowcut_resonance ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $EffectsSettingsPanel ) )
+    set_control_par( get_ui_id( $filter_lowcut_resonance ), $CONTROL_PAR_POS_X, 770 )
+    set_control_par( get_ui_id( $filter_lowcut_resonance ), $CONTROL_PAR_POS_Y, 425 )
+
+    set_control_par( get_ui_id( $filter_lowcut_resonance_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $EffectsSettingsPanel ) )
+    hide_part( $filter_lowcut_resonance_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $filter_lowcut_resonance_label ), $CONTROL_PAR_POS_X, 815)
+    set_control_par( get_ui_id( $filter_lowcut_resonance_label ), $CONTROL_PAR_POS_Y, 432 )
+
+
+    set_control_par( get_ui_id( $filter_highcut ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $EffectsSettingsPanel ) )
+    set_control_par( get_ui_id( $filter_highcut ), $CONTROL_PAR_POS_X, 875 )
+    set_control_par( get_ui_id( $filter_highcut ), $CONTROL_PAR_POS_Y, 350 )
+
+    set_control_par( get_ui_id( $filter_highcut_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $EffectsSettingsPanel ) )
+    hide_part( $filter_highcut_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $filter_highcut_label ), $CONTROL_PAR_POS_X, 930)
+    set_control_par( get_ui_id( $filter_highcut_label ), $CONTROL_PAR_POS_Y, 368 )
+
+
+    set_control_par( get_ui_id( $filter_highcut_resonance ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $EffectsSettingsPanel ) )
+    set_control_par( get_ui_id( $filter_highcut_resonance ), $CONTROL_PAR_POS_X, 885 )
+    set_control_par( get_ui_id( $filter_highcut_resonance ), $CONTROL_PAR_POS_Y, 425 )
+
+    set_control_par( get_ui_id( $filter_highcut_resonance_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $EffectsSettingsPanel ) )
+    hide_part( $filter_highcut_resonance_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $filter_highcut_resonance_label ), $CONTROL_PAR_POS_X, 930)
+    set_control_par( get_ui_id( $filter_highcut_resonance_label ), $CONTROL_PAR_POS_Y, 432 )
 
 
     {Envelope Parameters}
@@ -209,9 +388,26 @@ on init
     set_control_par( get_ui_id( $grainAmount ), $CONTROL_PAR_DEFAULT_VALUE, 10 ) {Default grains per second}
     $timebetweenGrains := 1000000 / get_control_par(get_ui_id($grainAmount), $CONTROL_PAR_DEFAULT_VALUE) {Default time between grains in microseconds}
     set_control_par(get_ui_id($grainDuration), $CONTROL_PAR_DEFAULT_VALUE, 440650) {Default grain duration in milliseconds}
+    set_control_par( get_ui_id($width_knob), $CONTROL_PAR_DEFAULT_VALUE, 500 )
     
     set_control_par( get_ui_id( $amp_env_attack ), $CONTROL_PAR_DEFAULT_VALUE, 200807 ) {Default attack value (200807 corresponds to 10ms)}
     set_control_par( get_ui_id( $amp_env_decay ), $CONTROL_PAR_DEFAULT_VALUE, 189935 ) {Default decay value (189935 corresponds to 10ms)}
+
+    set_control_par( get_ui_id( $kalimba_volume ), $CONTROL_PAR_DEFAULT_VALUE, 629961 ) {Default volume for Kalimba (629961 corresponds to 0.0 dB)}
+    set_control_par( get_ui_id( $rain_stick_volume ), $CONTROL_PAR_DEFAULT_VALUE, 629961 ) {Default volume for Rain Stick (629961 corresponds to 0.0 dB)}
+
+        {Reverb}
+    set_control_par( get_ui_id( $reverb_amount ), $CONTROL_PAR_DEFAULT_VALUE, 200000)       {Default reverb amount (396484 corresponds to 0.0 dB)}
+    set_control_par( get_ui_id( $reverb_pre_delay ), $CONTROL_PAR_DEFAULT_VALUE, 80000 )    {Default pre-delay for reverb (80000 corresponds to 20ms)}
+    set_control_par( get_ui_id( $reverb_time ), $CONTROL_PAR_DEFAULT_VALUE, 484259 )       {Default reverb time (200000 corresponds to 3 seconds)}
+    set_control_par( get_ui_id( $reverb_size ), $CONTROL_PAR_DEFAULT_VALUE, 1000000 )    {Default reverb size (1000000 corresponds to 100% size)}
+    set_control_par( get_ui_id( $reverb_stereo ), $CONTROL_PAR_DEFAULT_VALUE, 1000000 )    {Default reverb stereo width (500000 corresponds to 50% stereo width)}
+    set_control_par( get_ui_id( $reverb_low_shelf ), $CONTROL_PAR_DEFAULT_VALUE, 750000 )   {Default reverb low shelf (750000 corresponds to -9.0 dB)}
+    set_control_par( get_ui_id( $reverb_high_cut ), $CONTROL_PAR_DEFAULT_VALUE, 1000000 )   {Default reverb high cut (1000000 corresponds to 21 kHz)}
+
+        {Filter}
+    set_control_par( get_ui_id( $filter_lowcut ), $CONTROL_PAR_DEFAULT_VALUE, 0 ) {Default filter low cut (0 corresponds to 20 Hz)}
+    set_control_par( get_ui_id( $filter_highcut ), $CONTROL_PAR_DEFAULT_VALUE, 1000000 ) {Default filter high cut (1000000 corresponds to 20 kHz)}
 
 
 
@@ -240,15 +436,6 @@ on init
     hide_part( $width_label, $HIDE_PART_BG )
     set_control_par( get_ui_id( $width_label ), $CONTROL_PAR_POS_X, 205 )
     set_control_par( get_ui_id( $width_label ), $CONTROL_PAR_POS_Y, 25 )
-
-
-
-
-    {Effects Panel}
-    declare ui_panel $EffectsSettingsPanel
-    set_control_par( get_ui_id( $reverb_amount ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $EffectsSettingsPanel ) )
-    set_control_par( get_ui_id( $reverb_amount ), $CONTROL_PAR_POS_X, 700 )
-    set_control_par( get_ui_id( $reverb_amount ), $CONTROL_PAR_POS_Y, 345 )
 
 
 
@@ -284,17 +471,35 @@ on init
     set_control_par_str(get_ui_id( $amp_env_attack ), $CONTROL_PAR_PICTURE, "attack_decay_knob")
     set_control_par_str(get_ui_id($amp_env_decay), $CONTROL_PAR_PICTURE, "attack_decay_knob")
 
+        {Kalimba}
     set_control_par_str(get_ui_id($kalimba_position), $CONTROL_PAR_PICTURE, "attack_decay_knob")
-    set_control_par_str(get_ui_id($rain_stick_position), $CONTROL_PAR_PICTURE, "attack_decay_knob")
-
     set_control_par_str(get_ui_id($kalimba_position_random), $CONTROL_PAR_PICTURE, "attack_decay_knob")
+    set_control_par_str(get_ui_id($kalimba_volume), $CONTROL_PAR_PICTURE, "attack_decay_knob")
+
+        {Rain Stick}
+    set_control_par_str(get_ui_id($rain_stick_position), $CONTROL_PAR_PICTURE, "attack_decay_knob")
     set_control_par_str(get_ui_id($rain_stick_position_random), $CONTROL_PAR_PICTURE, "attack_decay_knob")
+    set_control_par_str(get_ui_id($rain_stick_volume), $CONTROL_PAR_PICTURE, "attack_decay_knob")
 
+        {Reverb}
     set_control_par_str(get_ui_id($reverb_amount), $CONTROL_PAR_PICTURE, "knob")
+    set_control_par_str(get_ui_id($reverb_pre_delay), $CONTROL_PAR_PICTURE, "attack_decay_knob")
+    set_control_par_str(get_ui_id($reverb_time), $CONTROL_PAR_PICTURE, "attack_decay_knob")
+    set_control_par_str(get_ui_id($reverb_size), $CONTROL_PAR_PICTURE, "attack_decay_knob")
+    set_control_par_str(get_ui_id($reverb_stereo), $CONTROL_PAR_PICTURE, "attack_decay_knob")
+    set_control_par_str(get_ui_id($reverb_low_shelf), $CONTROL_PAR_PICTURE, "attack_decay_knob")
+    set_control_par_str(get_ui_id($reverb_high_cut), $CONTROL_PAR_PICTURE, "attack_decay_knob")
+
+        {Filter}
+    set_control_par_str(get_ui_id($filter_lowcut), $CONTROL_PAR_PICTURE, "knob2")
+    set_control_par_str(get_ui_id($filter_lowcut_resonance), $CONTROL_PAR_PICTURE, "attack_decay_knob")
+    set_control_par_str(get_ui_id($filter_highcut), $CONTROL_PAR_PICTURE, "knob2")
+    set_control_par_str(get_ui_id($filter_highcut_resonance), $CONTROL_PAR_PICTURE, "attack_decay_knob")
 
 
 
-    {Mouse Controls}
+
+    {Mouse Controls/Behaviour}
     declare const $mouse_behaviour := -2050
     set_control_par(get_ui_id($grainAmount), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
     set_control_par(get_ui_id($grainDuration), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
@@ -305,11 +510,27 @@ on init
 
     set_control_par(get_ui_id($kalimba_position), $CONTROL_PAR_MOUSE_BEHAVIOUR, -1050)
     set_control_par(get_ui_id($kalimba_position_random), $CONTROL_PAR_MOUSE_BEHAVIOUR, -1050)
+    set_control_par(get_ui_id($kalimba_volume), $CONTROL_PAR_MOUSE_BEHAVIOUR, -1050)
 
     set_control_par( get_ui_id($rain_stick_position), $CONTROL_PAR_MOUSE_BEHAVIOUR, -1050)
     set_control_par( get_ui_id($rain_stick_position_random), $CONTROL_PAR_MOUSE_BEHAVIOUR, -1050)
+    set_control_par( get_ui_id($rain_stick_volume), $CONTROL_PAR_MOUSE_BEHAVIOUR, -1050)
 
+        {Reverb}
     set_control_par(get_ui_id($reverb_amount), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+    set_control_par(get_ui_id($reverb_pre_delay), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+    set_control_par(get_ui_id($reverb_time), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+    set_control_par(get_ui_id($reverb_size), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+    set_control_par(get_ui_id($reverb_stereo), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+    set_control_par(get_ui_id($reverb_low_shelf), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+    set_control_par(get_ui_id($reverb_high_cut), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+
+        {Filter}
+    set_control_par(get_ui_id($filter_lowcut), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+    set_control_par(get_ui_id($filter_lowcut_resonance), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+    set_control_par(get_ui_id($filter_highcut), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+    set_control_par(get_ui_id($filter_highcut_resonance), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+
 
 
 
@@ -329,10 +550,27 @@ on init
     make_persistent( $kalimba_reverse_button )
     make_persistent( $kalimba_position )
     make_persistent( $kalimba_position_random )
+    make_persistent( $kalimba_volume )
 
     make_persistent( $rain_stick_toggle_button )
     make_persistent( $rain_stick_reverse_button )
-    make_persistent( $rain_stick_position )    
+    make_persistent( $rain_stick_position )
+    make_persistent( $rain_stick_position_random ) 
+    make_persistent( $rain_stick_volume )
+
+
+    make_persistent( $reverb_amount )
+    make_persistent( $reverb_pre_delay )
+    make_persistent( $reverb_time )
+    make_persistent( $reverb_size )
+    make_persistent( $reverb_stereo )
+    make_persistent( $reverb_low_shelf )
+    make_persistent( $reverb_high_cut )
+
+    make_persistent( $filter_lowcut )
+    make_persistent( $filter_lowcut_resonance )
+    make_persistent( $filter_highcut )
+
 end on
 
 
@@ -342,7 +580,7 @@ on persistence_changed
     set_control_par_str(get_ui_id( $grainAmount_label ), $CONTROL_PAR_TEXT, get_control_par(get_ui_id( $grainAmount ), $CONTROL_PAR_VALUE) & " GRAINS")
     set_control_par_str( get_ui_id( $grainDuration_label ), $CONTROL_PAR_TEXT, get_engine_par_disp( $ENGINE_PAR_HOLD, 0, 0, -1 ) & " ms" )
 
-    set_control_par_str( get_ui_id( $width_label ), $CONTROL_PAR_TEXT, $width_knob/10 & "%" )
+    set_control_par_str( get_ui_id( $width_label ), $CONTROL_PAR_TEXT, "WIDTH" )
 
     $timebetweenGrains := 1000000 / get_control_par(get_ui_id($grainAmount), $CONTROL_PAR_VALUE) {update time between grains}
 
@@ -352,6 +590,12 @@ on persistence_changed
 
     ?instrument_position_randomness[0] := real($kalimba_position_random ) / 1000000.0
     ?instrument_position_randomness[1] := real($rain_stick_position_random ) / 1000000.0
+
+    set_engine_par($ENGINE_PAR_VOLUME, $kalimba_volume, 0, 0, -1) {Set volume for Kalimba}
+    set_engine_par($ENGINE_PAR_VOLUME, $kalimba_volume, 1, 0, -1) {Set volume for Kalimba}
+
+    set_engine_par($ENGINE_PAR_VOLUME, $rain_stick_volume, 2, 0, -1) {Set volume for Rain Stick}
+    set_engine_par($ENGINE_PAR_VOLUME, $rain_stick_volume, 3, 0, -1) {Set volume for Rain Stick}
 
     {Activation of Instruments}
     if($kalimba_toggle_button = 1) {Activate Kalimba if the toggle button is active}
@@ -460,10 +704,6 @@ on ui_control( $grainDuration )
     set_control_par_str( get_ui_id( $grainDuration_label ), $CONTROL_PAR_TEXT, get_engine_par_disp($ENGINE_PAR_HOLD, 0, 0, -1) & " ms" )
 end on
 
-on ui_control( $width_knob )
-     set_control_par_str( get_ui_id( $width_label ), $CONTROL_PAR_TEXT, $width_knob/10 & "%" )
-end on
-
 on ui_control( $amp_env_attack )
     %callback_ids[2] := $NI_CALLBACK_ID
 
@@ -498,7 +738,16 @@ on ui_control( $amp_env_decay )
     end if
 end on
 
+on ui_control( $width_knob )
+    %callback_ids[4] := $NI_CALLBACK_ID
 
+     set_control_par_str( get_ui_id( $width_label ), $CONTROL_PAR_TEXT, $width_knob/10 & "%" )
+
+     wait( $ui_wait )
+     if( %callback_ids[4] = $NI_CALLBACK_ID )
+        set_control_par_str( get_ui_id( $width_label ), $CONTROL_PAR_TEXT, "WIDTH" )
+     end if
+end on
 
 
 {Kalimba Related}
@@ -520,9 +769,29 @@ on ui_control( $kalimba_position )
 end on
 
 on ui_control( $kalimba_position_random )
+    %callback_ids[5] := $NI_CALLBACK_ID
     ?instrument_position_randomness[0] := real($kalimba_position_random ) / 1000000.0
+
+    set_control_par_str( get_ui_id( $kalimba_position_random_label ), $CONTROL_PAR_TEXT, "    " & $kalimba_position_random / 10000 & "%" )
+
+    wait($ui_wait)
+    if(%callback_ids[5] = $NI_CALLBACK_ID)
+        set_control_par_str(get_ui_id($kalimba_position_random_label), $CONTROL_PAR_TEXT, "RANDOM")
+    end if
 end on
 
+on ui_control( $kalimba_volume)
+    %callback_ids[6] := $NI_CALLBACK_ID
+    set_engine_par($ENGINE_PAR_VOLUME, $kalimba_volume, 0, 0, -1) {Set volume for Kalimba}
+    set_engine_par($ENGINE_PAR_VOLUME, $kalimba_volume, 1, 0, -1) {Set volume for Kalimba}
+
+    set_control_par_str( get_ui_id( $kalimba_volume_label ), $CONTROL_PAR_TEXT, "  " & get_engine_par_disp( $ENGINE_PAR_VOLUME, 0, 0, -1 ) & " dB" )
+
+    wait($ui_wait)
+    if(%callback_ids[6] = $NI_CALLBACK_ID)
+        set_control_par_str(get_ui_id($kalimba_volume_label), $CONTROL_PAR_TEXT, "VOLUME")
+    end if
+end on
 
 {Rain Stick Related}
 
@@ -543,17 +812,158 @@ on ui_control( $rain_stick_position )
 end on
 
 on ui_control( $rain_stick_position_random )
+    %callback_ids[7] := $NI_CALLBACK_ID
     ?instrument_position_randomness[1] := real($rain_stick_position_random ) / 1000000.0
+
+    set_control_par_str( get_ui_id( $rain_stick_position_random_label ), $CONTROL_PAR_TEXT, "    " & $rain_stick_position_random / 10000 & "%" )
+
+    wait($ui_wait)
+    if(%callback_ids[7] = $NI_CALLBACK_ID)
+        set_control_par_str(get_ui_id($rain_stick_position_random_label), $CONTROL_PAR_TEXT, "RANDOM")
+    end if
 end on
 
+on ui_control( $rain_stick_volume )
+    %callback_ids[8] := $NI_CALLBACK_ID
+    set_engine_par($ENGINE_PAR_VOLUME, $rain_stick_volume, 2, 0, -1) {Set volume for Rain Stick}
+    set_engine_par($ENGINE_PAR_VOLUME, $rain_stick_volume, 3, 0, -1) {Set volume for Rain Stick}
+
+    set_control_par_str( get_ui_id( $rain_stick_volume_label ), $CONTROL_PAR_TEXT, "  " & get_engine_par_disp( $ENGINE_PAR_VOLUME, 2, 0, -1 ) & " dB" )
+
+    wait($ui_wait)
+    if(%callback_ids[8] = $NI_CALLBACK_ID)
+        set_control_par_str(get_ui_id($rain_stick_volume_label), $CONTROL_PAR_TEXT, "VOLUME")
+    end if
+end on
+
+
+ 
 {Effects Related}
+    {Reverb}
 on ui_control( $reverb_amount )
-    $count := 0
-    while ( $count < $instrument_number * 2)
-        inc($count)
-    end while
+    %callback_ids[9] := $NI_CALLBACK_ID
+    set_engine_par( $ENGINE_PAR_SEND_EFFECT_OUTPUT_GAIN, $reverb_amount, -1, 1, $NI_SEND_BUS )
+
+    set_control_par_str( get_ui_id( $reverb_amount_label ), $CONTROL_PAR_TEXT, "  " & get_engine_par_disp( $ENGINE_PAR_SEND_EFFECT_OUTPUT_GAIN, -1, 1, $NI_SEND_BUS ) & " dB" )
+
+    wait($ui_wait)
+    if(%callback_ids[9] = $NI_CALLBACK_ID)
+        set_control_par_str(get_ui_id($reverb_amount_label), $CONTROL_PAR_TEXT, "AMOUNT")
+    end if
 end on
 
+on ui_control( $reverb_pre_delay )
+    %callback_ids[10] := $NI_CALLBACK_ID
+    set_engine_par( $ENGINE_PAR_RV2_PREDELAY, $reverb_pre_delay, -1, 1, $NI_SEND_BUS )
+
+    set_control_par_str( get_ui_id( $reverb_pre_delay_label ), $CONTROL_PAR_TEXT, "  " & get_engine_par_disp( $ENGINE_PAR_RV2_PREDELAY, -1, 1, $NI_SEND_BUS ) & " ms" )
+
+    wait($ui_wait)
+    if(%callback_ids[10] = $NI_CALLBACK_ID)
+        set_control_par_str(get_ui_id($reverb_pre_delay_label), $CONTROL_PAR_TEXT, "PRE-DELAY")
+    end if
+end on
+
+on ui_control( $reverb_time )
+    %callback_ids[11] := $NI_CALLBACK_ID
+    set_engine_par( $ENGINE_PAR_RV2_TIME, $reverb_time, -1, 1, $NI_SEND_BUS )
+
+    set_control_par_str( get_ui_id( $reverb_time_label ), $CONTROL_PAR_TEXT, get_engine_par_disp( $ENGINE_PAR_RV2_TIME, -1, 1, $NI_SEND_BUS ) & " ms" )
+
+    wait($ui_wait)
+    if(%callback_ids[11] = $NI_CALLBACK_ID)
+        set_control_par_str(get_ui_id($reverb_time_label), $CONTROL_PAR_TEXT, "TIME")
+    end if
+end on
+
+on ui_control( $reverb_size )
+    %callback_ids[12] := $NI_CALLBACK_ID
+    set_engine_par( $ENGINE_PAR_RV2_SIZE, $reverb_size, -1, 1, $NI_SEND_BUS )
+
+    set_control_par_str( get_ui_id( $reverb_size_label ), $CONTROL_PAR_TEXT, get_engine_par_disp( $ENGINE_PAR_RV2_SIZE, -1, 1, $NI_SEND_BUS ) & " %" )
+
+    wait($ui_wait)
+    if(%callback_ids[12] = $NI_CALLBACK_ID)
+        set_control_par_str(get_ui_id($reverb_size_label), $CONTROL_PAR_TEXT, "SIZE")
+    end if
+end on
+
+on ui_control( $reverb_stereo )
+    %callback_ids[13] := $NI_CALLBACK_ID
+    set_engine_par( $ENGINE_PAR_RV2_STEREO, $reverb_stereo, -1, 1, $NI_SEND_BUS )
+
+    set_control_par_str( get_ui_id( $reverb_stereo_label ), $CONTROL_PAR_TEXT, get_engine_par_disp( $ENGINE_PAR_RV2_STEREO, -1, 1, $NI_SEND_BUS ) & " %" )
+
+    wait($ui_wait)
+    if(%callback_ids[13] = $NI_CALLBACK_ID)
+        set_control_par_str(get_ui_id($reverb_stereo_label), $CONTROL_PAR_TEXT, "STEREO")
+    end if
+end on
+
+on ui_control( $reverb_low_shelf )
+    %callback_ids[14] := $NI_CALLBACK_ID
+    set_engine_par( $ENGINE_PAR_RV2_LOWSHELF, $reverb_low_shelf, -1, 1, $NI_SEND_BUS )
+
+    set_control_par_str( get_ui_id( $reverb_low_shelf_label ), $CONTROL_PAR_TEXT, "   " & get_engine_par_disp( $ENGINE_PAR_RV2_LOWSHELF, -1, 1, $NI_SEND_BUS ) & " dB" )
+
+    wait($ui_wait)
+    if(%callback_ids[14] = $NI_CALLBACK_ID)
+        set_control_par_str(get_ui_id($reverb_low_shelf_label), $CONTROL_PAR_TEXT, "LOW SHELF")
+    end if
+end on
+
+on ui_control( $reverb_high_cut )
+    %callback_ids[15] := $NI_CALLBACK_ID
+    set_engine_par( $ENGINE_PAR_RV2_HIGHCUT, 1000000 - $reverb_high_cut, -1, 1, $NI_SEND_BUS )
+
+    set_control_par_str( get_ui_id( $reverb_high_cut_label ), $CONTROL_PAR_TEXT, "   " & get_engine_par_disp( $ENGINE_PAR_RV2_HIGHCUT, -1, 1, $NI_SEND_BUS ) & " Hz" )
+
+    wait($ui_wait)
+    if(%callback_ids[15] = $NI_CALLBACK_ID)
+        set_control_par_str(get_ui_id($reverb_high_cut_label), $CONTROL_PAR_TEXT, "HIGH CUT")
+    end if
+end on
+
+    {Filter}
+on ui_control( $filter_lowcut )
+    %callback_ids[16] := $NI_CALLBACK_ID
+    set_engine_par( $ENGINE_PAR_CUTOFF, $filter_lowcut, -1, 0, $NI_MAIN_BUS )
+    set_control_par_str( get_ui_id( $filter_lowcut_label ), $CONTROL_PAR_TEXT, get_engine_par_disp( $ENGINE_PAR_CUTOFF, -1, 0, $NI_MAIN_BUS ) & " Hz" )
+    wait($ui_wait)
+    if(%callback_ids[16] = $NI_CALLBACK_ID)
+        set_control_par_str(get_ui_id($filter_lowcut_label), $CONTROL_PAR_TEXT, "LOW CUT")
+    end if
+end on
+
+on ui_control( $filter_lowcut_resonance )
+    %callback_ids[17] := $NI_CALLBACK_ID
+    set_engine_par( $ENGINE_PAR_RESONANCE, $filter_lowcut_resonance, -1, 0, $NI_MAIN_BUS )
+    set_control_par_str( get_ui_id( $filter_lowcut_resonance_label ), $CONTROL_PAR_TEXT, get_engine_par_disp( $ENGINE_PAR_RESONANCE, -1, 0, $NI_MAIN_BUS ) & " %" )
+    wait($ui_wait)
+    if(%callback_ids[17] = $NI_CALLBACK_ID)
+        set_control_par_str(get_ui_id($filter_lowcut_resonance_label), $CONTROL_PAR_TEXT, "LC RES")
+    end if
+end on
+
+on ui_control( $filter_highcut )
+    %callback_ids[18] := $NI_CALLBACK_ID
+    set_engine_par( $ENGINE_PAR_CUTOFF, $filter_highcut, -1, 1, $NI_MAIN_BUS )
+    set_control_par_str( get_ui_id( $filter_highcut_label ), $CONTROL_PAR_TEXT, get_engine_par_disp( $ENGINE_PAR_CUTOFF, -1, 1, $NI_MAIN_BUS ) & " Hz" )
+    wait($ui_wait)
+    if(%callback_ids[18] = $NI_CALLBACK_ID)
+        set_control_par_str(get_ui_id($filter_highcut_label), $CONTROL_PAR_TEXT, "HIGH CUT")
+    end if
+end on
+
+on ui_control( $filter_highcut_resonance )
+    %callback_ids[19] := $NI_CALLBACK_ID
+    set_engine_par( $ENGINE_PAR_RESONANCE, $filter_highcut_resonance, -1, 1, $NI_MAIN_BUS )
+    set_control_par_str( get_ui_id( $filter_highcut_resonance_label ), $CONTROL_PAR_TEXT, get_engine_par_disp( $ENGINE_PAR_RESONANCE, -1, 1, $NI_MAIN_BUS ) & " %" )
+    wait($ui_wait)
+    if(%callback_ids[19] = $NI_CALLBACK_ID)
+        set_control_par_str(get_ui_id($filter_highcut_resonance_label), $CONTROL_PAR_TEXT, "HC RES")
+    end if
+end on
 
 
 
