@@ -213,6 +213,13 @@ on init
     
 
     {Effect Settings}
+    declare ui_button $effects_bypass_all
+    declare %bypassed[4]
+    set_control_par( get_ui_id( $effects_bypass_all ), $CONTROL_PAR_WIDTH, 69 )
+    set_control_par_str( get_ui_id( $effects_bypass_all ), $CONTROL_PAR_TEXT, "BYPASS ALL" )
+    set_control_par( get_ui_id( $effects_bypass_all ), $CONTROL_PAR_POS_X, 926)
+    set_control_par( get_ui_id( $effects_bypass_all ), $CONTROL_PAR_POS_Y, 327 )
+
         {Reverb}
     declare ui_slider $reverb_amount(0, 1000000) {Reverb amount}
     declare ui_label $reverb_amount_label(1,1)
@@ -242,6 +249,10 @@ on init
     declare ui_label $reverb_high_cut_label(1,1)
         set_control_par_str( get_ui_id( $reverb_high_cut_label ), $CONTROL_PAR_TEXT, "HIGH CUT" )
 
+    declare ui_button $reverb_bypass_button
+    set_control_par( get_ui_id( $reverb_bypass_button ), $CONTROL_PAR_WIDTH, 50 )
+    set_control_par_str( get_ui_id( $reverb_bypass_button ), $CONTROL_PAR_TEXT, "BYPASS" )
+
         {Filter}
     declare ui_slider $filter_lowcut(0, 1000000) {Filter low cut}
     declare ui_label $filter_lowcut_label(1,1)
@@ -259,78 +270,211 @@ on init
     declare ui_label $filter_highcut_resonance_label(1,1)
         set_control_par_str( get_ui_id( $filter_highcut_resonance_label ), $CONTROL_PAR_TEXT, "HC RES" )
 
+    declare ui_button $filter_bypass_button
+    set_control_par( get_ui_id( $filter_bypass_button ), $CONTROL_PAR_WIDTH, 50 )
+    set_control_par_str( get_ui_id( $filter_bypass_button ), $CONTROL_PAR_TEXT, "BYPASS" )
+
+        {Psyche Delay slot 0}
+    declare ui_button $psyche_delay_toggle_button
+    set_control_par( get_ui_id( $psyche_delay_toggle_button ), $CONTROL_PAR_VALUE, 1)
+    set_control_par( get_ui_id( $psyche_delay_toggle_button ), $CONTROL_PAR_WIDTH, 70 )
+    set_control_par_str( get_ui_id( $psyche_delay_toggle_button ), $CONTROL_PAR_TEXT, "Psyche Delay" )
+
+    set_control_par( get_ui_id( $psyche_delay_toggle_button ), $CONTROL_PAR_POS_X, 270 )
+    set_control_par( get_ui_id( $psyche_delay_toggle_button ), $CONTROL_PAR_POS_Y, 327 )
+
+    declare ui_slider $psyche_delay_amount(0, 1000000) {Psyche delay amount}
+    declare ui_label $psyche_delay_amount_label(1,1)
+        set_control_par_str( get_ui_id( $psyche_delay_amount_label ), $CONTROL_PAR_TEXT, "AMOUNT" )
+
+    declare ui_slider $psyche_delay_time(0, 1000000) {Psyche delay time}
+    declare ui_label $psyche_delay_time_label(1,1)
+        set_control_par_str( get_ui_id( $psyche_delay_time_label ), $CONTROL_PAR_TEXT, "TIME" )
+
+    declare ui_slider $psyche_delay_feedback(0, 1000000) {Psyche delay feedback}
+    declare ui_label $psyche_delay_feedback_label(1,1)
+        set_control_par_str( get_ui_id( $psyche_delay_feedback_label ), $CONTROL_PAR_TEXT, "FEEDBACK" )
+
+    declare ui_slider $psyche_delay_lr_offset(0, 1000000) {Psyche delay left/right offset}
+    declare ui_label $psyche_delay_lr_offset_label(1,1)
+        set_control_par_str( get_ui_id( $psyche_delay_lr_offset_label ), $CONTROL_PAR_TEXT, "LR OFFSET" )
+
+    declare ui_slider $psyche_delay_cross_fb(0, 1000000) {Psyche delay cross feedback}
+    declare ui_label $psyche_delay_cross_fb_label(1,1)
+        set_control_par_str( get_ui_id( $psyche_delay_cross_fb_label ), $CONTROL_PAR_TEXT, "CROSS FB" )
+
+    declare ui_slider $psyche_delay_pitch(0, 1000000) {Psyche delay pitch}
+    declare ui_label $psyche_delay_pitch_label(1,1)
+        set_control_par_str( get_ui_id( $psyche_delay_pitch_label ), $CONTROL_PAR_TEXT, "PITCH" )
+    
+    declare ui_slider $psyche_delay_detune(0, 1000000) {Psyche delay detune}
+    declare ui_label $psyche_delay_detune_label(1,1)
+        set_control_par_str( get_ui_id( $psyche_delay_detune_label ), $CONTROL_PAR_TEXT, "DETUNE" )
+    
+    declare ui_button $psyche_delay_reversed_button
+    set_control_par( get_ui_id( $psyche_delay_reversed_button ), $CONTROL_PAR_WIDTH, 60 )
+    set_control_par_str( get_ui_id( $psyche_delay_reversed_button ), $CONTROL_PAR_TEXT, "REVERSED" )
+
+    declare ui_button $psyche_delay_bypass_button
+    set_control_par( get_ui_id( $psyche_delay_bypass_button ), $CONTROL_PAR_WIDTH, 50 )
+    set_control_par_str( get_ui_id( $psyche_delay_bypass_button ), $CONTROL_PAR_TEXT, "BYPASS" )
+    
+    
+    {Psyche Delay Settings Panel}
+    declare ui_panel $PsycheDelaySettingsPanel
+    set_control_par( get_ui_id( $PsycheDelaySettingsPanel ), $CONTROL_PAR_POS_X, 244 )
+    set_control_par( get_ui_id( $PsycheDelaySettingsPanel ), $CONTROL_PAR_POS_Y, 300 )
+
+    set_control_par( get_ui_id( $psyche_delay_amount ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $PsycheDelaySettingsPanel ) )
+    set_control_par( get_ui_id( $psyche_delay_amount ), $CONTROL_PAR_POS_X, 120 )
+    set_control_par( get_ui_id( $psyche_delay_amount ), $CONTROL_PAR_POS_Y, 75 )
+
+    set_control_par( get_ui_id( $psyche_delay_amount_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $PsycheDelaySettingsPanel ) )
+    hide_part( $psyche_delay_amount_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $psyche_delay_amount_label ), $CONTROL_PAR_POS_X, 132 )
+    set_control_par( get_ui_id( $psyche_delay_amount_label ), $CONTROL_PAR_POS_Y, 140 )
+
+    set_control_par( get_ui_id( $psyche_delay_time ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $PsycheDelaySettingsPanel ) )
+    set_control_par( get_ui_id( $psyche_delay_time ), $CONTROL_PAR_POS_X, 200 )
+    set_control_par( get_ui_id( $psyche_delay_time ), $CONTROL_PAR_POS_Y, 115 )
+
+    set_control_par( get_ui_id( $psyche_delay_time_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $PsycheDelaySettingsPanel ) )
+    hide_part( $psyche_delay_time_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $psyche_delay_time_label ), $CONTROL_PAR_POS_X, 200 )
+    set_control_par( get_ui_id( $psyche_delay_time_label ), $CONTROL_PAR_POS_Y, 150 )
+
+    set_control_par( get_ui_id( $psyche_delay_feedback ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $PsycheDelaySettingsPanel ) )
+    set_control_par( get_ui_id( $psyche_delay_feedback ), $CONTROL_PAR_POS_X, 200 )
+    set_control_par( get_ui_id( $psyche_delay_feedback ), $CONTROL_PAR_POS_Y, 60 )
+
+    set_control_par( get_ui_id( $psyche_delay_feedback_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $PsycheDelaySettingsPanel ) )
+    hide_part( $psyche_delay_feedback_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $psyche_delay_feedback_label ), $CONTROL_PAR_POS_X, 188 )
+    set_control_par( get_ui_id( $psyche_delay_feedback_label ), $CONTROL_PAR_POS_Y, 95 )
+
+    set_control_par( get_ui_id( $psyche_delay_lr_offset ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $PsycheDelaySettingsPanel ) )
+    set_control_par( get_ui_id( $psyche_delay_lr_offset ), $CONTROL_PAR_POS_X, 72 )
+    set_control_par( get_ui_id( $psyche_delay_lr_offset ), $CONTROL_PAR_POS_Y, 60 )
+
+    set_control_par( get_ui_id( $psyche_delay_lr_offset_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $PsycheDelaySettingsPanel ) )
+    hide_part( $psyche_delay_lr_offset_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $psyche_delay_lr_offset_label ), $CONTROL_PAR_POS_X, 59 )
+    set_control_par( get_ui_id( $psyche_delay_lr_offset_label ), $CONTROL_PAR_POS_Y, 95 )
+
+    set_control_par( get_ui_id( $psyche_delay_cross_fb ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $PsycheDelaySettingsPanel ) )
+    set_control_par( get_ui_id( $psyche_delay_cross_fb ), $CONTROL_PAR_POS_X, 72 )
+    set_control_par( get_ui_id( $psyche_delay_cross_fb ), $CONTROL_PAR_POS_Y, 115 )
+
+    set_control_par( get_ui_id( $psyche_delay_cross_fb_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $PsycheDelaySettingsPanel ) )
+    hide_part( $psyche_delay_cross_fb_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $psyche_delay_cross_fb_label ), $CONTROL_PAR_POS_X, 62 )
+    set_control_par( get_ui_id( $psyche_delay_cross_fb_label ), $CONTROL_PAR_POS_Y, 150 )
+
+    set_control_par( get_ui_id( $psyche_delay_pitch ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $PsycheDelaySettingsPanel ) )
+    set_control_par( get_ui_id( $psyche_delay_pitch ), $CONTROL_PAR_POS_X, 20 )
+    set_control_par( get_ui_id( $psyche_delay_pitch ), $CONTROL_PAR_POS_Y, 60 )
+
+    set_control_par( get_ui_id( $psyche_delay_pitch_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $PsycheDelaySettingsPanel ) )
+    hide_part( $psyche_delay_pitch_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $psyche_delay_pitch_label ), $CONTROL_PAR_POS_X, 18 )
+    set_control_par( get_ui_id( $psyche_delay_pitch_label ), $CONTROL_PAR_POS_Y, 95 )
+
+    set_control_par( get_ui_id( $psyche_delay_detune ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $PsycheDelaySettingsPanel ) )
+    set_control_par( get_ui_id( $psyche_delay_detune ), $CONTROL_PAR_POS_X, 20 )
+    set_control_par( get_ui_id( $psyche_delay_detune ), $CONTROL_PAR_POS_Y, 115 )
+
+    set_control_par( get_ui_id( $psyche_delay_detune_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $PsycheDelaySettingsPanel ) )
+    hide_part( $psyche_delay_detune_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $psyche_delay_detune_label ), $CONTROL_PAR_POS_X, 14 )
+    set_control_par( get_ui_id( $psyche_delay_detune_label ), $CONTROL_PAR_POS_Y, 150 )
+
+    set_control_par( get_ui_id( $psyche_delay_reversed_button ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $PsycheDelaySettingsPanel ) )
+    set_control_par( get_ui_id( $psyche_delay_reversed_button ), $CONTROL_PAR_POS_X, 124 )
+    set_control_par( get_ui_id( $psyche_delay_reversed_button ), $CONTROL_PAR_POS_Y, 55 )
+
+    set_control_par( get_ui_id( $psyche_delay_bypass_button ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $PsycheDelaySettingsPanel ) )
+    set_control_par( get_ui_id( $psyche_delay_bypass_button ), $CONTROL_PAR_POS_X, 132 )
+    set_control_par( get_ui_id( $psyche_delay_bypass_button ), $CONTROL_PAR_POS_Y, 165 )
+    {--------------------------------------------------------------------------------------------------------------------}
+
+
 
     {Effects Panel}
     declare ui_panel $EffectsSettingsPanel
         {Reverb}
+    declare $reverb_move := 113
     set_control_par( get_ui_id( $reverb_amount ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $EffectsSettingsPanel ) )
-    set_control_par( get_ui_id( $reverb_amount ), $CONTROL_PAR_POS_X, 500 )
+    set_control_par( get_ui_id( $reverb_amount ), $CONTROL_PAR_POS_X, 500 + $reverb_move )
     set_control_par( get_ui_id( $reverb_amount ), $CONTROL_PAR_POS_Y, 375 )
 
     set_control_par( get_ui_id( $reverb_amount_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $EffectsSettingsPanel ) )
     hide_part( $reverb_amount_label, $HIDE_PART_BG )
-    set_control_par( get_ui_id( $reverb_amount_label ), $CONTROL_PAR_POS_X, 512 )
+    set_control_par( get_ui_id( $reverb_amount_label ), $CONTROL_PAR_POS_X, 512 + $reverb_move )
     set_control_par( get_ui_id( $reverb_amount_label ), $CONTROL_PAR_POS_Y, 440 )
 
 
     set_control_par( get_ui_id( $reverb_pre_delay ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $EffectsSettingsPanel ) )
-    set_control_par( get_ui_id( $reverb_pre_delay ), $CONTROL_PAR_POS_X, 580 )
+    set_control_par( get_ui_id( $reverb_pre_delay ), $CONTROL_PAR_POS_X, 580 + $reverb_move )
     set_control_par( get_ui_id( $reverb_pre_delay ), $CONTROL_PAR_POS_Y, 360 )
 
     set_control_par( get_ui_id( $reverb_pre_delay_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $EffectsSettingsPanel ) )
     hide_part( $reverb_pre_delay_label, $HIDE_PART_BG )
-    set_control_par( get_ui_id( $reverb_pre_delay_label ), $CONTROL_PAR_POS_X, 568 )
+    set_control_par( get_ui_id( $reverb_pre_delay_label ), $CONTROL_PAR_POS_X, 568 + $reverb_move )
     set_control_par( get_ui_id( $reverb_pre_delay_label ), $CONTROL_PAR_POS_Y, 395 )
 
 
     set_control_par( get_ui_id( $reverb_time ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $EffectsSettingsPanel ) )
-    set_control_par( get_ui_id( $reverb_time ), $CONTROL_PAR_POS_X, 580 )
+    set_control_par( get_ui_id( $reverb_time ), $CONTROL_PAR_POS_X, 580 + $reverb_move )
     set_control_par( get_ui_id( $reverb_time ), $CONTROL_PAR_POS_Y, 415 )
 
     set_control_par( get_ui_id( $reverb_time_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $EffectsSettingsPanel ) )
     hide_part( $reverb_time_label, $HIDE_PART_BG )
-    set_control_par( get_ui_id( $reverb_time_label ), $CONTROL_PAR_POS_X, 580 )
+    set_control_par( get_ui_id( $reverb_time_label ), $CONTROL_PAR_POS_X, 580 + $reverb_move )
     set_control_par( get_ui_id( $reverb_time_label ), $CONTROL_PAR_POS_Y, 450 )
 
 
     set_control_par( get_ui_id( $reverb_size ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $EffectsSettingsPanel ) )
-    set_control_par( get_ui_id( $reverb_size ), $CONTROL_PAR_POS_X, 400 )
+    set_control_par( get_ui_id( $reverb_size ), $CONTROL_PAR_POS_X, 400 + $reverb_move )
     set_control_par( get_ui_id( $reverb_size ), $CONTROL_PAR_POS_Y, 360 )
 
     set_control_par( get_ui_id( $reverb_size_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $EffectsSettingsPanel ) )
     hide_part( $reverb_size_label, $HIDE_PART_BG )
-    set_control_par( get_ui_id( $reverb_size_label ), $CONTROL_PAR_POS_X, 402 )
+    set_control_par( get_ui_id( $reverb_size_label ), $CONTROL_PAR_POS_X, 402 + $reverb_move )
     set_control_par( get_ui_id( $reverb_size_label ), $CONTROL_PAR_POS_Y, 395 )
 
 
     set_control_par( get_ui_id( $reverb_stereo ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $EffectsSettingsPanel ) )
-    set_control_par( get_ui_id( $reverb_stereo ), $CONTROL_PAR_POS_X, 400 )
+    set_control_par( get_ui_id( $reverb_stereo ), $CONTROL_PAR_POS_X, 400 + $reverb_move )
     set_control_par( get_ui_id( $reverb_stereo ), $CONTROL_PAR_POS_Y, 415 )
 
     set_control_par( get_ui_id( $reverb_stereo_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $EffectsSettingsPanel ) )
     hide_part( $reverb_stereo_label, $HIDE_PART_BG )
-    set_control_par( get_ui_id( $reverb_stereo_label ), $CONTROL_PAR_POS_X, 395 )
+    set_control_par( get_ui_id( $reverb_stereo_label ), $CONTROL_PAR_POS_X, 395 + $reverb_move )
     set_control_par( get_ui_id( $reverb_stereo_label ), $CONTROL_PAR_POS_Y, 450 )
 
 
     set_control_par( get_ui_id( $reverb_low_shelf ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $EffectsSettingsPanel ) )
-    set_control_par( get_ui_id( $reverb_low_shelf ), $CONTROL_PAR_POS_X, 452 )
+    set_control_par( get_ui_id( $reverb_low_shelf ), $CONTROL_PAR_POS_X, 452 + $reverb_move )
     set_control_par( get_ui_id( $reverb_low_shelf ), $CONTROL_PAR_POS_Y, 360 )
 
     set_control_par( get_ui_id( $reverb_low_shelf_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $EffectsSettingsPanel ) )
     hide_part( $reverb_low_shelf_label, $HIDE_PART_BG )
-    set_control_par( get_ui_id( $reverb_low_shelf_label ), $CONTROL_PAR_POS_X, 440 )
+    set_control_par( get_ui_id( $reverb_low_shelf_label ), $CONTROL_PAR_POS_X, 440 + $reverb_move )
     set_control_par( get_ui_id( $reverb_low_shelf_label ), $CONTROL_PAR_POS_Y, 395 )
 
 
     set_control_par( get_ui_id( $reverb_high_cut ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $EffectsSettingsPanel ) )
-    set_control_par( get_ui_id( $reverb_high_cut ), $CONTROL_PAR_POS_X, 452 )
+    set_control_par( get_ui_id( $reverb_high_cut ), $CONTROL_PAR_POS_X, 452 + $reverb_move )
     set_control_par( get_ui_id( $reverb_high_cut ), $CONTROL_PAR_POS_Y, 415 )
     
     set_control_par( get_ui_id( $reverb_high_cut_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $EffectsSettingsPanel ) )
     hide_part( $reverb_high_cut_label, $HIDE_PART_BG )
-    set_control_par( get_ui_id( $reverb_high_cut_label ), $CONTROL_PAR_POS_X, 445 )
+    set_control_par( get_ui_id( $reverb_high_cut_label ), $CONTROL_PAR_POS_X, 445 + $reverb_move )
     set_control_par( get_ui_id( $reverb_high_cut_label ), $CONTROL_PAR_POS_Y, 450 )
+
+    set_control_par( get_ui_id( $reverb_bypass_button ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $EffectsSettingsPanel ) )
+    set_control_par( get_ui_id( $reverb_bypass_button ), $CONTROL_PAR_POS_X, 512 + $reverb_move )
+    set_control_par( get_ui_id( $reverb_bypass_button ), $CONTROL_PAR_POS_Y, 465 )
 
         {Filter}
     set_control_par( get_ui_id( $filter_lowcut ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $EffectsSettingsPanel ) )
@@ -371,6 +515,12 @@ on init
     set_control_par( get_ui_id( $filter_highcut_resonance_label ), $CONTROL_PAR_POS_X, 930)
     set_control_par( get_ui_id( $filter_highcut_resonance_label ), $CONTROL_PAR_POS_Y, 432 )
 
+    set_control_par( get_ui_id( $filter_bypass_button ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $EffectsSettingsPanel ) )
+    set_control_par( get_ui_id( $filter_bypass_button ), $CONTROL_PAR_POS_X, 875 - 40 )
+    set_control_par( get_ui_id( $filter_bypass_button ), $CONTROL_PAR_POS_Y, 465 )
+
+
+
 
     {Envelope Parameters}
     declare ui_slider $amp_env_attack(0, 440650)        {Attack time. 440650 corresponds to 1000ms}
@@ -397,7 +547,7 @@ on init
     set_control_par( get_ui_id( $rain_stick_volume ), $CONTROL_PAR_DEFAULT_VALUE, 629961 ) {Default volume for Rain Stick (629961 corresponds to 0.0 dB)}
 
         {Reverb}
-    set_control_par( get_ui_id( $reverb_amount ), $CONTROL_PAR_DEFAULT_VALUE, 200000)       {Default reverb amount (396484 corresponds to 0.0 dB)}
+    set_control_par( get_ui_id( $reverb_amount ), $CONTROL_PAR_DEFAULT_VALUE, 200000)       {Default reverb amount 
     set_control_par( get_ui_id( $reverb_pre_delay ), $CONTROL_PAR_DEFAULT_VALUE, 80000 )    {Default pre-delay for reverb (80000 corresponds to 20ms)}
     set_control_par( get_ui_id( $reverb_time ), $CONTROL_PAR_DEFAULT_VALUE, 484259 )       {Default reverb time (200000 corresponds to 3 seconds)}
     set_control_par( get_ui_id( $reverb_size ), $CONTROL_PAR_DEFAULT_VALUE, 1000000 )    {Default reverb size (1000000 corresponds to 100% size)}
@@ -409,7 +559,14 @@ on init
     set_control_par( get_ui_id( $filter_lowcut ), $CONTROL_PAR_DEFAULT_VALUE, 0 ) {Default filter low cut (0 corresponds to 20 Hz)}
     set_control_par( get_ui_id( $filter_highcut ), $CONTROL_PAR_DEFAULT_VALUE, 1000000 ) {Default filter high cut (1000000 corresponds to 20 kHz)}
 
-
+        {Psyche Delay}
+    set_control_par( get_ui_id( $psyche_delay_amount ), $CONTROL_PAR_DEFAULT_VALUE, 200000 ) {Default psyche delay amount}
+    set_control_par( get_ui_id( $psyche_delay_time ), $CONTROL_PAR_DEFAULT_VALUE, 250000 ) {Default psyche delay time (500000 corresponds to 500 ms)}
+    set_control_par( get_ui_id( $psyche_delay_feedback ), $CONTROL_PAR_DEFAULT_VALUE, 500000 ) {Default psyche delay feedback (500000 corresponds to 50% feedback)}
+    set_control_par( get_ui_id( $psyche_delay_lr_offset ), $CONTROL_PAR_DEFAULT_VALUE, 500000 ) {Default psyche delay left/right offset (500000 corresponds to 50% offset)}
+    set_control_par( get_ui_id( $psyche_delay_cross_fb ), $CONTROL_PAR_DEFAULT_VALUE, 500000 ) {Default psyche delay cross feedback (500000 corresponds to 50% cross feedback)}
+    set_control_par( get_ui_id( $psyche_delay_pitch ), $CONTROL_PAR_DEFAULT_VALUE, 500000 ) {Default psyche delay pitch (500000 corresponds to 0.0 semitones)}
+    set_control_par( get_ui_id( $psyche_delay_detune ), $CONTROL_PAR_DEFAULT_VALUE, 500000 ) {Default psyche delay detune (500000 corresponds to 0.0 cents)}
 
 
     {Granular Settings Panel}
@@ -417,24 +574,24 @@ on init
     set_control_par( get_ui_id( $grainDuration ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $GrainSettingsPanel ) )
 
     set_control_par( get_ui_id( $width_knob ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $GrainSettingsPanel ) )
-    set_control_par( get_ui_id( $width_knob ), $CONTROL_PAR_POS_X, 138 )
+    set_control_par( get_ui_id( $width_knob ), $CONTROL_PAR_POS_X, 110 )
 
     set_control_par( get_ui_id( $grainAmount ), $CONTROL_PAR_POS_X, 0 )
     set_control_par( get_ui_id( $grainDuration ), $CONTROL_PAR_POS_Y, 60 )
 
     set_control_par( get_ui_id( $grainAmount_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $GrainSettingsPanel ) )
     hide_part( $grainAmount_label, $HIDE_PART_BG )
-    set_control_par( get_ui_id( $grainAmount_label ), $CONTROL_PAR_POS_X, 65)
+    set_control_par( get_ui_id( $grainAmount_label ), $CONTROL_PAR_POS_X, 60)
     set_control_par( get_ui_id( $grainAmount_label ), $CONTROL_PAR_POS_Y, 25 )
 
     set_control_par( get_ui_id( $grainDuration_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $GrainSettingsPanel ) )
     hide_part( $grainDuration_label, $HIDE_PART_BG )
-    set_control_par( get_ui_id( $grainDuration_label ), $CONTROL_PAR_POS_X, 65 )
+    set_control_par( get_ui_id( $grainDuration_label ), $CONTROL_PAR_POS_X, 58 )
     set_control_par( get_ui_id( $grainDuration_label ), $CONTROL_PAR_POS_Y, 85 )
 
     set_control_par( get_ui_id( $width_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $GrainSettingsPanel ) )
     hide_part( $width_label, $HIDE_PART_BG )
-    set_control_par( get_ui_id( $width_label ), $CONTROL_PAR_POS_X, 205 )
+    set_control_par( get_ui_id( $width_label ), $CONTROL_PAR_POS_X, 167 )
     set_control_par( get_ui_id( $width_label ), $CONTROL_PAR_POS_Y, 25 )
 
 
@@ -496,25 +653,34 @@ on init
     set_control_par_str(get_ui_id($filter_highcut), $CONTROL_PAR_PICTURE, "knob2")
     set_control_par_str(get_ui_id($filter_highcut_resonance), $CONTROL_PAR_PICTURE, "attack_decay_knob")
 
+    {Psyche Delay}
+    set_control_par_str(get_ui_id($psyche_delay_amount), $CONTROL_PAR_PICTURE, "knob")
+    set_control_par_str(get_ui_id($psyche_delay_time), $CONTROL_PAR_PICTURE, "attack_decay_knob")
+    set_control_par_str(get_ui_id($psyche_delay_feedback), $CONTROL_PAR_PICTURE, "attack_decay_knob")
+    set_control_par_str(get_ui_id($psyche_delay_lr_offset), $CONTROL_PAR_PICTURE, "attack_decay_knob")
+    set_control_par_str(get_ui_id($psyche_delay_cross_fb), $CONTROL_PAR_PICTURE, "attack_decay_knob")
+    set_control_par_str(get_ui_id($psyche_delay_pitch), $CONTROL_PAR_PICTURE, "attack_decay_knob")
+    set_control_par_str(get_ui_id($psyche_delay_detune), $CONTROL_PAR_PICTURE, "attack_decay_knob")
+    
 
 
 
     {Mouse Controls/Behaviour}
-    declare const $mouse_behaviour := -2050
+    declare const $mouse_behaviour := -1050
     set_control_par(get_ui_id($grainAmount), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
     set_control_par(get_ui_id($grainDuration), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
     set_control_par(get_ui_id($width_knob), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
 
-    set_control_par(get_ui_id($amp_env_attack), $CONTROL_PAR_MOUSE_BEHAVIOUR, -1050)
-    set_control_par(get_ui_id($amp_env_decay), $CONTROL_PAR_MOUSE_BEHAVIOUR, -1050)
+    set_control_par(get_ui_id($amp_env_attack), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+    set_control_par(get_ui_id($amp_env_decay), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
 
-    set_control_par(get_ui_id($kalimba_position), $CONTROL_PAR_MOUSE_BEHAVIOUR, -1050)
-    set_control_par(get_ui_id($kalimba_position_random), $CONTROL_PAR_MOUSE_BEHAVIOUR, -1050)
-    set_control_par(get_ui_id($kalimba_volume), $CONTROL_PAR_MOUSE_BEHAVIOUR, -1050)
+    set_control_par(get_ui_id($kalimba_position), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+    set_control_par(get_ui_id($kalimba_position_random), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+    set_control_par(get_ui_id($kalimba_volume), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
 
-    set_control_par( get_ui_id($rain_stick_position), $CONTROL_PAR_MOUSE_BEHAVIOUR, -1050)
-    set_control_par( get_ui_id($rain_stick_position_random), $CONTROL_PAR_MOUSE_BEHAVIOUR, -1050)
-    set_control_par( get_ui_id($rain_stick_volume), $CONTROL_PAR_MOUSE_BEHAVIOUR, -1050)
+    set_control_par( get_ui_id($rain_stick_position), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+    set_control_par( get_ui_id($rain_stick_position_random), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+    set_control_par( get_ui_id($rain_stick_volume), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
 
         {Reverb}
     set_control_par(get_ui_id($reverb_amount), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
@@ -531,7 +697,14 @@ on init
     set_control_par(get_ui_id($filter_highcut), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
     set_control_par(get_ui_id($filter_highcut_resonance), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
 
-
+        {Psyche Delay}
+    set_control_par(get_ui_id($psyche_delay_amount), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+    set_control_par(get_ui_id($psyche_delay_time), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+    set_control_par(get_ui_id($psyche_delay_feedback), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+    set_control_par(get_ui_id($psyche_delay_lr_offset), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+    set_control_par(get_ui_id($psyche_delay_cross_fb), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+    set_control_par(get_ui_id($psyche_delay_pitch), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+    set_control_par(get_ui_id($psyche_delay_detune), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
 
 
     {Persistency}
@@ -566,11 +739,21 @@ on init
     make_persistent( $reverb_stereo )
     make_persistent( $reverb_low_shelf )
     make_persistent( $reverb_high_cut )
+    make_persistent( $reverb_bypass_button )
 
     make_persistent( $filter_lowcut )
     make_persistent( $filter_lowcut_resonance )
     make_persistent( $filter_highcut )
+    make_persistent( $filter_highcut_resonance )
+    make_persistent( $filter_bypass_button )
 
+    make_persistent( $psyche_delay_amount )
+    make_persistent( $psyche_delay_time )
+    make_persistent( $psyche_delay_feedback )
+    make_persistent( $psyche_delay_lr_offset )
+    make_persistent( $psyche_delay_cross_fb )
+    make_persistent( $psyche_delay_pitch )
+    make_persistent( $psyche_delay_detune )
 end on
 
 
@@ -686,7 +869,6 @@ end on
 
 
 {Granular Settings}
-
 on ui_control( $grainAmount )
     %callback_ids[0] := $NI_CALLBACK_ID
     $timebetweenGrains := 1000000 / get_control_par(get_ui_id($grainAmount), $CONTROL_PAR_VALUE) {update time between grains}
@@ -741,7 +923,7 @@ end on
 on ui_control( $width_knob )
     %callback_ids[4] := $NI_CALLBACK_ID
 
-     set_control_par_str( get_ui_id( $width_label ), $CONTROL_PAR_TEXT, $width_knob/10 & "%" )
+     set_control_par_str( get_ui_id( $width_label ), $CONTROL_PAR_TEXT, "  " & $width_knob/10 & "%" )
 
      wait( $ui_wait )
      if( %callback_ids[4] = $NI_CALLBACK_ID )
@@ -751,7 +933,6 @@ end on
 
 
 {Kalimba Related}
-
 on ui_control( $kalimba_toggle_button )
     %instrument_active[0] := $kalimba_toggle_button
 end on
@@ -794,7 +975,6 @@ on ui_control( $kalimba_volume)
 end on
 
 {Rain Stick Related}
-
 on ui_control( $rain_stick_toggle_button )
     %instrument_active[1] := $rain_stick_toggle_button
 end on
@@ -839,6 +1019,25 @@ end on
 
  
 {Effects Related}
+
+on ui_control( $effects_bypass_all )
+    if ( %bypassed[0] = 0 )
+        set_control_par( get_ui_id( $reverb_bypass_button ), $CONTROL_PAR_VALUE, $effects_bypass_all )
+        set_engine_par( $ENGINE_PAR_SEND_EFFECT_BYPASS, $reverb_bypass_button, -1, 1, $NI_SEND_BUS ) 
+    end if
+
+    if ( %bypassed[1] = 0 )
+        set_control_par( get_ui_id( $filter_bypass_button ), $CONTROL_PAR_VALUE, $effects_bypass_all )
+        set_engine_par( $ENGINE_PAR_EFFECT_BYPASS, $filter_bypass_button, -1, 0, $NI_MAIN_BUS ) {Bypass LOW CUT filter}
+        set_engine_par( $ENGINE_PAR_EFFECT_BYPASS, $filter_bypass_button, -1, 1, $NI_MAIN_BUS ) {Bypass HIGH CUT filter}
+    end if
+
+    if ( %bypassed[2] = 0 )
+        set_control_par( get_ui_id( $psyche_delay_bypass_button ), $CONTROL_PAR_VALUE, $effects_bypass_all )
+        set_engine_par( $ENGINE_PAR_SEND_EFFECT_BYPASS, $psyche_delay_bypass_button, -1, 0, $NI_SEND_BUS ) 
+    end if
+end on
+
     {Reverb}
 on ui_control( $reverb_amount )
     %callback_ids[9] := $NI_CALLBACK_ID
@@ -924,6 +1123,11 @@ on ui_control( $reverb_high_cut )
     end if
 end on
 
+on ui_control( $reverb_bypass_button )
+    set_engine_par( $ENGINE_PAR_SEND_EFFECT_BYPASS, $reverb_bypass_button, -1, 1, $NI_SEND_BUS )
+    %bypassed[0] := $reverb_bypass_button 
+end on
+
     {Filter}
 on ui_control( $filter_lowcut )
     %callback_ids[16] := $NI_CALLBACK_ID
@@ -965,6 +1169,121 @@ on ui_control( $filter_highcut_resonance )
     end if
 end on
 
+on ui_control( $filter_bypass_button )
+    set_engine_par( $ENGINE_PAR_EFFECT_BYPASS, $filter_bypass_button, -1, 0, $NI_MAIN_BUS ) {Bypass LOW CUT filter}
+    set_engine_par( $ENGINE_PAR_EFFECT_BYPASS, $filter_bypass_button, -1, 1, $NI_MAIN_BUS ) {Bypass HIGH CUT filter}
+    %bypassed[1] := $filter_bypass_button {Store the bypass state of the filter}
+end on
+
+    {Psyche Delay}
+on ui_control( $psyche_delay_toggle_button )
+    if($psyche_delay_toggle_button = 0)
+        set_control_par( get_ui_id( $PsycheDelaySettingsPanel ), $CONTROL_PAR_HIDE, $HIDE_WHOLE_CONTROL )
+
+        set_control_par( get_ui_id( $psyche_delay_bypass_button ), $CONTROL_PAR_VALUE, 1 )
+        set_engine_par( $ENGINE_PAR_SEND_EFFECT_BYPASS, $psyche_delay_bypass_button, -1, 0, $NI_SEND_BUS ) 
+        %bypassed[2] := $psyche_delay_bypass_button {Store the bypass state of the psyche delay}
+
+    else
+        set_control_par( get_ui_id( $PsycheDelaySettingsPanel ), $CONTROL_PAR_HIDE, $HIDE_PART_NOTHING )
+        set_control_par( get_ui_id( $psyche_delay_bypass_button ), $CONTROL_PAR_VALUE, 0 )
+        set_engine_par( $ENGINE_PAR_SEND_EFFECT_BYPASS, $psyche_delay_bypass_button, -1, 0, $NI_SEND_BUS ) 
+        %bypassed[2] := $psyche_delay_bypass_button {Store the bypass state of the psyche delay}
+    end if
+end on
+
+on ui_control( $psyche_delay_amount )
+    %callback_ids[20] := $NI_CALLBACK_ID
+    set_engine_par( $ENGINE_PAR_SEND_EFFECT_OUTPUT_GAIN, $psyche_delay_amount, -1, 0, $NI_SEND_BUS )
+
+    set_control_par_str( get_ui_id( $psyche_delay_amount_label ), $CONTROL_PAR_TEXT, get_engine_par_disp( $ENGINE_PAR_SEND_EFFECT_OUTPUT_GAIN, -1, 0, $NI_SEND_BUS ) & " dB" )
+
+    wait($ui_wait)
+    if(%callback_ids[20] = $NI_CALLBACK_ID)
+        set_control_par_str(get_ui_id($psyche_delay_amount_label), $CONTROL_PAR_TEXT, "AMOUNT")
+    end if
+end on
+
+on ui_control( $psyche_delay_time )
+    %callback_ids[21] := $NI_CALLBACK_ID
+    set_engine_par( $ENGINE_PAR_PSYDL_TIME, $psyche_delay_time, -1, 0, $NI_SEND_BUS )
+
+    set_control_par_str( get_ui_id( $psyche_delay_time_label ), $CONTROL_PAR_TEXT, get_engine_par_disp( $ENGINE_PAR_PSYDL_TIME, -1, 0, $NI_SEND_BUS ) & " ms" )
+
+    wait($ui_wait)
+    if(%callback_ids[21] = $NI_CALLBACK_ID)
+        set_control_par_str(get_ui_id($psyche_delay_time_label), $CONTROL_PAR_TEXT, "TIME")
+    end if
+end on
+
+on ui_control( $psyche_delay_feedback )
+    %callback_ids[22] := $NI_CALLBACK_ID
+    set_engine_par( $ENGINE_PAR_PSYDL_FEEDBACK, $psyche_delay_feedback, -1, 0, $NI_SEND_BUS )
+
+    set_control_par_str( get_ui_id( $psyche_delay_feedback_label ), $CONTROL_PAR_TEXT, "    " & get_engine_par_disp( $ENGINE_PAR_PSYDL_FEEDBACK, -1, 0, $NI_SEND_BUS ) & " %" )
+
+    wait($ui_wait)
+    if(%callback_ids[22] = $NI_CALLBACK_ID)
+        set_control_par_str(get_ui_id($psyche_delay_feedback_label), $CONTROL_PAR_TEXT, "FEEDBACK")
+    end if
+end on
+
+on ui_control( $psyche_delay_lr_offset )
+    %callback_ids[23] := $NI_CALLBACK_ID
+    set_engine_par( $ENGINE_PAR_PSYDL_LR_OFFSET, $psyche_delay_lr_offset, -1, 0, $NI_SEND_BUS )
+
+    set_control_par_str( get_ui_id( $psyche_delay_lr_offset_label ), $CONTROL_PAR_TEXT, "    " & get_engine_par_disp( $ENGINE_PAR_PSYDL_LR_OFFSET, -1, 0, $NI_SEND_BUS ) & " %" )
+
+    wait($ui_wait)
+    if(%callback_ids[23] = $NI_CALLBACK_ID)
+        set_control_par_str(get_ui_id($psyche_delay_lr_offset_label), $CONTROL_PAR_TEXT, "LR OFFSET")
+    end if
+end on
+
+on ui_control( $psyche_delay_cross_fb )
+    %callback_ids[24] := $NI_CALLBACK_ID
+    set_engine_par( $ENGINE_PAR_PSYDL_CROSS_FEEDBACK, $psyche_delay_cross_fb, -1, 0, $NI_SEND_BUS )
+
+    set_control_par_str( get_ui_id( $psyche_delay_cross_fb_label ), $CONTROL_PAR_TEXT, "    " & get_engine_par_disp( $ENGINE_PAR_PSYDL_CROSS_FEEDBACK, -1, 0, $NI_SEND_BUS ) & " %" )
+
+    wait($ui_wait)
+    if(%callback_ids[24] = $NI_CALLBACK_ID)
+        set_control_par_str(get_ui_id($psyche_delay_cross_fb_label), $CONTROL_PAR_TEXT, "CROSS FB")
+    end if
+end on
+
+on ui_control( $psyche_delay_pitch )
+    %callback_ids[25] := $NI_CALLBACK_ID
+    set_engine_par( $ENGINE_PAR_PSYDL_PITCH, $psyche_delay_pitch, -1, 0, $NI_SEND_BUS )
+
+    set_control_par_str( get_ui_id( $psyche_delay_pitch_label ), $CONTROL_PAR_TEXT, " " & get_engine_par_disp( $ENGINE_PAR_PSYDL_PITCH, -1, 0, $NI_SEND_BUS ) & " st" )
+
+    wait($ui_wait)
+    if(%callback_ids[25] = $NI_CALLBACK_ID)
+        set_control_par_str(get_ui_id($psyche_delay_pitch_label), $CONTROL_PAR_TEXT, "PITCH")
+    end if
+end on
+
+on ui_control( $psyche_delay_detune )
+    %callback_ids[26] := $NI_CALLBACK_ID
+    set_engine_par( $ENGINE_PAR_PSYDL_DETUNE, $psyche_delay_detune, -1, 0, $NI_SEND_BUS )
+
+    set_control_par_str( get_ui_id( $psyche_delay_detune_label ), $CONTROL_PAR_TEXT, " " & get_engine_par_disp( $ENGINE_PAR_PSYDL_DETUNE, -1, 0, $NI_SEND_BUS ) & " cts" )
+
+    wait($ui_wait)
+    if(%callback_ids[26] = $NI_CALLBACK_ID)
+        set_control_par_str(get_ui_id($psyche_delay_detune_label), $CONTROL_PAR_TEXT, "DETUNE")
+    end if
+end on
+
+on ui_control( $psyche_delay_reversed_button)
+    set_engine_par( $ENGINE_PAR_PSYDL_REVERSE, $psyche_delay_reversed_button, -1, 0, $NI_SEND_BUS )
+end on
+
+on ui_control( $psyche_delay_bypass_button )
+    set_engine_par( $ENGINE_PAR_SEND_EFFECT_BYPASS, $psyche_delay_bypass_button, -1, 0, $NI_SEND_BUS ) 
+    %bypassed[2] := $psyche_delay_bypass_button {Store the bypass state of the psyche delay}
+end on
 
 
 on listener
