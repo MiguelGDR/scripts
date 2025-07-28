@@ -1,12 +1,18 @@
 {***************************************************
 Granular Kalimba Script
 Author: Miguel González del Río
-Modified: July 16th, 2025
+Modified: July 38th, 2025
 ****************************************************}
 
 {
     Tasks:                          
-    - Add reverb and delay functions
+    - Change filter slot                OK!
+    - Move reverb to a main effect      OK!
+    - Add the replika delay             OK!
+    
+    - Add american flute
+    - Add electric guitar
+    - Add piano
 }
 
 on init
@@ -210,7 +216,57 @@ on init
     {Poliphony Settings}
     declare %note_active[128]
     declare %evento_id[128]
+
+
+
+
+    {LFO setting}
+    declare ui_slider $lfo_freq(0, 692000) {LFO rate}
+    declare ui_label $lfo_freq_label(1,1)
+        set_control_par_str( get_ui_id( $lfo_freq_label ), $CONTROL_PAR_TEXT, " FREQ" )
+
+    declare ui_slider $lfo_depth(0, 1000000) {LFO depth}
+    declare ui_label $lfo_depth_label(1,1)
+        set_control_par_str( get_ui_id( $lfo_depth_label ), $CONTROL_PAR_TEXT, "DEPTH" )
+
+    declare ui_slider $lfo_fade_in(0, 1000000) {LFO fade in}
+    declare ui_label $lfo_fade_in_label(1,1)
+        set_control_par_str( get_ui_id( $lfo_fade_in_label ), $CONTROL_PAR_TEXT, "FADE IN" )
+
+    {LFO Settings Panel}
+    declare ui_panel $LFOSettingsPanel
+    set_control_par( get_ui_id( $LFOSettingsPanel ), $CONTROL_PAR_POS_X, 296 )
+    set_control_par( get_ui_id( $LFOSettingsPanel ), $CONTROL_PAR_POS_Y, 255 )
+
+    set_control_par( get_ui_id( $lfo_freq ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $LFOSettingsPanel ) )
+    set_control_par( get_ui_id( $lfo_freq ), $CONTROL_PAR_POS_X, 100 )
+    set_control_par( get_ui_id( $lfo_freq ), $CONTROL_PAR_POS_Y, 20 )
+
+    set_control_par( get_ui_id( $lfo_freq_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $LFOSettingsPanel ) )
+    hide_part( $lfo_freq_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $lfo_freq_label ), $CONTROL_PAR_POS_X, 98 )
+    set_control_par( get_ui_id( $lfo_freq_label ), $CONTROL_PAR_POS_Y, 60 )
     
+    set_control_par( get_ui_id( $lfo_depth ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $LFOSettingsPanel ) )
+    set_control_par( get_ui_id( $lfo_depth ), $CONTROL_PAR_POS_X, 160 )
+    set_control_par( get_ui_id( $lfo_depth ), $CONTROL_PAR_POS_Y, 0 )
+
+    set_control_par( get_ui_id( $lfo_depth_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $LFOSettingsPanel ) )
+    hide_part( $lfo_depth_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $lfo_depth_label ), $CONTROL_PAR_POS_X, 173 )
+    set_control_par( get_ui_id( $lfo_depth_label ), $CONTROL_PAR_POS_Y, 60 )
+
+    set_control_par( get_ui_id( $lfo_fade_in ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $LFOSettingsPanel ) )
+    set_control_par( get_ui_id( $lfo_fade_in ), $CONTROL_PAR_POS_X, 254 )
+    set_control_par( get_ui_id( $lfo_fade_in ), $CONTROL_PAR_POS_Y, 20 )
+
+    set_control_par( get_ui_id( $lfo_fade_in_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $LFOSettingsPanel ) )
+    hide_part( $lfo_fade_in_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $lfo_fade_in_label ), $CONTROL_PAR_POS_X, 249 )
+    set_control_par( get_ui_id( $lfo_fade_in_label ), $CONTROL_PAR_POS_Y, 60 )
+
+
+
 
     {Effect Settings}
     declare ui_button $effects_bypass_all
@@ -280,7 +336,7 @@ on init
     set_control_par( get_ui_id( $psyche_delay_toggle_button ), $CONTROL_PAR_WIDTH, 70 )
     set_control_par_str( get_ui_id( $psyche_delay_toggle_button ), $CONTROL_PAR_TEXT, "Psyche Delay" )
 
-    set_control_par( get_ui_id( $psyche_delay_toggle_button ), $CONTROL_PAR_POS_X, 270 )
+    set_control_par( get_ui_id( $psyche_delay_toggle_button ), $CONTROL_PAR_POS_X, 240 )
     set_control_par( get_ui_id( $psyche_delay_toggle_button ), $CONTROL_PAR_POS_Y, 327 )
 
     declare ui_slider $psyche_delay_amount(0, 1000000) {Psyche delay amount}
@@ -314,6 +370,7 @@ on init
     declare ui_button $psyche_delay_reversed_button
     set_control_par( get_ui_id( $psyche_delay_reversed_button ), $CONTROL_PAR_WIDTH, 60 )
     set_control_par_str( get_ui_id( $psyche_delay_reversed_button ), $CONTROL_PAR_TEXT, "REVERSED" )
+    set_engine_par( $ENGINE_PAR_PSYDL_REVERSE, $psyche_delay_reversed_button, -1, 0, $NI_SEND_BUS )
 
     declare ui_button $psyche_delay_bypass_button
     set_control_par( get_ui_id( $psyche_delay_bypass_button ), $CONTROL_PAR_WIDTH, 50 )
@@ -395,7 +452,122 @@ on init
     set_control_par( get_ui_id( $psyche_delay_bypass_button ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $PsycheDelaySettingsPanel ) )
     set_control_par( get_ui_id( $psyche_delay_bypass_button ), $CONTROL_PAR_POS_X, 132 )
     set_control_par( get_ui_id( $psyche_delay_bypass_button ), $CONTROL_PAR_POS_Y, 165 )
-    {--------------------------------------------------------------------------------------------------------------------}
+
+    {Replika Delay slot 2}
+    declare ui_button $replika_delay_toggle_button
+    set_control_par( get_ui_id( $replika_delay_toggle_button ), $CONTROL_PAR_VALUE, 0)
+    set_control_par( get_ui_id( $replika_delay_toggle_button ), $CONTROL_PAR_WIDTH, 70 )
+    set_control_par_str( get_ui_id( $replika_delay_toggle_button ), $CONTROL_PAR_TEXT, "Replika Delay" )
+
+    set_control_par( get_ui_id( $replika_delay_toggle_button ), $CONTROL_PAR_POS_X, 310 )
+    set_control_par( get_ui_id( $replika_delay_toggle_button ), $CONTROL_PAR_POS_Y, 327 )
+
+    declare ui_slider $replika_delay_amount(0, 1000000) {Replika delay amount}
+    declare ui_label $replika_delay_amount_label(1,1)
+        set_control_par_str( get_ui_id( $replika_delay_amount_label ), $CONTROL_PAR_TEXT, "AMOUNT" )
+
+    declare ui_slider $replika_delay_time(0, 1000000) {Replika delay time}
+    declare ui_label $replika_delay_time_label(1,1)
+        set_control_par_str( get_ui_id( $replika_delay_time_label ), $CONTROL_PAR_TEXT, "TIME" )
+
+    declare ui_slider $replika_delay_feedback(0, 1000000) {Replika delay feedback}
+    declare ui_label $replika_delay_feedback_label(1,1)
+        set_control_par_str( get_ui_id( $replika_delay_feedback_label ), $CONTROL_PAR_TEXT, "FEEDBACK" )
+    
+    declare ui_slider $replika_delay_depth( 0, 1000000) {Replika delay depth}
+    declare ui_label $replika_delay_depth_label(1,1)
+        set_control_par_str( get_ui_id( $replika_delay_depth_label ), $CONTROL_PAR_TEXT, "DEPTH" )
+
+    declare ui_slider $replika_delay_rate(0, 1000000) {Replika delay rate}
+    declare ui_label $replika_delay_rate_label(1,1)
+        set_control_par_str( get_ui_id( $replika_delay_rate_label ), $CONTROL_PAR_TEXT, "RATE" )
+
+    declare ui_slider $replika_delay_saturation(0, 1000000) {Replika delay saturation}
+    declare ui_label $replika_delay_saturation_label(1,1)
+        set_control_par_str( get_ui_id( $replika_delay_saturation_label ), $CONTROL_PAR_TEXT, "SATURATION" )
+
+    declare ui_slider $replika_delay_filter(0, 1000000) {Replika delay filter}
+    declare ui_label $replika_delay_filter_label(1,1)
+        set_control_par_str( get_ui_id( $replika_delay_filter_label ), $CONTROL_PAR_TEXT, "FILTER" )
+
+    declare ui_button $replika_delay_bypass_button
+    set_control_par( get_ui_id( $replika_delay_bypass_button ), $CONTROL_PAR_WIDTH, 50 )
+    set_control_par_str( get_ui_id( $replika_delay_bypass_button ), $CONTROL_PAR_TEXT, "BYPASS" )
+    set_control_par( get_ui_id( $replika_delay_bypass_button ), $CONTROL_PAR_VALUE, 1 )
+    set_engine_par( $ENGINE_PAR_SEND_EFFECT_BYPASS, $replika_delay_bypass_button, -1, 1, $NI_SEND_BUS )
+
+    {Replika Delay Settings Panel}
+    declare ui_panel $ReplikaDelaySettingsPanel
+    set_control_par( get_ui_id( $ReplikaDelaySettingsPanel ), $CONTROL_PAR_HIDE, $HIDE_WHOLE_CONTROL )
+    set_control_par( get_ui_id( $ReplikaDelaySettingsPanel ), $CONTROL_PAR_POS_X, 244 )
+    set_control_par( get_ui_id( $ReplikaDelaySettingsPanel ), $CONTROL_PAR_POS_Y, 300 )
+
+    set_control_par( get_ui_id( $replika_delay_amount ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $ReplikaDelaySettingsPanel ) )
+    set_control_par( get_ui_id( $replika_delay_amount ), $CONTROL_PAR_POS_X, 120 )
+    set_control_par( get_ui_id( $replika_delay_amount ), $CONTROL_PAR_POS_Y, 75 )
+
+    set_control_par( get_ui_id( $replika_delay_amount_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $ReplikaDelaySettingsPanel ) )
+    hide_part( $replika_delay_amount_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $replika_delay_amount_label ), $CONTROL_PAR_POS_X, 132 )
+    set_control_par( get_ui_id( $replika_delay_amount_label ), $CONTROL_PAR_POS_Y, 140 )
+
+    set_control_par( get_ui_id( $replika_delay_time ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $ReplikaDelaySettingsPanel ) )
+    set_control_par( get_ui_id( $replika_delay_time ), $CONTROL_PAR_POS_X, 200 )
+    set_control_par( get_ui_id( $replika_delay_time ), $CONTROL_PAR_POS_Y, 115 )
+
+    set_control_par( get_ui_id( $replika_delay_time_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $ReplikaDelaySettingsPanel ) )
+    hide_part( $replika_delay_time_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $replika_delay_time_label ), $CONTROL_PAR_POS_X, 200 )
+    set_control_par( get_ui_id( $replika_delay_time_label ), $CONTROL_PAR_POS_Y, 150 )
+
+    set_control_par( get_ui_id( $replika_delay_feedback ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $ReplikaDelaySettingsPanel ) )
+    set_control_par( get_ui_id( $replika_delay_feedback ), $CONTROL_PAR_POS_X, 200 )
+    set_control_par( get_ui_id( $replika_delay_feedback ), $CONTROL_PAR_POS_Y, 60 )
+
+    set_control_par( get_ui_id( $replika_delay_feedback_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $ReplikaDelaySettingsPanel ) )
+    hide_part( $replika_delay_feedback_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $replika_delay_feedback_label ), $CONTROL_PAR_POS_X, 188 )
+    set_control_par( get_ui_id( $replika_delay_feedback_label ), $CONTROL_PAR_POS_Y, 95 )
+
+    set_control_par( get_ui_id( $replika_delay_depth ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $ReplikaDelaySettingsPanel ) )
+    set_control_par( get_ui_id( $replika_delay_depth ), $CONTROL_PAR_POS_X, 72 )
+    set_control_par( get_ui_id( $replika_delay_depth ), $CONTROL_PAR_POS_Y, 60 )
+
+    set_control_par( get_ui_id( $replika_delay_depth_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $ReplikaDelaySettingsPanel ) )
+    hide_part( $replika_delay_depth_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $replika_delay_depth_label ), $CONTROL_PAR_POS_X, 70 )
+    set_control_par( get_ui_id( $replika_delay_depth_label ), $CONTROL_PAR_POS_Y, 95 )
+
+    set_control_par( get_ui_id( $replika_delay_rate ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $ReplikaDelaySettingsPanel ) )
+    set_control_par( get_ui_id( $replika_delay_rate ), $CONTROL_PAR_POS_X, 72 )
+    set_control_par( get_ui_id( $replika_delay_rate ), $CONTROL_PAR_POS_Y, 115 )
+
+    set_control_par( get_ui_id( $replika_delay_rate_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $ReplikaDelaySettingsPanel ) )
+    hide_part( $replika_delay_rate_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $replika_delay_rate_label ), $CONTROL_PAR_POS_X, 73 )
+    set_control_par( get_ui_id( $replika_delay_rate_label ), $CONTROL_PAR_POS_Y, 150 )
+
+    set_control_par( get_ui_id( $replika_delay_saturation ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $ReplikaDelaySettingsPanel ) )
+    set_control_par( get_ui_id( $replika_delay_saturation ), $CONTROL_PAR_POS_X, 20 )
+    set_control_par( get_ui_id( $replika_delay_saturation ), $CONTROL_PAR_POS_Y, 60 )
+
+    set_control_par( get_ui_id( $replika_delay_saturation_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $ReplikaDelaySettingsPanel ) )
+    hide_part( $replika_delay_saturation_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $replika_delay_saturation_label ), $CONTROL_PAR_POS_X, 3 )
+    set_control_par( get_ui_id( $replika_delay_saturation_label ), $CONTROL_PAR_POS_Y, 95 )
+
+    set_control_par( get_ui_id( $replika_delay_filter ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $ReplikaDelaySettingsPanel ) )
+    set_control_par( get_ui_id( $replika_delay_filter ), $CONTROL_PAR_POS_X, 20 )
+    set_control_par( get_ui_id( $replika_delay_filter ), $CONTROL_PAR_POS_Y, 115 )
+
+    set_control_par( get_ui_id( $replika_delay_filter_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $ReplikaDelaySettingsPanel ) )
+    hide_part( $replika_delay_filter_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $replika_delay_filter_label ), $CONTROL_PAR_POS_X, 18 )
+    set_control_par( get_ui_id( $replika_delay_filter_label ), $CONTROL_PAR_POS_Y, 150 )
+
+    set_control_par( get_ui_id( $replika_delay_bypass_button ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $ReplikaDelaySettingsPanel ) )
+    set_control_par( get_ui_id( $replika_delay_bypass_button ), $CONTROL_PAR_POS_X, 132 )
+    set_control_par( get_ui_id( $replika_delay_bypass_button ), $CONTROL_PAR_POS_Y, 165 )
 
 
 
@@ -546,8 +718,12 @@ on init
     set_control_par( get_ui_id( $kalimba_volume ), $CONTROL_PAR_DEFAULT_VALUE, 629961 ) {Default volume for Kalimba (629961 corresponds to 0.0 dB)}
     set_control_par( get_ui_id( $rain_stick_volume ), $CONTROL_PAR_DEFAULT_VALUE, 629961 ) {Default volume for Rain Stick (629961 corresponds to 0.0 dB)}
 
+        {LFO}
+    set_control_par( get_ui_id( $lfo_freq ), $CONTROL_PAR_DEFAULT_VALUE, 0 ) {Default LFO frequency}
+    set_control_par( get_ui_id( $lfo_depth ), $CONTROL_PAR_DEFAULT_VALUE, 500000 ) {Default LFO depth (500000 corresponds to 0% depth)}
+
         {Reverb}
-    set_control_par( get_ui_id( $reverb_amount ), $CONTROL_PAR_DEFAULT_VALUE, 200000)       {Default reverb amount 
+    set_control_par( get_ui_id( $reverb_amount ), $CONTROL_PAR_DEFAULT_VALUE, 200000)       {Default reverb amount}
     set_control_par( get_ui_id( $reverb_pre_delay ), $CONTROL_PAR_DEFAULT_VALUE, 80000 )    {Default pre-delay for reverb (80000 corresponds to 20ms)}
     set_control_par( get_ui_id( $reverb_time ), $CONTROL_PAR_DEFAULT_VALUE, 484259 )       {Default reverb time (200000 corresponds to 3 seconds)}
     set_control_par( get_ui_id( $reverb_size ), $CONTROL_PAR_DEFAULT_VALUE, 1000000 )    {Default reverb size (1000000 corresponds to 100% size)}
@@ -567,6 +743,13 @@ on init
     set_control_par( get_ui_id( $psyche_delay_cross_fb ), $CONTROL_PAR_DEFAULT_VALUE, 500000 ) {Default psyche delay cross feedback (500000 corresponds to 50% cross feedback)}
     set_control_par( get_ui_id( $psyche_delay_pitch ), $CONTROL_PAR_DEFAULT_VALUE, 500000 ) {Default psyche delay pitch (500000 corresponds to 0.0 semitones)}
     set_control_par( get_ui_id( $psyche_delay_detune ), $CONTROL_PAR_DEFAULT_VALUE, 500000 ) {Default psyche delay detune (500000 corresponds to 0.0 cents)}
+
+        {Replika Delay}
+    set_control_par( get_ui_id( $replika_delay_amount ), $CONTROL_PAR_DEFAULT_VALUE, 200000 ) {Default replika delay amount}
+    set_control_par( get_ui_id( $replika_delay_time ), $CONTROL_PAR_DEFAULT_VALUE, 250000 ) {Default replika delay time (500000 corresponds to 500 ms)}
+    set_control_par( get_ui_id( $replika_delay_feedback ), $CONTROL_PAR_DEFAULT_VALUE, 416667 ) {Default replika delay feedback (500000 corresponds to 50% feedback)}
+    set_control_par( get_ui_id( $replika_delay_filter ), $CONTROL_PAR_DEFAULT_VALUE, 500000 ) {Default replika delay depth (500000 corresponds to 50% depth)}
+
 
 
     {Granular Settings Panel}
@@ -638,6 +821,12 @@ on init
     set_control_par_str(get_ui_id($rain_stick_position_random), $CONTROL_PAR_PICTURE, "attack_decay_knob")
     set_control_par_str(get_ui_id($rain_stick_volume), $CONTROL_PAR_PICTURE, "attack_decay_knob")
 
+
+        {LFO}
+    set_control_par_str(get_ui_id($lfo_freq), $CONTROL_PAR_PICTURE, "attack_decay_knob")
+    set_control_par_str(get_ui_id($lfo_depth), $CONTROL_PAR_PICTURE, "knob")
+    set_control_par_str(get_ui_id($lfo_fade_in), $CONTROL_PAR_PICTURE, "attack_decay_knob")
+
         {Reverb}
     set_control_par_str(get_ui_id($reverb_amount), $CONTROL_PAR_PICTURE, "knob")
     set_control_par_str(get_ui_id($reverb_pre_delay), $CONTROL_PAR_PICTURE, "attack_decay_knob")
@@ -662,13 +851,20 @@ on init
     set_control_par_str(get_ui_id($psyche_delay_pitch), $CONTROL_PAR_PICTURE, "attack_decay_knob")
     set_control_par_str(get_ui_id($psyche_delay_detune), $CONTROL_PAR_PICTURE, "attack_decay_knob")
     
-
+    {Replika Delay}
+    set_control_par_str(get_ui_id($replika_delay_amount), $CONTROL_PAR_PICTURE, "knob")
+    set_control_par_str(get_ui_id($replika_delay_time), $CONTROL_PAR_PICTURE, "attack_decay_knob")
+    set_control_par_str(get_ui_id($replika_delay_feedback), $CONTROL_PAR_PICTURE, "attack_decay_knob")
+    set_control_par_str(get_ui_id($replika_delay_depth), $CONTROL_PAR_PICTURE, "attack_decay_knob")
+    set_control_par_str(get_ui_id($replika_delay_rate), $CONTROL_PAR_PICTURE, "attack_decay_knob")
+    set_control_par_str(get_ui_id($replika_delay_saturation), $CONTROL_PAR_PICTURE, "attack_decay_knob")
+    set_control_par_str(get_ui_id($replika_delay_filter), $CONTROL_PAR_PICTURE, "attack_decay_knob")
 
 
     {Mouse Controls/Behaviour}
     declare const $mouse_behaviour := -1050
     set_control_par(get_ui_id($grainAmount), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
-    set_control_par(get_ui_id($grainDuration), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+    set_control_par(get_ui_id($grainDuration), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour + 500)
     set_control_par(get_ui_id($width_knob), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
 
     set_control_par(get_ui_id($amp_env_attack), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
@@ -682,10 +878,15 @@ on init
     set_control_par( get_ui_id($rain_stick_position_random), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
     set_control_par( get_ui_id($rain_stick_volume), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
 
+        {LFO}
+    set_control_par(get_ui_id($lfo_freq), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+    set_control_par(get_ui_id($lfo_depth), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+    set_control_par(get_ui_id($lfo_fade_in), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+
         {Reverb}
     set_control_par(get_ui_id($reverb_amount), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
     set_control_par(get_ui_id($reverb_pre_delay), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
-    set_control_par(get_ui_id($reverb_time), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+    set_control_par(get_ui_id($reverb_time), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour + 900)
     set_control_par(get_ui_id($reverb_size), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
     set_control_par(get_ui_id($reverb_stereo), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
     set_control_par(get_ui_id($reverb_low_shelf), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
@@ -699,12 +900,21 @@ on init
 
         {Psyche Delay}
     set_control_par(get_ui_id($psyche_delay_amount), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
-    set_control_par(get_ui_id($psyche_delay_time), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+    set_control_par(get_ui_id($psyche_delay_time), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour + 900)
     set_control_par(get_ui_id($psyche_delay_feedback), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
     set_control_par(get_ui_id($psyche_delay_lr_offset), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
     set_control_par(get_ui_id($psyche_delay_cross_fb), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
     set_control_par(get_ui_id($psyche_delay_pitch), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
     set_control_par(get_ui_id($psyche_delay_detune), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+
+        {Replika Delay}
+    set_control_par(get_ui_id($replika_delay_amount), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+    set_control_par(get_ui_id($replika_delay_time), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour + 900)
+    set_control_par(get_ui_id($replika_delay_feedback), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+    set_control_par(get_ui_id($replika_delay_depth), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+    set_control_par(get_ui_id($replika_delay_rate), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+    set_control_par(get_ui_id($replika_delay_saturation), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+    set_control_par(get_ui_id($replika_delay_filter), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
 
 
     {Persistency}
@@ -731,6 +941,9 @@ on init
     make_persistent( $rain_stick_position_random ) 
     make_persistent( $rain_stick_volume )
 
+    make_persistent( $lfo_freq )
+    make_persistent( $lfo_depth )
+    make_persistent( $lfo_fade_in )
 
     make_persistent( $reverb_amount )
     make_persistent( $reverb_pre_delay )
@@ -739,13 +952,11 @@ on init
     make_persistent( $reverb_stereo )
     make_persistent( $reverb_low_shelf )
     make_persistent( $reverb_high_cut )
-    make_persistent( $reverb_bypass_button )
 
     make_persistent( $filter_lowcut )
     make_persistent( $filter_lowcut_resonance )
     make_persistent( $filter_highcut )
     make_persistent( $filter_highcut_resonance )
-    make_persistent( $filter_bypass_button )
 
     make_persistent( $psyche_delay_amount )
     make_persistent( $psyche_delay_time )
@@ -754,6 +965,14 @@ on init
     make_persistent( $psyche_delay_cross_fb )
     make_persistent( $psyche_delay_pitch )
     make_persistent( $psyche_delay_detune )
+
+    make_persistent( $replika_delay_amount )
+    make_persistent( $replika_delay_time )
+    make_persistent( $replika_delay_feedback )
+    make_persistent( $replika_delay_depth )
+    make_persistent( $replika_delay_rate )
+    make_persistent( $replika_delay_saturation )
+    make_persistent( $replika_delay_filter )
 end on
 
 
@@ -1017,33 +1236,86 @@ on ui_control( $rain_stick_volume )
 end on
 
 
- 
+
+{LFO Related}
+on ui_control($lfo_freq)
+    %callback_ids[27] := $NI_CALLBACK_ID
+    $count := 0
+    while ( $count < $instrument_number * 2 )
+        set_engine_par($ENGINE_PAR_INTMOD_FREQUENCY, $lfo_freq, $count, get_mod_idx( $count,"LFO"), -1)
+        inc( $count )
+    end while
+
+    set_control_par_str(get_ui_id($lfo_freq_label), $CONTROL_PAR_TEXT, get_engine_par_disp($ENGINE_PAR_INTMOD_FREQUENCY, 0, get_mod_idx( 0,"LFO"), -1) & " Hz")
+
+    wait($ui_wait)
+    if(%callback_ids[27] = $NI_CALLBACK_ID)
+        set_control_par_str(get_ui_id($lfo_freq_label), $CONTROL_PAR_TEXT, " FREQ")
+    end if
+end on
+
+on ui_control($lfo_depth)
+    %callback_ids[28] := $NI_CALLBACK_ID
+    $count := 0
+    while ( $count < $instrument_number * 2 )
+        set_engine_par($ENGINE_PAR_INTMOD_INTENSITY, $lfo_depth, $count, get_mod_idx( $count,"LFO"), -1)
+        inc( $count )
+    end while
+    set_control_par_str(get_ui_id($lfo_depth_label), $CONTROL_PAR_TEXT, get_engine_par_disp($ENGINE_PAR_INTMOD_INTENSITY, 0, get_mod_idx( 0,"LFO"), -1) & " %")
+
+    wait($ui_wait)
+    if(%callback_ids[28] = $NI_CALLBACK_ID)
+        set_control_par_str(get_ui_id($lfo_depth_label), $CONTROL_PAR_TEXT, "DEPTH")
+    end if
+end on
+
+on ui_control($lfo_fade_in)
+    %callback_ids[29] := $NI_CALLBACK_ID
+    $count := 0
+    while ( $count < $instrument_number * 2 )
+        set_engine_par($ENGINE_PAR_LFO_DELAY, $lfo_fade_in, $count, get_mod_idx( $count,"LFO"), -1)
+        inc( $count )
+    end while
+
+    set_control_par_str(get_ui_id($lfo_fade_in_label), $CONTROL_PAR_TEXT, get_engine_par_disp($ENGINE_PAR_LFO_DELAY, 0, get_mod_idx( 0,"LFO"), -1) & " ms")
+
+    wait($ui_wait)
+    if(%callback_ids[29] = $NI_CALLBACK_ID)
+        set_control_par_str(get_ui_id($lfo_fade_in_label), $CONTROL_PAR_TEXT, "FADE IN")
+    end if
+end on
+
 {Effects Related}
 
 on ui_control( $effects_bypass_all )
     if ( %bypassed[0] = 0 )
         set_control_par( get_ui_id( $reverb_bypass_button ), $CONTROL_PAR_VALUE, $effects_bypass_all )
-        set_engine_par( $ENGINE_PAR_SEND_EFFECT_BYPASS, $reverb_bypass_button, -1, 1, $NI_SEND_BUS ) 
+        set_engine_par( $ENGINE_PAR_SEND_EFFECT_BYPASS, $reverb_bypass_button, -1, 0, $NI_MAIN_BUS ) 
     end if
 
     if ( %bypassed[1] = 0 )
         set_control_par( get_ui_id( $filter_bypass_button ), $CONTROL_PAR_VALUE, $effects_bypass_all )
-        set_engine_par( $ENGINE_PAR_EFFECT_BYPASS, $filter_bypass_button, -1, 0, $NI_MAIN_BUS ) {Bypass LOW CUT filter}
-        set_engine_par( $ENGINE_PAR_EFFECT_BYPASS, $filter_bypass_button, -1, 1, $NI_MAIN_BUS ) {Bypass HIGH CUT filter}
+        set_engine_par( $ENGINE_PAR_EFFECT_BYPASS, $filter_bypass_button, -1, 1, $NI_MAIN_BUS ) {Bypass LOW CUT filter}
+        set_engine_par( $ENGINE_PAR_EFFECT_BYPASS, $filter_bypass_button, -1, 2, $NI_MAIN_BUS ) {Bypass HIGH CUT filter}
     end if
 
     if ( %bypassed[2] = 0 )
         set_control_par( get_ui_id( $psyche_delay_bypass_button ), $CONTROL_PAR_VALUE, $effects_bypass_all )
         set_engine_par( $ENGINE_PAR_SEND_EFFECT_BYPASS, $psyche_delay_bypass_button, -1, 0, $NI_SEND_BUS ) 
     end if
+
+    if ( %bypassed[3] = 0 )
+        set_control_par( get_ui_id( $replika_delay_bypass_button ), $CONTROL_PAR_VALUE, $effects_bypass_all )
+        set_engine_par( $ENGINE_PAR_SEND_EFFECT_BYPASS, $replika_delay_bypass_button, -1, 1, $NI_SEND_BUS ) 
+    end if
 end on
 
     {Reverb}
 on ui_control( $reverb_amount )
     %callback_ids[9] := $NI_CALLBACK_ID
-    set_engine_par( $ENGINE_PAR_SEND_EFFECT_OUTPUT_GAIN, $reverb_amount, -1, 1, $NI_SEND_BUS )
+    set_engine_par( $ENGINE_PAR_SEND_EFFECT_OUTPUT_GAIN, $reverb_amount, -1, 0, $NI_MAIN_BUS )
 
-    set_control_par_str( get_ui_id( $reverb_amount_label ), $CONTROL_PAR_TEXT, "  " & get_engine_par_disp( $ENGINE_PAR_SEND_EFFECT_OUTPUT_GAIN, -1, 1, $NI_SEND_BUS ) & " dB" )
+    set_control_par_str( get_ui_id( $reverb_amount_label ), $CONTROL_PAR_TEXT, "  " & get_engine_par_disp( $ENGINE_PAR_SEND_EFFECT_OUTPUT_GAIN, -1, 0, $NI_MAIN_BUS ) & " dB" )
 
     wait($ui_wait)
     if(%callback_ids[9] = $NI_CALLBACK_ID)
@@ -1053,9 +1325,9 @@ end on
 
 on ui_control( $reverb_pre_delay )
     %callback_ids[10] := $NI_CALLBACK_ID
-    set_engine_par( $ENGINE_PAR_RV2_PREDELAY, $reverb_pre_delay, -1, 1, $NI_SEND_BUS )
+    set_engine_par( $ENGINE_PAR_RV2_PREDELAY, $reverb_pre_delay, -1, 0, $NI_MAIN_BUS )
 
-    set_control_par_str( get_ui_id( $reverb_pre_delay_label ), $CONTROL_PAR_TEXT, "  " & get_engine_par_disp( $ENGINE_PAR_RV2_PREDELAY, -1, 1, $NI_SEND_BUS ) & " ms" )
+    set_control_par_str( get_ui_id( $reverb_pre_delay_label ), $CONTROL_PAR_TEXT, "  " & get_engine_par_disp( $ENGINE_PAR_RV2_PREDELAY, -1, 0, $NI_MAIN_BUS ) & " ms" )
 
     wait($ui_wait)
     if(%callback_ids[10] = $NI_CALLBACK_ID)
@@ -1065,9 +1337,9 @@ end on
 
 on ui_control( $reverb_time )
     %callback_ids[11] := $NI_CALLBACK_ID
-    set_engine_par( $ENGINE_PAR_RV2_TIME, $reverb_time, -1, 1, $NI_SEND_BUS )
+    set_engine_par( $ENGINE_PAR_RV2_TIME, $reverb_time, -1, 0, $NI_MAIN_BUS )
 
-    set_control_par_str( get_ui_id( $reverb_time_label ), $CONTROL_PAR_TEXT, get_engine_par_disp( $ENGINE_PAR_RV2_TIME, -1, 1, $NI_SEND_BUS ) & " ms" )
+    set_control_par_str( get_ui_id( $reverb_time_label ), $CONTROL_PAR_TEXT, get_engine_par_disp( $ENGINE_PAR_RV2_TIME, -1, 0, $NI_MAIN_BUS ) & " ms" )
 
     wait($ui_wait)
     if(%callback_ids[11] = $NI_CALLBACK_ID)
@@ -1077,9 +1349,9 @@ end on
 
 on ui_control( $reverb_size )
     %callback_ids[12] := $NI_CALLBACK_ID
-    set_engine_par( $ENGINE_PAR_RV2_SIZE, $reverb_size, -1, 1, $NI_SEND_BUS )
+    set_engine_par( $ENGINE_PAR_RV2_SIZE, $reverb_size, -1, 0, $NI_MAIN_BUS )
 
-    set_control_par_str( get_ui_id( $reverb_size_label ), $CONTROL_PAR_TEXT, get_engine_par_disp( $ENGINE_PAR_RV2_SIZE, -1, 1, $NI_SEND_BUS ) & " %" )
+    set_control_par_str( get_ui_id( $reverb_size_label ), $CONTROL_PAR_TEXT, get_engine_par_disp( $ENGINE_PAR_RV2_SIZE, -1, 0, $NI_MAIN_BUS ) & " %" )
 
     wait($ui_wait)
     if(%callback_ids[12] = $NI_CALLBACK_ID)
@@ -1089,9 +1361,9 @@ end on
 
 on ui_control( $reverb_stereo )
     %callback_ids[13] := $NI_CALLBACK_ID
-    set_engine_par( $ENGINE_PAR_RV2_STEREO, $reverb_stereo, -1, 1, $NI_SEND_BUS )
+    set_engine_par( $ENGINE_PAR_RV2_STEREO, $reverb_stereo, -1, 0, $NI_MAIN_BUS )
 
-    set_control_par_str( get_ui_id( $reverb_stereo_label ), $CONTROL_PAR_TEXT, get_engine_par_disp( $ENGINE_PAR_RV2_STEREO, -1, 1, $NI_SEND_BUS ) & " %" )
+    set_control_par_str( get_ui_id( $reverb_stereo_label ), $CONTROL_PAR_TEXT, get_engine_par_disp( $ENGINE_PAR_RV2_STEREO, -1, 0, $NI_MAIN_BUS ) & " %" )
 
     wait($ui_wait)
     if(%callback_ids[13] = $NI_CALLBACK_ID)
@@ -1101,9 +1373,9 @@ end on
 
 on ui_control( $reverb_low_shelf )
     %callback_ids[14] := $NI_CALLBACK_ID
-    set_engine_par( $ENGINE_PAR_RV2_LOWSHELF, $reverb_low_shelf, -1, 1, $NI_SEND_BUS )
+    set_engine_par( $ENGINE_PAR_RV2_LOWSHELF, $reverb_low_shelf, -1, 0, $NI_MAIN_BUS )
 
-    set_control_par_str( get_ui_id( $reverb_low_shelf_label ), $CONTROL_PAR_TEXT, "   " & get_engine_par_disp( $ENGINE_PAR_RV2_LOWSHELF, -1, 1, $NI_SEND_BUS ) & " dB" )
+    set_control_par_str( get_ui_id( $reverb_low_shelf_label ), $CONTROL_PAR_TEXT, "   " & get_engine_par_disp( $ENGINE_PAR_RV2_LOWSHELF, -1, 0, $NI_MAIN_BUS ) & " dB" )
 
     wait($ui_wait)
     if(%callback_ids[14] = $NI_CALLBACK_ID)
@@ -1113,9 +1385,9 @@ end on
 
 on ui_control( $reverb_high_cut )
     %callback_ids[15] := $NI_CALLBACK_ID
-    set_engine_par( $ENGINE_PAR_RV2_HIGHCUT, 1000000 - $reverb_high_cut, -1, 1, $NI_SEND_BUS )
+    set_engine_par( $ENGINE_PAR_RV2_HIGHCUT, 1000000 - $reverb_high_cut, -1, 0, $NI_MAIN_BUS )
 
-    set_control_par_str( get_ui_id( $reverb_high_cut_label ), $CONTROL_PAR_TEXT, "   " & get_engine_par_disp( $ENGINE_PAR_RV2_HIGHCUT, -1, 1, $NI_SEND_BUS ) & " Hz" )
+    set_control_par_str( get_ui_id( $reverb_high_cut_label ), $CONTROL_PAR_TEXT, "   " & get_engine_par_disp( $ENGINE_PAR_RV2_HIGHCUT, -1, 0, $NI_MAIN_BUS ) & " Hz" )
 
     wait($ui_wait)
     if(%callback_ids[15] = $NI_CALLBACK_ID)
@@ -1124,15 +1396,19 @@ on ui_control( $reverb_high_cut )
 end on
 
 on ui_control( $reverb_bypass_button )
-    set_engine_par( $ENGINE_PAR_SEND_EFFECT_BYPASS, $reverb_bypass_button, -1, 1, $NI_SEND_BUS )
+    set_engine_par( $ENGINE_PAR_SEND_EFFECT_BYPASS, $reverb_bypass_button, -1, 0, $NI_MAIN_BUS )
     %bypassed[0] := $reverb_bypass_button 
+
+    if( %bypassed[0] = 0 )
+        set_control_par( get_ui_id( $effects_bypass_all ), $CONTROL_PAR_VALUE, 0 ) 
+    end if
 end on
 
     {Filter}
 on ui_control( $filter_lowcut )
     %callback_ids[16] := $NI_CALLBACK_ID
-    set_engine_par( $ENGINE_PAR_CUTOFF, $filter_lowcut, -1, 0, $NI_MAIN_BUS )
-    set_control_par_str( get_ui_id( $filter_lowcut_label ), $CONTROL_PAR_TEXT, get_engine_par_disp( $ENGINE_PAR_CUTOFF, -1, 0, $NI_MAIN_BUS ) & " Hz" )
+    set_engine_par( $ENGINE_PAR_CUTOFF, $filter_lowcut, -1, 1, $NI_MAIN_BUS )
+    set_control_par_str( get_ui_id( $filter_lowcut_label ), $CONTROL_PAR_TEXT, get_engine_par_disp( $ENGINE_PAR_CUTOFF, -1, 1, $NI_MAIN_BUS ) & " Hz" )
     wait($ui_wait)
     if(%callback_ids[16] = $NI_CALLBACK_ID)
         set_control_par_str(get_ui_id($filter_lowcut_label), $CONTROL_PAR_TEXT, "LOW CUT")
@@ -1141,8 +1417,8 @@ end on
 
 on ui_control( $filter_lowcut_resonance )
     %callback_ids[17] := $NI_CALLBACK_ID
-    set_engine_par( $ENGINE_PAR_RESONANCE, $filter_lowcut_resonance, -1, 0, $NI_MAIN_BUS )
-    set_control_par_str( get_ui_id( $filter_lowcut_resonance_label ), $CONTROL_PAR_TEXT, get_engine_par_disp( $ENGINE_PAR_RESONANCE, -1, 0, $NI_MAIN_BUS ) & " %" )
+    set_engine_par( $ENGINE_PAR_RESONANCE, $filter_lowcut_resonance, -1, 1, $NI_MAIN_BUS )
+    set_control_par_str( get_ui_id( $filter_lowcut_resonance_label ), $CONTROL_PAR_TEXT, get_engine_par_disp( $ENGINE_PAR_RESONANCE, -1, 1, $NI_MAIN_BUS ) & " %" )
     wait($ui_wait)
     if(%callback_ids[17] = $NI_CALLBACK_ID)
         set_control_par_str(get_ui_id($filter_lowcut_resonance_label), $CONTROL_PAR_TEXT, "LC RES")
@@ -1151,8 +1427,8 @@ end on
 
 on ui_control( $filter_highcut )
     %callback_ids[18] := $NI_CALLBACK_ID
-    set_engine_par( $ENGINE_PAR_CUTOFF, $filter_highcut, -1, 1, $NI_MAIN_BUS )
-    set_control_par_str( get_ui_id( $filter_highcut_label ), $CONTROL_PAR_TEXT, get_engine_par_disp( $ENGINE_PAR_CUTOFF, -1, 1, $NI_MAIN_BUS ) & " Hz" )
+    set_engine_par( $ENGINE_PAR_CUTOFF, $filter_highcut, -1, 2, $NI_MAIN_BUS )
+    set_control_par_str( get_ui_id( $filter_highcut_label ), $CONTROL_PAR_TEXT, get_engine_par_disp( $ENGINE_PAR_CUTOFF, -1, 2, $NI_MAIN_BUS ) & " Hz" )
     wait($ui_wait)
     if(%callback_ids[18] = $NI_CALLBACK_ID)
         set_control_par_str(get_ui_id($filter_highcut_label), $CONTROL_PAR_TEXT, "HIGH CUT")
@@ -1161,8 +1437,8 @@ end on
 
 on ui_control( $filter_highcut_resonance )
     %callback_ids[19] := $NI_CALLBACK_ID
-    set_engine_par( $ENGINE_PAR_RESONANCE, $filter_highcut_resonance, -1, 1, $NI_MAIN_BUS )
-    set_control_par_str( get_ui_id( $filter_highcut_resonance_label ), $CONTROL_PAR_TEXT, get_engine_par_disp( $ENGINE_PAR_RESONANCE, -1, 1, $NI_MAIN_BUS ) & " %" )
+    set_engine_par( $ENGINE_PAR_RESONANCE, $filter_highcut_resonance, -1, 2, $NI_MAIN_BUS )
+    set_control_par_str( get_ui_id( $filter_highcut_resonance_label ), $CONTROL_PAR_TEXT, get_engine_par_disp( $ENGINE_PAR_RESONANCE, -1, 2, $NI_MAIN_BUS ) & " %" )
     wait($ui_wait)
     if(%callback_ids[19] = $NI_CALLBACK_ID)
         set_control_par_str(get_ui_id($filter_highcut_resonance_label), $CONTROL_PAR_TEXT, "HC RES")
@@ -1170,9 +1446,13 @@ on ui_control( $filter_highcut_resonance )
 end on
 
 on ui_control( $filter_bypass_button )
-    set_engine_par( $ENGINE_PAR_EFFECT_BYPASS, $filter_bypass_button, -1, 0, $NI_MAIN_BUS ) {Bypass LOW CUT filter}
-    set_engine_par( $ENGINE_PAR_EFFECT_BYPASS, $filter_bypass_button, -1, 1, $NI_MAIN_BUS ) {Bypass HIGH CUT filter}
+    set_engine_par( $ENGINE_PAR_EFFECT_BYPASS, $filter_bypass_button, -1, 1, $NI_MAIN_BUS ) {Bypass LOW CUT filter}
+    set_engine_par( $ENGINE_PAR_EFFECT_BYPASS, $filter_bypass_button, -1, 2, $NI_MAIN_BUS ) {Bypass HIGH CUT filter}
     %bypassed[1] := $filter_bypass_button {Store the bypass state of the filter}
+
+    if( %bypassed[1] = 0 )
+        set_control_par( get_ui_id( $effects_bypass_all ), $CONTROL_PAR_VALUE, 0 ) 
+    end if
 end on
 
     {Psyche Delay}
@@ -1184,12 +1464,29 @@ on ui_control( $psyche_delay_toggle_button )
         set_engine_par( $ENGINE_PAR_SEND_EFFECT_BYPASS, $psyche_delay_bypass_button, -1, 0, $NI_SEND_BUS ) 
         %bypassed[2] := $psyche_delay_bypass_button {Store the bypass state of the psyche delay}
 
+        set_control_par( get_ui_id( $replika_delay_toggle_button ), $CONTROL_PAR_VALUE, 1 ) 
+        set_control_par( get_ui_id( $ReplikaDelaySettingsPanel ), $CONTROL_PAR_HIDE, $HIDE_PART_NOTHING )
+
+        set_control_par( get_ui_id( $replika_delay_bypass_button ), $CONTROL_PAR_VALUE, 0 ) 
+        set_engine_par( $ENGINE_PAR_SEND_EFFECT_BYPASS, $replika_delay_bypass_button, -1, 1, $NI_SEND_BUS )
+        %bypassed[3] := $replika_delay_bypass_button {Store the bypass state of the replika delay}
     else
+        set_control_par( get_ui_id( $replika_delay_toggle_button ), $CONTROL_PAR_VALUE, 0 ) 
         set_control_par( get_ui_id( $PsycheDelaySettingsPanel ), $CONTROL_PAR_HIDE, $HIDE_PART_NOTHING )
-        set_control_par( get_ui_id( $psyche_delay_bypass_button ), $CONTROL_PAR_VALUE, 0 )
+
+        set_control_par( get_ui_id( $psyche_delay_bypass_button ), $CONTROL_PAR_VALUE, 0 ) 
         set_engine_par( $ENGINE_PAR_SEND_EFFECT_BYPASS, $psyche_delay_bypass_button, -1, 0, $NI_SEND_BUS ) 
         %bypassed[2] := $psyche_delay_bypass_button {Store the bypass state of the psyche delay}
+
+        set_control_par( get_ui_id( $ReplikaDelaySettingsPanel ), $CONTROL_PAR_HIDE, $HIDE_WHOLE_CONTROL )
+
+        set_control_par( get_ui_id( $replika_delay_bypass_button ), $CONTROL_PAR_VALUE, 1 ) 
+        set_engine_par( $ENGINE_PAR_SEND_EFFECT_BYPASS, $replika_delay_bypass_button, -1, 1, $NI_SEND_BUS )
+        %bypassed[3] := $replika_delay_bypass_button {Store the bypass state of the replika delay}
     end if
+
+    set_control_par( get_ui_id( $effects_bypass_all ), $CONTROL_PAR_VALUE, 0 ) {Reset the bypass all button}
+
 end on
 
 on ui_control( $psyche_delay_amount )
@@ -1283,6 +1580,147 @@ end on
 on ui_control( $psyche_delay_bypass_button )
     set_engine_par( $ENGINE_PAR_SEND_EFFECT_BYPASS, $psyche_delay_bypass_button, -1, 0, $NI_SEND_BUS ) 
     %bypassed[2] := $psyche_delay_bypass_button {Store the bypass state of the psyche delay}
+
+    if( %bypassed[2] = 0 )
+        set_control_par( get_ui_id( $effects_bypass_all ), $CONTROL_PAR_VALUE, 0 ) 
+    end if
+end on
+
+    {Replika Delay}
+on ui_control( $replika_delay_toggle_button )
+    if($replika_delay_toggle_button = 0)
+        set_control_par( get_ui_id( $ReplikaDelaySettingsPanel ), $CONTROL_PAR_HIDE, $HIDE_WHOLE_CONTROL )
+
+        set_control_par( get_ui_id( $replika_delay_bypass_button ), $CONTROL_PAR_VALUE, 1 ) 
+        set_engine_par( $ENGINE_PAR_SEND_EFFECT_BYPASS, $replika_delay_bypass_button, -1, 1, $NI_SEND_BUS )
+        %bypassed[3] := $replika_delay_bypass_button {Store the bypass state of the replika delay}
+
+        set_control_par( get_ui_id( $psyche_delay_toggle_button ), $CONTROL_PAR_VALUE, 1 ) 
+        set_control_par( get_ui_id( $PsycheDelaySettingsPanel ), $CONTROL_PAR_HIDE, $HIDE_PART_NOTHING )
+
+        set_control_par( get_ui_id( $psyche_delay_bypass_button ), $CONTROL_PAR_VALUE, 0 ) 
+        set_engine_par( $ENGINE_PAR_SEND_EFFECT_BYPASS, $psyche_delay_bypass_button, -1, 0, $NI_SEND_BUS ) 
+        %bypassed[2] := $psyche_delay_bypass_button {Store the bypass state of the psyche delay}
+    else
+        set_control_par( get_ui_id( $psyche_delay_toggle_button ), $CONTROL_PAR_VALUE, 0 ) 
+        set_control_par( get_ui_id( $ReplikaDelaySettingsPanel ), $CONTROL_PAR_HIDE, $HIDE_PART_NOTHING )
+
+        set_control_par( get_ui_id( $replika_delay_bypass_button ), $CONTROL_PAR_VALUE, 0 ) 
+        set_engine_par( $ENGINE_PAR_SEND_EFFECT_BYPASS, $replika_delay_bypass_button, -1, 1, $NI_SEND_BUS )
+        %bypassed[3] := $replika_delay_bypass_button {Store the bypass state of the replika delay}
+
+        set_control_par( get_ui_id( $PsycheDelaySettingsPanel ), $CONTROL_PAR_HIDE, $HIDE_WHOLE_CONTROL )
+
+        set_control_par( get_ui_id( $psyche_delay_bypass_button ), $CONTROL_PAR_VALUE, 1 )
+        set_engine_par( $ENGINE_PAR_SEND_EFFECT_BYPASS, $psyche_delay_bypass_button, -1, 0, $NI_SEND_BUS )
+        %bypassed[2] := $psyche_delay_bypass_button {Store the bypass state of the psyche delay}
+    end if
+
+    set_control_par( get_ui_id( $effects_bypass_all ), $CONTROL_PAR_VALUE, 0 ) {Reset the bypass all button}
+
+end on
+
+on ui_control( $replika_delay_amount )
+    %callback_ids[30] := $NI_CALLBACK_ID
+    set_engine_par( $ENGINE_PAR_SEND_EFFECT_OUTPUT_GAIN, $replika_delay_amount, -1, 1, $NI_SEND_BUS )
+
+    set_control_par_str( get_ui_id( $replika_delay_amount_label ), $CONTROL_PAR_TEXT, "  " & get_engine_par_disp( $ENGINE_PAR_SEND_EFFECT_OUTPUT_GAIN, -1, 1, $NI_SEND_BUS ) & " dB" )
+
+    wait($ui_wait)
+    if(%callback_ids[30] = $NI_CALLBACK_ID)
+        set_control_par_str(get_ui_id($replika_delay_amount_label), $CONTROL_PAR_TEXT, "AMOUNT")
+    end if
+end on
+
+on ui_control( $replika_delay_time )
+    %callback_ids[31] := $NI_CALLBACK_ID
+    set_engine_par( $ENGINE_PAR_RDL_TIME, $replika_delay_time, -1, 1, $NI_SEND_BUS )
+
+    set_control_par_str( get_ui_id( $replika_delay_time_label ), $CONTROL_PAR_TEXT, get_engine_par_disp( $ENGINE_PAR_RDL_TIME, -1, 1, $NI_SEND_BUS ) & " ms" )
+
+    wait($ui_wait)
+    if(%callback_ids[31] = $NI_CALLBACK_ID)
+        set_control_par_str(get_ui_id($replika_delay_time_label), $CONTROL_PAR_TEXT, "TIME")
+    end if
+end on
+
+on ui_control( $replika_delay_feedback )
+    %callback_ids[32] := $NI_CALLBACK_ID
+    set_engine_par( $ENGINE_PAR_RDL_FEEDBACK, $replika_delay_feedback, -1, 1, $NI_SEND_BUS )
+
+    set_control_par_str( get_ui_id( $replika_delay_feedback_label ), $CONTROL_PAR_TEXT, "    " & get_engine_par_disp( $ENGINE_PAR_RDL_FEEDBACK, -1, 1, $NI_SEND_BUS ) & " %" )
+
+    wait($ui_wait)
+    if(%callback_ids[32] = $NI_CALLBACK_ID)
+        set_control_par_str(get_ui_id($replika_delay_feedback_label), $CONTROL_PAR_TEXT, "FEEDBACK")
+    end if
+end on
+
+on ui_control( $replika_delay_depth )
+    %callback_ids[33] := $NI_CALLBACK_ID
+    set_engine_par( $ENGINE_PAR_RDL_DEPTH, $replika_delay_depth, -1, 1, $NI_SEND_BUS )
+
+    set_control_par_str( get_ui_id( $replika_delay_depth_label ), $CONTROL_PAR_TEXT, " " & get_engine_par_disp( $ENGINE_PAR_RDL_DEPTH, -1, 1, $NI_SEND_BUS ) & " %" )
+
+    wait($ui_wait)
+    if(%callback_ids[33] = $NI_CALLBACK_ID)
+        set_control_par_str(get_ui_id($replika_delay_depth_label), $CONTROL_PAR_TEXT, "DEPTH")
+    end if
+end on
+
+on ui_control( $replika_delay_rate )
+    %callback_ids[34] := $NI_CALLBACK_ID
+    set_engine_par( $ENGINE_PAR_RDL_RATE, $replika_delay_rate, -1, 1, $NI_SEND_BUS )
+
+    set_control_par_str( get_ui_id( $replika_delay_rate_label ), $CONTROL_PAR_TEXT, get_engine_par_disp( $ENGINE_PAR_RDL_RATE, -1, 1, $NI_SEND_BUS ) & " Hz" )
+
+    wait($ui_wait)
+    if(%callback_ids[34] = $NI_CALLBACK_ID)
+        set_control_par_str(get_ui_id($replika_delay_rate_label), $CONTROL_PAR_TEXT, "RATE")
+    end if
+end on
+
+on ui_control( $replika_delay_saturation )
+    %callback_ids[35] := $NI_CALLBACK_ID
+    set_engine_par( $ENGINE_PAR_RDL_SATURATION, $replika_delay_saturation, -1, 1, $NI_SEND_BUS )
+
+    set_control_par_str( get_ui_id( $replika_delay_saturation_label ), $CONTROL_PAR_TEXT, "      " & get_engine_par_disp( $ENGINE_PAR_RDL_SATURATION, -1, 1, $NI_SEND_BUS ) & " %" )
+
+    wait($ui_wait)
+    if(%callback_ids[35] = $NI_CALLBACK_ID)
+        set_control_par_str(get_ui_id($replika_delay_saturation_label), $CONTROL_PAR_TEXT, "SATURATION")
+    end if
+end on
+
+on ui_control( $replika_delay_filter )
+    %callback_ids[36] := $NI_CALLBACK_ID
+    
+    if($replika_delay_filter < 500000)
+        set_engine_par( $ENGINE_PAR_RDL_HIGHCUT, $replika_delay_filter * 2, -1, 1, $NI_SEND_BUS )
+        set_control_par_str( get_ui_id( $replika_delay_filter_label ), $CONTROL_PAR_TEXT, "HC " & ((1000000 - $replika_delay_filter * 2) / 10000) & " %" )
+    end if
+    if($replika_delay_filter > 500000)
+        set_engine_par( $ENGINE_PAR_RDL_LOWCUT,  ($replika_delay_filter - 500000) * 2, -1, 1, $NI_SEND_BUS )
+        set_control_par_str( get_ui_id( $replika_delay_filter_label ), $CONTROL_PAR_TEXT, "LC " & ($replika_delay_filter - 500000) * 2 / 10000 & " %" )
+    end if
+
+    if( $replika_delay_filter = 500000 )
+        set_control_par_str( get_ui_id( $replika_delay_filter_label ), $CONTROL_PAR_TEXT, "Default" )
+    end if
+
+    wait($ui_wait)
+    if(%callback_ids[36] = $NI_CALLBACK_ID)
+        set_control_par_str(get_ui_id($replika_delay_filter_label), $CONTROL_PAR_TEXT, "FILTER")
+    end if
+end on
+
+on ui_control( $replika_delay_bypass_button )
+    set_engine_par( $ENGINE_PAR_SEND_EFFECT_BYPASS, $replika_delay_bypass_button, -1, 1, $NI_SEND_BUS ) 
+    %bypassed[3] := $replika_delay_bypass_button {Store the bypass state of the replika delay}
+
+    if( %bypassed[3] = 0 )
+        set_control_par( get_ui_id( $effects_bypass_all ), $CONTROL_PAR_VALUE, 0 ) 
+    end if
 end on
 
 
