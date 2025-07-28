@@ -22,7 +22,7 @@ on init
 
     set_snapshot_type( 0 ) {0 = load the entire init callback, 1 = loads only the on persistence_changed callback}
 
-
+    declare ui_slider $test(0,1000000)
 
     {Useful Variables}
     declare const $ui_wait := 1500000
@@ -42,31 +42,43 @@ on init
 
 
     {Group Declarations}
-    declare $instrument_number := 2
+    declare $instrument_number := 4
     declare $a
     declare $b
 
-    declare %group[4]
+    declare %group[8]
     %group[0] := 0              {Kalimba Group}
     %group[1] := 1              {Reverse Kalimba Group}
     %group[2] := 2              {Rain Effect Group}
     %group[3] := 3              {Reverse Rain Effect Group}
+    %group[4] := 4              {Native American Flute Group}
+    %group[5] := 5              {Reverse Native American Flute Group}
+    %group[6] := 6              {Guitar Group}
+    %group[7] := 7              {Reverse Guitar Group}
  
-    declare %instrument_active[2]
+    declare %instrument_active[4]
     %instrument_active[0] := 1  {Kalimba Active}
     %instrument_active[1] := 0  {Rain Effect Active}
+    %instrument_active[2] := 0  {Native American Flute Active}
+    %instrument_active[3] := 0  {Guitar Active}
 
-    declare %instrument_reverse[2]
+    declare %instrument_reverse[4]
     %instrument_reverse[0] := 0  {Kalimba Reverse}
     %instrument_reverse[1] := 0  {Rain Effect Reverse}
+    %instrument_reverse[2] := 0  {Native American Flute Reverse}
+    %instrument_reverse[3] := 0  {Guitar Reverse}
 
-    declare %instrument_position[2]
+    declare %instrument_position[4]
     %instrument_position[0] := 0 {Kalimba Position}
     %instrument_position[1] := 0 {Rain Effect Position}
+    %instrument_position[2] := 0 {Native American Flute Position}
+    %instrument_position[3] := 0 {Guitar Position}
 
-    declare ?instrument_position_randomness[2]
+    declare ?instrument_position_randomness[4]
     ?instrument_position_randomness[0] := 0.0 {Kalimba Position Randomness}
     ?instrument_position_randomness[1] := 0.0 {Rain Effect Position Randomness}
+    ?instrument_position_randomness[2] := 0.0 {Native American Flute Position Randomness}
+    ?instrument_position_randomness[3] := 0.0 {Guitar Position Randomness}
 
 
     {Kalimba Group}
@@ -132,6 +144,7 @@ on init
     declare ui_button $rain_stick_toggle_button
     set_control_par( get_ui_id( $rain_stick_toggle_button ), $CONTROL_PAR_WIDTH, 60 )
     set_control_par_str( get_ui_id( $rain_stick_toggle_button ), $CONTROL_PAR_TEXT, "Rain Stick" )
+
     declare ui_button $rain_stick_reverse_button
     set_control_par( get_ui_id( $rain_stick_reverse_button ), $CONTROL_PAR_WIDTH, 55 )
     set_control_par_str( get_ui_id( $rain_stick_reverse_button ), $CONTROL_PAR_TEXT, "Reversed" )
@@ -186,6 +199,127 @@ on init
     hide_part( $rain_stick_volume_label, $HIDE_PART_BG )
     set_control_par( get_ui_id( $rain_stick_volume_label ), $CONTROL_PAR_POS_X, 296)
     set_control_par( get_ui_id( $rain_stick_volume_label ), $CONTROL_PAR_POS_Y, 50 )
+
+    {Native American Flute Group}
+    declare ui_button $native_flute_toggle_button
+    set_control_par( get_ui_id( $native_flute_toggle_button ), $CONTROL_PAR_WIDTH, 65 ) 
+    set_control_par_str( get_ui_id( $native_flute_toggle_button ), $CONTROL_PAR_TEXT, "Native Flute" )
+
+    declare ui_button $native_flute_reverse_button
+    set_control_par( get_ui_id( $native_flute_reverse_button ), $CONTROL_PAR_WIDTH, 55 )
+    set_control_par_str( get_ui_id( $native_flute_reverse_button ), $CONTROL_PAR_TEXT, "Reversed" )
+
+    declare ui_slider $native_flute_position(0, 1000000 )         { slider for grain playback}
+    declare ui_label $native_flute_position_label( 1, 1 )
+        set_control_par_str( get_ui_id( $native_flute_position_label ), $CONTROL_PAR_TEXT, "POSITION" )
+
+    declare ui_slider $native_flute_position_random(0, 1000000 )         {kalimba_position slider for grain playback}
+    declare ui_label $native_flute_position_random_label( 1, 1 )
+        set_control_par_str( get_ui_id( $native_flute_position_random_label ), $CONTROL_PAR_TEXT, "RANDOM" )
+    
+    declare ui_slider $native_flute_volume(0, 1000000)                  {Volume knob for Native Flute}
+    declare ui_label $native_flute_volume_label( 1, 1 )
+        set_control_par_str( get_ui_id( $native_flute_volume_label ), $CONTROL_PAR_TEXT, "VOLUME" )
+
+    declare ui_panel $native_flute_panel
+    set_control_par( get_ui_id( $native_flute_panel ), $CONTROL_PAR_POS_X, 20 )
+    set_control_par( get_ui_id( $native_flute_panel ), $CONTROL_PAR_POS_Y, 190 )
+
+    set_control_par( get_ui_id( $native_flute_toggle_button ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $native_flute_panel ) )
+    set_control_par( get_ui_id( $native_flute_toggle_button ), $CONTROL_PAR_POS_X, 0 )
+    set_control_par( get_ui_id( $native_flute_toggle_button ), $CONTROL_PAR_POS_Y, 25 )
+
+    set_control_par( get_ui_id( $native_flute_reverse_button ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $native_flute_panel ) )
+    set_control_par( get_ui_id( $native_flute_reverse_button ), $CONTROL_PAR_POS_X, 70 )
+    set_control_par( get_ui_id( $native_flute_reverse_button ), $CONTROL_PAR_POS_Y, 25 )
+
+    set_control_par( get_ui_id( $native_flute_position ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $native_flute_panel ) )
+    set_control_par( get_ui_id( $native_flute_position ), $CONTROL_PAR_POS_X, 165 )
+    set_control_par( get_ui_id( $native_flute_position ), $CONTROL_PAR_POS_Y, 15 )
+
+    set_control_par( get_ui_id( $native_flute_position_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $native_flute_panel ) )
+    hide_part( $native_flute_position_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $native_flute_position_label ), $CONTROL_PAR_POS_X, 156)
+    set_control_par( get_ui_id( $native_flute_position_label ), $CONTROL_PAR_POS_Y, 50 )
+
+    set_control_par( get_ui_id( $native_flute_position_random ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $native_flute_panel ) )
+    set_control_par( get_ui_id( $native_flute_position_random ), $CONTROL_PAR_POS_X, 235 )
+    set_control_par( get_ui_id( $native_flute_position_random ), $CONTROL_PAR_POS_Y, 15 )
+
+    set_control_par( get_ui_id( $native_flute_position_random_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $native_flute_panel ) )
+    hide_part( $native_flute_position_random_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $native_flute_position_random_label ), $CONTROL_PAR_POS_X, 226)
+    set_control_par( get_ui_id( $native_flute_position_random_label ), $CONTROL_PAR_POS_Y, 50 )
+
+    set_control_par( get_ui_id( $native_flute_volume ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $native_flute_panel ) )
+    set_control_par( get_ui_id( $native_flute_volume ), $CONTROL_PAR_POS_X, 305 )
+    set_control_par( get_ui_id( $native_flute_volume ), $CONTROL_PAR_POS_Y, 15 )
+
+    set_control_par( get_ui_id( $native_flute_volume_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $native_flute_panel ) )
+    hide_part( $native_flute_volume_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $native_flute_volume_label ), $CONTROL_PAR_POS_X, 296)
+    set_control_par( get_ui_id( $native_flute_volume_label ), $CONTROL_PAR_POS_Y, 50 )
+
+    {Guitar Group}
+    declare ui_button $guitar_toggle_button
+    set_control_par( get_ui_id( $guitar_toggle_button ), $CONTROL_PAR_WIDTH, 40 )
+    set_control_par_str( get_ui_id( $guitar_toggle_button ), $CONTROL_PAR_TEXT, "Guitar" )
+
+    declare ui_button $guitar_reverse_button
+    set_control_par( get_ui_id( $guitar_reverse_button ), $CONTROL_PAR_WIDTH, 55 )
+    set_control_par_str( get_ui_id( $guitar_reverse_button ), $CONTROL_PAR_TEXT, "Reversed" )
+
+    declare ui_slider $guitar_position(0, 1000000 )         { slider for grain playback}
+    declare ui_label $guitar_position_label( 1, 1 )
+        set_control_par_str( get_ui_id( $guitar_position_label ), $CONTROL_PAR_TEXT, "POSITION" )
+
+    declare ui_slider $guitar_position_random(0, 1000000 )         {kalimba_position slider for grain playback}
+    declare ui_label $guitar_position_random_label( 1, 1 )
+        set_control_par_str( get_ui_id( $guitar_position_random_label ), $CONTROL_PAR_TEXT, "RANDOM" )
+
+    declare ui_slider $guitar_volume(0, 1000000)                  {Volume knob for Guitar}
+    declare ui_label $guitar_volume_label( 1, 1 )
+        set_control_par_str( get_ui_id( $guitar_volume_label ), $CONTROL_PAR_TEXT, "VOLUME" )
+
+    declare ui_panel $guitar_panel
+    set_control_par( get_ui_id( $guitar_panel ), $CONTROL_PAR_POS_X, 20 )
+    set_control_par( get_ui_id( $guitar_panel ), $CONTROL_PAR_POS_Y, 260 )
+
+    set_control_par( get_ui_id( $guitar_toggle_button ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $guitar_panel ) )
+    set_control_par( get_ui_id( $guitar_toggle_button ), $CONTROL_PAR_POS_X, 20 )
+    set_control_par( get_ui_id( $guitar_toggle_button ), $CONTROL_PAR_POS_Y, 25 )
+
+    set_control_par( get_ui_id( $guitar_reverse_button ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $guitar_panel ) )
+    set_control_par( get_ui_id( $guitar_reverse_button ), $CONTROL_PAR_POS_X, 70 )
+    set_control_par( get_ui_id( $guitar_reverse_button ), $CONTROL_PAR_POS_Y, 25 )
+
+    set_control_par( get_ui_id( $guitar_position ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $guitar_panel ) )
+    set_control_par( get_ui_id( $guitar_position ), $CONTROL_PAR_POS_X, 165 )
+    set_control_par( get_ui_id( $guitar_position ), $CONTROL_PAR_POS_Y, 15 )
+
+    set_control_par( get_ui_id( $guitar_position_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $guitar_panel ) )
+    hide_part( $guitar_position_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $guitar_position_label ), $CONTROL_PAR_POS_X, 156)
+    set_control_par( get_ui_id( $guitar_position_label ), $CONTROL_PAR_POS_Y, 50 )
+
+    set_control_par( get_ui_id( $guitar_position_random ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $guitar_panel ) )
+    set_control_par( get_ui_id( $guitar_position_random ), $CONTROL_PAR_POS_X, 235 )
+    set_control_par( get_ui_id( $guitar_position_random ), $CONTROL_PAR_POS_Y, 15 )
+
+    set_control_par( get_ui_id( $guitar_position_random_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $guitar_panel ) )
+    hide_part( $guitar_position_random_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $guitar_position_random_label ), $CONTROL_PAR_POS_X, 226)
+    set_control_par( get_ui_id( $guitar_position_random_label ), $CONTROL_PAR_POS_Y, 50 )
+
+    set_control_par( get_ui_id( $guitar_volume ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $guitar_panel ) )
+    set_control_par( get_ui_id( $guitar_volume ), $CONTROL_PAR_POS_X, 305 )
+    set_control_par( get_ui_id( $guitar_volume ), $CONTROL_PAR_POS_Y, 15 )
+
+    set_control_par( get_ui_id( $guitar_volume_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $guitar_panel ) )
+    hide_part( $guitar_volume_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $guitar_volume_label ), $CONTROL_PAR_POS_X, 296)
+    set_control_par( get_ui_id( $guitar_volume_label ), $CONTROL_PAR_POS_Y, 50 )
+
 
 
 
@@ -337,7 +471,7 @@ on init
     set_control_par_str( get_ui_id( $psyche_delay_toggle_button ), $CONTROL_PAR_TEXT, "Psyche Delay" )
 
     set_control_par( get_ui_id( $psyche_delay_toggle_button ), $CONTROL_PAR_POS_X, 240 )
-    set_control_par( get_ui_id( $psyche_delay_toggle_button ), $CONTROL_PAR_POS_Y, 327 )
+    set_control_par( get_ui_id( $psyche_delay_toggle_button ), $CONTROL_PAR_POS_Y, 330 )
 
     declare ui_slider $psyche_delay_amount(0, 1000000) {Psyche delay amount}
     declare ui_label $psyche_delay_amount_label(1,1)
@@ -460,7 +594,7 @@ on init
     set_control_par_str( get_ui_id( $replika_delay_toggle_button ), $CONTROL_PAR_TEXT, "Replika Delay" )
 
     set_control_par( get_ui_id( $replika_delay_toggle_button ), $CONTROL_PAR_POS_X, 310 )
-    set_control_par( get_ui_id( $replika_delay_toggle_button ), $CONTROL_PAR_POS_Y, 327 )
+    set_control_par( get_ui_id( $replika_delay_toggle_button ), $CONTROL_PAR_POS_Y, 330 )
 
     declare ui_slider $replika_delay_amount(0, 1000000) {Replika delay amount}
     declare ui_label $replika_delay_amount_label(1,1)
@@ -717,6 +851,8 @@ on init
 
     set_control_par( get_ui_id( $kalimba_volume ), $CONTROL_PAR_DEFAULT_VALUE, 629961 ) {Default volume for Kalimba (629961 corresponds to 0.0 dB)}
     set_control_par( get_ui_id( $rain_stick_volume ), $CONTROL_PAR_DEFAULT_VALUE, 629961 ) {Default volume for Rain Stick (629961 corresponds to 0.0 dB)}
+    set_control_par( get_ui_id( $native_flute_volume ), $CONTROL_PAR_DEFAULT_VALUE, 629961 ) {Default volume for Wind Chimes (629961 corresponds to 0.0 dB)}
+    set_control_par( get_ui_id( $guitar_volume ), $CONTROL_PAR_DEFAULT_VALUE, 629961 ) {Default volume for Wind Chimes (629961 corresponds to 0.0 dB)}
 
         {LFO}
     set_control_par( get_ui_id( $lfo_freq ), $CONTROL_PAR_DEFAULT_VALUE, 0 ) {Default LFO frequency}
@@ -821,6 +957,16 @@ on init
     set_control_par_str(get_ui_id($rain_stick_position_random), $CONTROL_PAR_PICTURE, "attack_decay_knob")
     set_control_par_str(get_ui_id($rain_stick_volume), $CONTROL_PAR_PICTURE, "attack_decay_knob")
 
+        {Native Flute}
+    set_control_par_str(get_ui_id($native_flute_position), $CONTROL_PAR_PICTURE, "attack_decay_knob")
+    set_control_par_str(get_ui_id($native_flute_position_random), $CONTROL_PAR_PICTURE, "attack_decay_knob")
+    set_control_par_str(get_ui_id($native_flute_volume), $CONTROL_PAR_PICTURE, "attack_decay_knob")
+
+        {Guitar}
+    set_control_par_str(get_ui_id($guitar_position), $CONTROL_PAR_PICTURE, "attack_decay_knob")
+    set_control_par_str(get_ui_id($guitar_position_random), $CONTROL_PAR_PICTURE, "attack_decay_knob")
+    set_control_par_str(get_ui_id($guitar_volume), $CONTROL_PAR_PICTURE, "attack_decay_knob")
+
 
         {LFO}
     set_control_par_str(get_ui_id($lfo_freq), $CONTROL_PAR_PICTURE, "attack_decay_knob")
@@ -877,6 +1023,15 @@ on init
     set_control_par( get_ui_id($rain_stick_position), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
     set_control_par( get_ui_id($rain_stick_position_random), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
     set_control_par( get_ui_id($rain_stick_volume), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+
+    set_control_par(get_ui_id($native_flute_position), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+    set_control_par(get_ui_id($native_flute_position_random), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+    set_control_par(get_ui_id($native_flute_volume), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+
+    set_control_par(get_ui_id($guitar_position), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+    set_control_par(get_ui_id($guitar_position_random), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+    set_control_par(get_ui_id($guitar_volume), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+
 
         {LFO}
     set_control_par(get_ui_id($lfo_freq), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
@@ -941,6 +1096,18 @@ on init
     make_persistent( $rain_stick_position_random ) 
     make_persistent( $rain_stick_volume )
 
+    make_persistent( $native_flute_toggle_button )
+    make_persistent( $native_flute_reverse_button )
+    make_persistent( $native_flute_position )
+    make_persistent( $native_flute_position_random )
+    make_persistent( $native_flute_volume )
+
+    make_persistent( $guitar_toggle_button )
+    make_persistent( $guitar_reverse_button )
+    make_persistent( $guitar_position )
+    make_persistent( $guitar_position_random )
+    make_persistent( $guitar_volume )
+
     make_persistent( $lfo_freq )
     make_persistent( $lfo_depth )
     make_persistent( $lfo_fade_in )
@@ -952,11 +1119,13 @@ on init
     make_persistent( $reverb_stereo )
     make_persistent( $reverb_low_shelf )
     make_persistent( $reverb_high_cut )
+    make_persistent( $reverb_bypass_button )
 
     make_persistent( $filter_lowcut )
     make_persistent( $filter_lowcut_resonance )
     make_persistent( $filter_highcut )
     make_persistent( $filter_highcut_resonance )
+    make_persistent( $filter_bypass_button )
 
     make_persistent( $psyche_delay_amount )
     make_persistent( $psyche_delay_time )
@@ -965,6 +1134,7 @@ on init
     make_persistent( $psyche_delay_cross_fb )
     make_persistent( $psyche_delay_pitch )
     make_persistent( $psyche_delay_detune )
+    make_persistent( $psyche_delay_bypass_button )
 
     make_persistent( $replika_delay_amount )
     make_persistent( $replika_delay_time )
@@ -973,6 +1143,7 @@ on init
     make_persistent( $replika_delay_rate )
     make_persistent( $replika_delay_saturation )
     make_persistent( $replika_delay_filter )
+    make_persistent( $replika_delay_bypass_button )
 end on
 
 
@@ -987,17 +1158,28 @@ on persistence_changed
     $timebetweenGrains := 1000000 / get_control_par(get_ui_id($grainAmount), $CONTROL_PAR_VALUE) {update time between grains}
 
 
+    {Instrument Settings}
     %instrument_position[0] := $kalimba_position
     %instrument_position[1] := $rain_stick_position
+    %instrument_position[2] := $native_flute_position
+    %instrument_position[3] := $guitar_position
 
     ?instrument_position_randomness[0] := real($kalimba_position_random ) / 1000000.0
     ?instrument_position_randomness[1] := real($rain_stick_position_random ) / 1000000.0
+    ?instrument_position_randomness[2] := real($native_flute_position_random ) / 1000000.0
+    ?instrument_position_randomness[3] := real($guitar_position_random ) / 1000000.0
 
     set_engine_par($ENGINE_PAR_VOLUME, $kalimba_volume, 0, 0, -1) {Set volume for Kalimba}
     set_engine_par($ENGINE_PAR_VOLUME, $kalimba_volume, 1, 0, -1) {Set volume for Kalimba}
 
     set_engine_par($ENGINE_PAR_VOLUME, $rain_stick_volume, 2, 0, -1) {Set volume for Rain Stick}
     set_engine_par($ENGINE_PAR_VOLUME, $rain_stick_volume, 3, 0, -1) {Set volume for Rain Stick}
+
+    set_engine_par($ENGINE_PAR_VOLUME, $native_flute_volume, 4, 0, -1) {Set volume for Native Flute}
+    set_engine_par($ENGINE_PAR_VOLUME, $native_flute_volume, 5, 0, -1) {Set volume for Native Flute}
+
+    set_engine_par($ENGINE_PAR_VOLUME, $guitar_volume, 6, 0, -1) {Set volume for Guitar}
+    set_engine_par($ENGINE_PAR_VOLUME, $guitar_volume, 7, 0, -1) {Set volume for Guitar}
 
     {Activation of Instruments}
     if($kalimba_toggle_button = 1) {Activate Kalimba if the toggle button is active}
@@ -1022,6 +1204,30 @@ on persistence_changed
         %instrument_reverse[1] := 1
     else
         %instrument_reverse[1] := 0
+    end if
+
+    if($native_flute_toggle_button = 1) {Activate Native Flute if the toggle button is active}
+        %instrument_active[2] := 1
+    else
+        %instrument_active[2] := 0
+    end if
+
+    if($native_flute_reverse_button = 1) {Activate Native Flute Reverse if the toggle button is active}
+        %instrument_reverse[2] := 1
+    else
+        %instrument_reverse[2] := 0
+    end if
+
+    if($guitar_toggle_button = 1) {Activate Guitar if the toggle button is active}
+        %instrument_active[3] := 1
+    else
+        %instrument_active[3] := 0
+    end if
+
+    if($guitar_reverse_button = 1) {Activate Guitar Reverse if the toggle button is active}
+        %instrument_reverse[3] := 1
+    else
+        %instrument_reverse[3] := 0
     end if
 
 end on
@@ -1225,7 +1431,7 @@ end on
 on ui_control( $rain_stick_volume )
     %callback_ids[8] := $NI_CALLBACK_ID
     set_engine_par($ENGINE_PAR_VOLUME, $rain_stick_volume, 2, 0, -1) {Set volume for Rain Stick}
-    set_engine_par($ENGINE_PAR_VOLUME, $rain_stick_volume, 3, 0, -1) {Set volume for Rain Stick}
+    set_engine_par($ENGINE_PAR_VOLUME, $rain_stick_volume, 3, 0, -1) {Set volume for Rain Stick Reversed}
 
     set_control_par_str( get_ui_id( $rain_stick_volume_label ), $CONTROL_PAR_TEXT, "  " & get_engine_par_disp( $ENGINE_PAR_VOLUME, 2, 0, -1 ) & " dB" )
 
@@ -1234,6 +1440,91 @@ on ui_control( $rain_stick_volume )
         set_control_par_str(get_ui_id($rain_stick_volume_label), $CONTROL_PAR_TEXT, "VOLUME")
     end if
 end on
+
+{Native Flute Related}
+on ui_control( $native_flute_toggle_button )
+    %instrument_active[2] := $native_flute_toggle_button
+end on
+
+on ui_control( $native_flute_reverse_button )
+    if($native_flute_reverse_button = 1)
+        %instrument_reverse[2] := 1
+    else
+        %instrument_reverse[2] := 0
+    end if
+end on
+
+on ui_control( $native_flute_position )
+    %instrument_position[2] := $native_flute_position
+end on
+
+on ui_control( $native_flute_position_random )
+    %callback_ids[37] := $NI_CALLBACK_ID
+    ?instrument_position_randomness[2] := real($native_flute_position_random ) / 1000000.0
+
+    set_control_par_str( get_ui_id( $native_flute_position_random_label ), $CONTROL_PAR_TEXT, "    " & $native_flute_position_random / 10000 & "%" )
+
+    wait($ui_wait)
+    if(%callback_ids[37] = $NI_CALLBACK_ID)
+        set_control_par_str(get_ui_id($native_flute_position_random_label), $CONTROL_PAR_TEXT, "RANDOM")
+    end if
+end on
+
+on ui_control( $native_flute_volume )
+    %callback_ids[38] := $NI_CALLBACK_ID
+    set_engine_par($ENGINE_PAR_VOLUME, $native_flute_volume, 4, 0, -1) {Set volume for Native Flute}
+    set_engine_par($ENGINE_PAR_VOLUME, $native_flute_volume, 5, 0, -1) {Set volume for Native Flute Reversed}
+
+    set_control_par_str( get_ui_id( $native_flute_volume_label ), $CONTROL_PAR_TEXT, "  " & get_engine_par_disp( $ENGINE_PAR_VOLUME, 4, 0, -1 ) & " dB" )
+
+    wait($ui_wait)
+    if(%callback_ids[38] = $NI_CALLBACK_ID)
+        set_control_par_str(get_ui_id($native_flute_volume_label), $CONTROL_PAR_TEXT, "VOLUME")
+    end if
+end on
+
+{Guitar Related}
+on ui_control( $guitar_toggle_button )
+    %instrument_active[3] := $guitar_toggle_button
+end on
+
+on ui_control( $guitar_reverse_button )
+    if($guitar_reverse_button = 1)
+        %instrument_reverse[3] := 1
+    else
+        %instrument_reverse[3] := 0
+    end if
+end on
+
+on ui_control( $guitar_position )
+    %instrument_position[3] := $guitar_position
+end on
+
+on ui_control( $guitar_position_random )
+    %callback_ids[39] := $NI_CALLBACK_ID
+    ?instrument_position_randomness[3] := real($guitar_position_random ) / 1000000.0
+
+    set_control_par_str( get_ui_id( $guitar_position_random_label ), $CONTROL_PAR_TEXT, "    " & $guitar_position_random / 10000 & "%" )
+
+    wait($ui_wait)
+    if(%callback_ids[39] = $NI_CALLBACK_ID)
+        set_control_par_str(get_ui_id($guitar_position_random_label), $CONTROL_PAR_TEXT, "RANDOM")
+    end if
+end on
+
+on ui_control( $guitar_volume )
+    %callback_ids[40] := $NI_CALLBACK_ID
+    set_engine_par($ENGINE_PAR_VOLUME, $guitar_volume, 6, 0, -1) {Set volume for Guitar}
+    set_engine_par($ENGINE_PAR_VOLUME, $guitar_volume, 7, 0, -1) {Set volume for Guitar Reversed}
+
+    set_control_par_str( get_ui_id( $guitar_volume_label ), $CONTROL_PAR_TEXT, "  " & get_engine_par_disp( $ENGINE_PAR_VOLUME, 6, 0, -1 ) & " dB" )
+
+    wait($ui_wait)
+    if(%callback_ids[40] = $NI_CALLBACK_ID)
+        set_control_par_str(get_ui_id($guitar_volume_label), $CONTROL_PAR_TEXT, "VOLUME")
+    end if
+end on
+
 
 
 
@@ -1723,6 +2014,20 @@ on ui_control( $replika_delay_bypass_button )
     end if
 end on
 
+
+
+
+
+
+
+
+on ui_control( $test )
+    $count := 0
+    while ( $count < $instrument_number * 2 )
+        message(%bypassed[$count])
+        inc( $count )
+    end while
+end on
 
 on listener
     if($animation = get_control_par( get_ui_id($animation), $CONTROL_PAR_MAX_VALUE ))
