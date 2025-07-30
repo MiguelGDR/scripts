@@ -12,9 +12,9 @@ Modified: July 38th, 2025
     
     - Add american flute                OK!
     - Add electric guitar               OK!
-    - Add Saw Pluck
-    - Add piano
-}
+    - Add Saw Pluck                     OK!
+    - Add piano                         OK!     
+}   
 
 on init
     load_performance_view( "perfView.nckp" )
@@ -23,7 +23,6 @@ on init
 
     set_snapshot_type( 1 ) {0 = load the entire init callback, 1 = loads only the on persistence_changed callback}
 
-    declare ui_slider $test(0,1000000)
 
     {Useful Variables}
     declare const $ui_wait := 1500000
@@ -43,11 +42,11 @@ on init
 
 
     {Group Declarations}
-    declare $instrument_number := 5
+    declare $instrument_number := 7
     declare $a
     declare $b
 
-    declare %group[10]
+    declare %group[14]
     %group[0] := 0              {Kalimba Group}
     %group[1] := 1              {Reverse Kalimba Group}
     %group[2] := 2              {Rain Effect Group}
@@ -58,36 +57,49 @@ on init
     %group[7] := 7              {Reverse Guitar Group}
     %group[8] := 8              {Saw Pluck Group}
     %group[9] := 9              {Reverse Saw Pluck Group}
+    %group[10] := 10            {Vocal Group}
+    %group[11] := 11            {Reverse Vocal Group}
+    %group[12] := 12            {Piano Group}
+    %group[13] := 13            {Reverse Piano Group}
  
-    declare %instrument_active[5]
+    declare %instrument_active[7]
     %instrument_active[0] := 1  {Kalimba Active}
     %instrument_active[1] := 0  {Rain Effect Active}
     %instrument_active[2] := 0  {Native American Flute Active}
     %instrument_active[3] := 0  {Guitar Active}
     %instrument_active[4] := 0  {Saw Pluck Active}
+    %instrument_active[5] := 0  {Vocal Active}
+    %instrument_active[6] := 0  {Piano Active}
 
-    declare %instrument_reverse[5]
+    declare %instrument_reverse[7]
     %instrument_reverse[0] := 0  {Kalimba Reverse}
     %instrument_reverse[1] := 0  {Rain Effect Reverse}
     %instrument_reverse[2] := 0  {Native American Flute Reverse}
     %instrument_reverse[3] := 0  {Guitar Reverse}
     %instrument_reverse[4] := 0  {Saw Pluck Reverse}
+    %instrument_reverse[5] := 0  {Vocal Reverse}
+    %instrument_reverse[6] := 0  {Piano Reverse}
 
-    declare %instrument_position[5]
+    declare %instrument_position[7]
     %instrument_position[0] := 0 {Kalimba Position}
     %instrument_position[1] := 0 {Rain Effect Position}
     %instrument_position[2] := 0 {Native American Flute Position}
     %instrument_position[3] := 0 {Guitar Position}
     %instrument_position[4] := 0 {Saw Pluck Position}
+    %instrument_position[5] := 0 {Vocal Position}
+    %instrument_position[6] := 0 {Piano Position}
 
-    declare ?instrument_position_randomness[5]
+    declare ?instrument_position_randomness[7]
     ?instrument_position_randomness[0] := 0.0 {Kalimba Position Randomness}
     ?instrument_position_randomness[1] := 0.0 {Rain Effect Position Randomness}
     ?instrument_position_randomness[2] := 0.0 {Native American Flute Position Randomness}
     ?instrument_position_randomness[3] := 0.0 {Guitar Position Randomness}
     ?instrument_position_randomness[4] := 0.0 {Saw Pluck Position Randomness}
+    ?instrument_position_randomness[5] := 0.0 {Vocal Position Randomness}
+    ?instrument_position_randomness[6] := 0.0 {Piano Position Randomness}
 
 
+    declare $height := 10
     {Kalimba Group}
     declare ui_button $kalimba_toggle_button                    {Button to toggle kalimba}
     set_control_par( get_ui_id( $kalimba_toggle_button ), $CONTROL_PAR_WIDTH, 50 )
@@ -110,7 +122,7 @@ on init
 
     declare ui_panel $kalimba_panel
     set_control_par( get_ui_id( $kalimba_panel ), $CONTROL_PAR_POS_X, 30 )
-    set_control_par( get_ui_id( $kalimba_panel ), $CONTROL_PAR_POS_Y, 50 )
+    set_control_par( get_ui_id( $kalimba_panel ), $CONTROL_PAR_POS_Y, 0 + $height )
 
     set_control_par( get_ui_id( $kalimba_toggle_button ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $kalimba_panel ) )
     set_control_par( get_ui_id( $kalimba_toggle_button ), $CONTROL_PAR_POS_X, 0 )
@@ -169,8 +181,8 @@ on init
         set_control_par_str( get_ui_id( $rain_stick_volume_label ), $CONTROL_PAR_TEXT, "VOLUME" )
 
     declare ui_panel $rain_stick_panel
-    set_control_par( get_ui_id( $rain_stick_panel ), $CONTROL_PAR_POS_X, 20 )
-    set_control_par( get_ui_id( $rain_stick_panel ), $CONTROL_PAR_POS_Y, 120 )
+    set_control_par( get_ui_id( $rain_stick_panel ), $CONTROL_PAR_POS_X, 630 )
+    set_control_par( get_ui_id( $rain_stick_panel ), $CONTROL_PAR_POS_Y, 190 )
 
     set_control_par( get_ui_id( $rain_stick_toggle_button ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $rain_stick_panel ) )
     set_control_par( get_ui_id( $rain_stick_toggle_button ), $CONTROL_PAR_POS_X, 5 )
@@ -230,7 +242,7 @@ on init
 
     declare ui_panel $native_flute_panel
     set_control_par( get_ui_id( $native_flute_panel ), $CONTROL_PAR_POS_X, 20 )
-    set_control_par( get_ui_id( $native_flute_panel ), $CONTROL_PAR_POS_Y, 190 )
+    set_control_par( get_ui_id( $native_flute_panel ), $CONTROL_PAR_POS_Y, 120 + $height )
 
     set_control_par( get_ui_id( $native_flute_toggle_button ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $native_flute_panel ) )
     set_control_par( get_ui_id( $native_flute_toggle_button ), $CONTROL_PAR_POS_X, 0 )
@@ -290,7 +302,7 @@ on init
 
     declare ui_panel $guitar_panel
     set_control_par( get_ui_id( $guitar_panel ), $CONTROL_PAR_POS_X, 20 )
-    set_control_par( get_ui_id( $guitar_panel ), $CONTROL_PAR_POS_Y, 260 )
+    set_control_par( get_ui_id( $guitar_panel ), $CONTROL_PAR_POS_Y, 180 + $height)
 
     set_control_par( get_ui_id( $guitar_toggle_button ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $guitar_panel ) )
     set_control_par( get_ui_id( $guitar_toggle_button ), $CONTROL_PAR_POS_X, 20 )
@@ -327,6 +339,66 @@ on init
     set_control_par( get_ui_id( $guitar_volume_label ), $CONTROL_PAR_POS_X, 296)
     set_control_par( get_ui_id( $guitar_volume_label ), $CONTROL_PAR_POS_Y, 50 )
 
+    {Vocal Group}
+    declare ui_button $vocal_toggle_button
+    set_control_par( get_ui_id( $vocal_toggle_button ), $CONTROL_PAR_WIDTH, 40 )
+    set_control_par_str( get_ui_id( $vocal_toggle_button ), $CONTROL_PAR_TEXT, "Vocal" )
+
+    declare ui_button $vocal_reverse_button
+    set_control_par( get_ui_id( $vocal_reverse_button ), $CONTROL_PAR_WIDTH, 55 )
+    set_control_par_str( get_ui_id( $vocal_reverse_button ), $CONTROL_PAR_TEXT, "Reversed" )
+
+    declare ui_slider $vocal_position(0, 1000000 )         { slider for grain playback}
+    declare ui_label $vocal_position_label( 1, 1 )
+        set_control_par_str( get_ui_id( $vocal_position_label ), $CONTROL_PAR_TEXT, "POSITION" )
+
+    declare ui_slider $vocal_position_random(0, 1000000 )         {kalimba_position slider for grain playback}
+    declare ui_label $vocal_position_random_label( 1, 1 )
+        set_control_par_str( get_ui_id( $vocal_position_random_label ), $CONTROL_PAR_TEXT, "RANDOM" )
+    
+    declare ui_slider $vocal_volume(0, 1000000)                  {Volume knob for Vocal}
+    declare ui_label $vocal_volume_label( 1, 1 )
+        set_control_par_str( get_ui_id( $vocal_volume_label ), $CONTROL_PAR_TEXT, "VOLUME" )
+
+    declare ui_panel $vocal_panel
+    set_control_par( get_ui_id( $vocal_panel ), $CONTROL_PAR_POS_X, 20 )
+    set_control_par( get_ui_id( $vocal_panel ), $CONTROL_PAR_POS_Y, 240 + $height )
+
+    set_control_par( get_ui_id( $vocal_toggle_button ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $vocal_panel ) )
+    set_control_par( get_ui_id( $vocal_toggle_button ), $CONTROL_PAR_POS_X, 20 )
+    set_control_par( get_ui_id( $vocal_toggle_button ), $CONTROL_PAR_POS_Y, 25 )
+
+    set_control_par( get_ui_id( $vocal_reverse_button ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $vocal_panel ) )
+    set_control_par( get_ui_id( $vocal_reverse_button ), $CONTROL_PAR_POS_X, 70 )
+    set_control_par( get_ui_id( $vocal_reverse_button ), $CONTROL_PAR_POS_Y, 25 )
+
+    set_control_par( get_ui_id( $vocal_position ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $vocal_panel ) )
+    set_control_par( get_ui_id( $vocal_position ), $CONTROL_PAR_POS_X, 165 )
+    set_control_par( get_ui_id( $vocal_position ), $CONTROL_PAR_POS_Y, 15 )
+
+    set_control_par( get_ui_id( $vocal_position_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $vocal_panel ) )
+    hide_part( $vocal_position_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $vocal_position_label ), $CONTROL_PAR_POS_X, 146)
+    set_control_par( get_ui_id( $vocal_position_label ), $CONTROL_PAR_POS_Y, 50 )
+
+    set_control_par( get_ui_id( $vocal_position_random ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $vocal_panel ) )
+    set_control_par( get_ui_id( $vocal_position_random ), $CONTROL_PAR_POS_X, 235 )
+    set_control_par( get_ui_id( $vocal_position_random ), $CONTROL_PAR_POS_Y, 15 )
+
+    set_control_par( get_ui_id( $vocal_position_random_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $vocal_panel ) )
+    hide_part( $vocal_position_random_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $vocal_position_random_label ), $CONTROL_PAR_POS_X, 226)
+    set_control_par( get_ui_id( $vocal_position_random_label ), $CONTROL_PAR_POS_Y, 50 )
+
+    set_control_par( get_ui_id( $vocal_volume ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $vocal_panel ) )
+    set_control_par( get_ui_id( $vocal_volume ), $CONTROL_PAR_POS_X, 305 )
+    set_control_par( get_ui_id( $vocal_volume ), $CONTROL_PAR_POS_Y, 15 )
+
+    set_control_par( get_ui_id( $vocal_volume_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $vocal_panel ) )
+    hide_part( $vocal_volume_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $vocal_volume_label ), $CONTROL_PAR_POS_X, 296)
+    set_control_par( get_ui_id( $vocal_volume_label ), $CONTROL_PAR_POS_Y, 50 )
+
     {Saw Pluck (MF_P1)}
     declare ui_button $sawpluck_toggle_button
     set_control_par( get_ui_id( $sawpluck_toggle_button ), $CONTROL_PAR_WIDTH, 60 )
@@ -350,7 +422,7 @@ on init
 
     declare ui_panel $sawpluck_panel
     set_control_par( get_ui_id( $sawpluck_panel ), $CONTROL_PAR_POS_X, 630 )
-    set_control_par( get_ui_id( $sawpluck_panel ), $CONTROL_PAR_POS_Y, 50 )
+    set_control_par( get_ui_id( $sawpluck_panel ), $CONTROL_PAR_POS_Y, 10 )
 
     set_control_par( get_ui_id( $sawpluck_toggle_button ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $sawpluck_panel ) )
     set_control_par( get_ui_id( $sawpluck_toggle_button ), $CONTROL_PAR_POS_X, 0 )
@@ -386,6 +458,66 @@ on init
     hide_part( $sawpluck_volume_label, $HIDE_PART_BG )
     set_control_par( get_ui_id( $sawpluck_volume_label ), $CONTROL_PAR_POS_X, 296)
     set_control_par( get_ui_id( $sawpluck_volume_label ), $CONTROL_PAR_POS_Y, 50 )
+
+    {Piano Group}
+    declare ui_button $piano_toggle_button
+    set_control_par( get_ui_id( $piano_toggle_button ), $CONTROL_PAR_WIDTH, 40 )
+    set_control_par_str( get_ui_id( $piano_toggle_button ), $CONTROL_PAR_TEXT, "Piano" )
+
+    declare ui_button $piano_reverse_button
+    set_control_par( get_ui_id( $piano_reverse_button ), $CONTROL_PAR_WIDTH, 55 )
+    set_control_par_str( get_ui_id( $piano_reverse_button ), $CONTROL_PAR_TEXT, "Reversed" )
+
+    declare ui_slider $piano_position(0, 1000000 )         { slider for grain playback}
+    declare ui_label $piano_position_label( 1, 1 )
+        set_control_par_str( get_ui_id( $piano_position_label ), $CONTROL_PAR_TEXT, "POSITION" )
+
+    declare ui_slider $piano_position_random(0, 1000000 )         {kalimba_position slider for grain playback}
+    declare ui_label $piano_position_random_label( 1, 1 )
+        set_control_par_str( get_ui_id( $piano_position_random_label ), $CONTROL_PAR_TEXT, "RANDOM" )
+
+    declare ui_slider $piano_volume(0, 1000000)                  {Volume knob for Piano}
+    declare ui_label $piano_volume_label( 1, 1 )
+        set_control_par_str( get_ui_id( $piano_volume_label ), $CONTROL_PAR_TEXT, "VOLUME" )
+
+    declare ui_panel $piano_panel
+    set_control_par( get_ui_id( $piano_panel ), $CONTROL_PAR_POS_X, 20 )
+    set_control_par( get_ui_id( $piano_panel ), $CONTROL_PAR_POS_Y, 60 + $height)
+
+    set_control_par( get_ui_id( $piano_toggle_button ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $piano_panel ) )
+    set_control_par( get_ui_id( $piano_toggle_button ), $CONTROL_PAR_POS_X, 20 )
+    set_control_par( get_ui_id( $piano_toggle_button ), $CONTROL_PAR_POS_Y, 25 )
+
+    set_control_par( get_ui_id( $piano_reverse_button ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $piano_panel ) )
+    set_control_par( get_ui_id( $piano_reverse_button ), $CONTROL_PAR_POS_X, 70 )
+    set_control_par( get_ui_id( $piano_reverse_button ), $CONTROL_PAR_POS_Y, 25 )
+
+    set_control_par( get_ui_id( $piano_position ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $piano_panel ) )
+    set_control_par( get_ui_id( $piano_position ), $CONTROL_PAR_POS_X, 165 )
+    set_control_par( get_ui_id( $piano_position ), $CONTROL_PAR_POS_Y, 15 )
+
+    set_control_par( get_ui_id( $piano_position_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $piano_panel ) )
+    hide_part( $piano_position_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $piano_position_label ), $CONTROL_PAR_POS_X, 156)
+    set_control_par( get_ui_id( $piano_position_label ), $CONTROL_PAR_POS_Y, 50 )
+
+    set_control_par( get_ui_id( $piano_position_random ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $piano_panel ) )
+    set_control_par( get_ui_id( $piano_position_random ), $CONTROL_PAR_POS_X, 235 )
+    set_control_par( get_ui_id( $piano_position_random ), $CONTROL_PAR_POS_Y, 15 )
+
+    set_control_par( get_ui_id( $piano_position_random_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $piano_panel ) )
+    hide_part( $piano_position_random_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $piano_position_random_label ), $CONTROL_PAR_POS_X, 226)
+    set_control_par( get_ui_id( $piano_position_random_label ), $CONTROL_PAR_POS_Y, 50 )
+
+    set_control_par( get_ui_id( $piano_volume ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $piano_panel ) )
+    set_control_par( get_ui_id( $piano_volume ), $CONTROL_PAR_POS_X, 305 )
+    set_control_par( get_ui_id( $piano_volume ), $CONTROL_PAR_POS_Y, 15 )
+
+    set_control_par( get_ui_id( $piano_volume_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $piano_panel ) )
+    hide_part( $piano_volume_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $piano_volume_label ), $CONTROL_PAR_POS_X, 296)
+    set_control_par( get_ui_id( $piano_volume_label ), $CONTROL_PAR_POS_Y, 50 )
 
 
     {Granular Engine Parameters}
@@ -917,7 +1049,9 @@ on init
     set_control_par( get_ui_id( $rain_stick_volume ), $CONTROL_PAR_DEFAULT_VALUE, 629961 ) {Default volume for Rain Stick (629961 corresponds to 0.0 dB)}
     set_control_par( get_ui_id( $native_flute_volume ), $CONTROL_PAR_DEFAULT_VALUE, 629961 ) {Default volume for nat flute (629961 corresponds to 0.0 dB)}
     set_control_par( get_ui_id( $guitar_volume ), $CONTROL_PAR_DEFAULT_VALUE, 629961 ) {Default volume for guitar (629961 corresponds to 0.0 dB)}
+    set_control_par( get_ui_id( $vocal_volume ), $CONTROL_PAR_DEFAULT_VALUE, 629961 ) {Default volume for guitar (629961 corresponds to 0.0 dB)}
     set_control_par( get_ui_id( $sawpluck_volume ), $CONTROL_PAR_DEFAULT_VALUE, 629961 ) {Default volume for guitar (629961 corresponds to 0.0 dB)}
+    set_control_par( get_ui_id( $piano_volume ), $CONTROL_PAR_DEFAULT_VALUE, 629961 ) {Default volume for guitar (629961 corresponds to 0.0 dB)}
 
         {LFO}
     set_control_par( get_ui_id( $lfo_freq ), $CONTROL_PAR_DEFAULT_VALUE, 0 ) {Default LFO frequency}
@@ -1032,11 +1166,20 @@ on init
     set_control_par_str(get_ui_id($guitar_position_random), $CONTROL_PAR_PICTURE, "attack_decay_knob")
     set_control_par_str(get_ui_id($guitar_volume), $CONTROL_PAR_PICTURE, "attack_decay_knob")
 
+        {Vocal}
+    set_control_par_str(get_ui_id($vocal_position), $CONTROL_PAR_PICTURE, "attack_decay_knob")
+    set_control_par_str(get_ui_id($vocal_position_random), $CONTROL_PAR_PICTURE, "attack_decay_knob")
+    set_control_par_str(get_ui_id($vocal_volume), $CONTROL_PAR_PICTURE, "attack_decay_knob")
+
         {Saw Pluck}
     set_control_par_str(get_ui_id($sawpluck_position), $CONTROL_PAR_PICTURE, "attack_decay_knob")
     set_control_par_str(get_ui_id($sawpluck_position_random), $CONTROL_PAR_PICTURE, "attack_decay_knob")
     set_control_par_str(get_ui_id($sawpluck_volume), $CONTROL_PAR_PICTURE, "attack_decay_knob")
 
+        {Piano}
+    set_control_par_str(get_ui_id($piano_position), $CONTROL_PAR_PICTURE, "attack_decay_knob")
+    set_control_par_str(get_ui_id($piano_position_random), $CONTROL_PAR_PICTURE, "attack_decay_knob")
+    set_control_par_str(get_ui_id($piano_volume), $CONTROL_PAR_PICTURE, "attack_decay_knob")
 
         {LFO}
     set_control_par_str(get_ui_id($lfo_freq), $CONTROL_PAR_PICTURE, "attack_decay_knob")
@@ -1102,10 +1245,17 @@ on init
     set_control_par(get_ui_id($guitar_position_random), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
     set_control_par(get_ui_id($guitar_volume), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
 
+    set_control_par(get_ui_id($vocal_position), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+    set_control_par(get_ui_id($vocal_position_random), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+    set_control_par(get_ui_id($vocal_volume), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+
     set_control_par(get_ui_id($sawpluck_position), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
     set_control_par(get_ui_id($sawpluck_position_random), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
     set_control_par(get_ui_id($sawpluck_volume), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
 
+    set_control_par(get_ui_id($piano_position), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+    set_control_par(get_ui_id($piano_position_random), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+    set_control_par(get_ui_id($piano_volume), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
 
         {LFO}
     set_control_par(get_ui_id($lfo_freq), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
@@ -1182,11 +1332,23 @@ on init
     make_persistent( $guitar_position_random )
     make_persistent( $guitar_volume )
 
+    make_persistent( $vocal_toggle_button )
+    make_persistent( $vocal_reverse_button )
+    make_persistent( $vocal_position )
+    make_persistent( $vocal_position_random )
+    make_persistent( $vocal_volume )
+
     make_persistent( $sawpluck_toggle_button )
     make_persistent( $sawpluck_reverse_button )
     make_persistent( $sawpluck_position )
     make_persistent( $sawpluck_position_random )
     make_persistent( $sawpluck_volume )
+
+    make_persistent( $piano_toggle_button )
+    make_persistent( $piano_reverse_button )
+    make_persistent( $piano_position )
+    make_persistent( $piano_position_random )
+    make_persistent( $piano_volume )
 
     make_persistent( $lfo_freq )
     make_persistent( $lfo_depth )
@@ -1224,6 +1386,164 @@ on init
     make_persistent( $replika_delay_saturation )
     make_persistent( $replika_delay_filter )
     make_persistent( $replika_delay_bypass_button )
+
+
+    {Automation ID/Names}
+    set_control_par(get_ui_id($grainAmount), $CONTROL_PAR_AUTOMATION_ID, 0) 
+    set_control_par_str(get_ui_id($grainAmount), $CONTROL_PAR_AUTOMATION_NAME, "Grain Amount")
+
+    set_control_par(get_ui_id($grainDuration), $CONTROL_PAR_AUTOMATION_ID, 1) 
+    set_control_par_str(get_ui_id($grainDuration), $CONTROL_PAR_AUTOMATION_NAME, "Grain Duration")
+
+    set_control_par(get_ui_id($width_knob), $CONTROL_PAR_AUTOMATION_ID, 2)
+    set_control_par_str(get_ui_id($width_knob), $CONTROL_PAR_AUTOMATION_NAME, "Width") 
+
+    set_control_par(get_ui_id($amp_env_attack), $CONTROL_PAR_AUTOMATION_ID, 3)
+    set_control_par_str(get_ui_id($amp_env_attack), $CONTROL_PAR_AUTOMATION_NAME, "Attack") 
+
+    set_control_par(get_ui_id($amp_env_decay), $CONTROL_PAR_AUTOMATION_ID, 4)
+    set_control_par_str(get_ui_id($amp_env_decay), $CONTROL_PAR_AUTOMATION_NAME, "Decay")
+
+    set_control_par(get_ui_id($lfo_freq), $CONTROL_PAR_AUTOMATION_ID, 45)
+    set_control_par_str(get_ui_id($lfo_freq), $CONTROL_PAR_AUTOMATION_NAME, "LFO Frequency")
+
+    set_control_par(get_ui_id($lfo_depth), $CONTROL_PAR_AUTOMATION_ID, 46)
+    set_control_par_str(get_ui_id($lfo_depth), $CONTROL_PAR_AUTOMATION_NAME, "LFO Depth")
+
+    set_control_par(get_ui_id($lfo_fade_in), $CONTROL_PAR_AUTOMATION_ID, 47)
+    set_control_par_str(get_ui_id($lfo_fade_in), $CONTROL_PAR_AUTOMATION_NAME, "LFO Fade In")
+
+    set_control_par(get_ui_id($reverb_amount), $CONTROL_PAR_AUTOMATION_ID, 5)
+    set_control_par_str(get_ui_id($reverb_amount), $CONTROL_PAR_AUTOMATION_NAME, "Reverb Amount") 
+
+    set_control_par(get_ui_id($reverb_pre_delay), $CONTROL_PAR_AUTOMATION_ID, 6) 
+    set_control_par_str(get_ui_id($reverb_pre_delay), $CONTROL_PAR_AUTOMATION_NAME, "Reverb Pre-Delay") 
+
+    set_control_par(get_ui_id($reverb_time), $CONTROL_PAR_AUTOMATION_ID, 7) 
+    set_control_par_str(get_ui_id($reverb_time), $CONTROL_PAR_AUTOMATION_NAME, "Reverb Time") 
+
+    set_control_par(get_ui_id($reverb_size), $CONTROL_PAR_AUTOMATION_ID, 8) 
+    set_control_par_str(get_ui_id($reverb_size), $CONTROL_PAR_AUTOMATION_NAME, "Reverb Size") 
+
+    set_control_par(get_ui_id($reverb_stereo), $CONTROL_PAR_AUTOMATION_ID, 9) 
+    set_control_par_str(get_ui_id($reverb_stereo), $CONTROL_PAR_AUTOMATION_NAME, "Reverb Stereo Width") 
+
+    set_control_par(get_ui_id($reverb_low_shelf), $CONTROL_PAR_AUTOMATION_ID, 10) 
+    set_control_par_str(get_ui_id($reverb_low_shelf), $CONTROL_PAR_AUTOMATION_NAME, "Reverb Low Shelf") 
+
+    set_control_par(get_ui_id($reverb_high_cut), $CONTROL_PAR_AUTOMATION_ID, 11)
+    set_control_par_str(get_ui_id($reverb_high_cut), $CONTROL_PAR_AUTOMATION_NAME, "Reverb High Cut") 
+
+    set_control_par(get_ui_id($filter_lowcut), $CONTROL_PAR_AUTOMATION_ID, 12) 
+    set_control_par_str(get_ui_id($filter_lowcut), $CONTROL_PAR_AUTOMATION_NAME, "Filter Low Cut")
+
+    set_control_par(get_ui_id($filter_lowcut_resonance), $CONTROL_PAR_AUTOMATION_ID, 13) 
+    set_control_par_str(get_ui_id($filter_lowcut_resonance), $CONTROL_PAR_AUTOMATION_NAME, "Filter Low Cut Resonance")
+
+    set_control_par(get_ui_id($filter_highcut), $CONTROL_PAR_AUTOMATION_ID, 14) 
+    set_control_par_str(get_ui_id($filter_highcut), $CONTROL_PAR_AUTOMATION_NAME, "Filter High Cut") 
+
+    set_control_par(get_ui_id($filter_highcut_resonance), $CONTROL_PAR_AUTOMATION_ID, 15) 
+    set_control_par_str(get_ui_id($filter_highcut_resonance), $CONTROL_PAR_AUTOMATION_NAME, "Filter High Cut Resonance") 
+
+    set_control_par(get_ui_id($psyche_delay_amount), $CONTROL_PAR_AUTOMATION_ID, 16) 
+    set_control_par_str(get_ui_id($psyche_delay_amount), $CONTROL_PAR_AUTOMATION_NAME, "Psyche Delay Amount") 
+
+    set_control_par(get_ui_id($psyche_delay_time), $CONTROL_PAR_AUTOMATION_ID, 17) 
+    set_control_par_str(get_ui_id($psyche_delay_time), $CONTROL_PAR_AUTOMATION_NAME, "Psyche Delay Time") 
+
+    set_control_par(get_ui_id($psyche_delay_feedback), $CONTROL_PAR_AUTOMATION_ID, 18) 
+    set_control_par_str(get_ui_id($psyche_delay_feedback), $CONTROL_PAR_AUTOMATION_NAME, "Psyche Delay Feedback") 
+
+    set_control_par(get_ui_id($psyche_delay_lr_offset), $CONTROL_PAR_AUTOMATION_ID, 19)
+    set_control_par_str(get_ui_id($psyche_delay_lr_offset), $CONTROL_PAR_AUTOMATION_NAME, "Psyche Delay Left/Right Offset")
+
+    set_control_par(get_ui_id($psyche_delay_cross_fb), $CONTROL_PAR_AUTOMATION_ID, 20)
+    set_control_par_str(get_ui_id($psyche_delay_cross_fb), $CONTROL_PAR_AUTOMATION_NAME, "Psyche Delay Cross Feedback")
+
+    set_control_par(get_ui_id($psyche_delay_pitch), $CONTROL_PAR_AUTOMATION_ID, 21)
+    set_control_par_str(get_ui_id($psyche_delay_pitch), $CONTROL_PAR_AUTOMATION_NAME, "Psyche Delay Pitch")
+
+    set_control_par(get_ui_id($psyche_delay_detune), $CONTROL_PAR_AUTOMATION_ID, 22)
+    set_control_par_str(get_ui_id($psyche_delay_detune), $CONTROL_PAR_AUTOMATION_NAME, "Psyche Delay Detune")
+
+    set_control_par(get_ui_id($replika_delay_amount), $CONTROL_PAR_AUTOMATION_ID, 23)
+    set_control_par_str(get_ui_id($replika_delay_amount), $CONTROL_PAR_AUTOMATION_NAME, "Replika Delay Amount")
+
+    set_control_par(get_ui_id($replika_delay_time), $CONTROL_PAR_AUTOMATION_ID, 24)
+    set_control_par_str(get_ui_id($replika_delay_time), $CONTROL_PAR_AUTOMATION_NAME, "Replika Delay Time")
+
+    set_control_par(get_ui_id($replika_delay_feedback), $CONTROL_PAR_AUTOMATION_ID, 25)
+    set_control_par_str(get_ui_id($replika_delay_feedback), $CONTROL_PAR_AUTOMATION_NAME, "Replika Delay Feedback")
+
+    set_control_par(get_ui_id($replika_delay_depth), $CONTROL_PAR_AUTOMATION_ID, 26)
+    set_control_par_str(get_ui_id($replika_delay_depth), $CONTROL_PAR_AUTOMATION_NAME, "Replika Delay Depth")
+
+    set_control_par(get_ui_id($replika_delay_rate), $CONTROL_PAR_AUTOMATION_ID, 27)
+    set_control_par_str(get_ui_id($replika_delay_rate), $CONTROL_PAR_AUTOMATION_NAME, "Replika Delay Rate")
+
+    set_control_par(get_ui_id($replika_delay_saturation), $CONTROL_PAR_AUTOMATION_ID, 28)
+    set_control_par_str(get_ui_id($replika_delay_saturation), $CONTROL_PAR_AUTOMATION_NAME, "Replika Delay Saturation")
+
+    set_control_par(get_ui_id($replika_delay_filter), $CONTROL_PAR_AUTOMATION_ID, 29)
+    set_control_par_str(get_ui_id($replika_delay_filter), $CONTROL_PAR_AUTOMATION_NAME, "Replika Delay Filter")
+
+    set_control_par(get_ui_id($kalimba_position), $CONTROL_PAR_AUTOMATION_ID, 30)
+    set_control_par_str(get_ui_id($kalimba_position), $CONTROL_PAR_AUTOMATION_NAME, "Kalimba Position")
+
+    set_control_par(get_ui_id($kalimba_position_random), $CONTROL_PAR_AUTOMATION_ID, 31)
+    set_control_par_str(get_ui_id($kalimba_position_random), $CONTROL_PAR_AUTOMATION_NAME, "Kalimba Position Randomness")
+
+    set_control_par(get_ui_id($kalimba_volume), $CONTROL_PAR_AUTOMATION_ID, 32)
+    set_control_par_str(get_ui_id($kalimba_volume), $CONTROL_PAR_AUTOMATION_NAME, "Kalimba Volume")
+
+    set_control_par(get_ui_id($rain_stick_position), $CONTROL_PAR_AUTOMATION_ID, 33)
+    set_control_par_str(get_ui_id($rain_stick_position), $CONTROL_PAR_AUTOMATION_NAME, "Rain Stick Position")
+
+    set_control_par(get_ui_id($rain_stick_position_random), $CONTROL_PAR_AUTOMATION_ID, 34)
+    set_control_par_str(get_ui_id($rain_stick_position_random), $CONTROL_PAR_AUTOMATION_NAME, "Rain Stick Position Randomness")
+
+    set_control_par(get_ui_id($rain_stick_volume), $CONTROL_PAR_AUTOMATION_ID, 35)
+    set_control_par_str(get_ui_id($rain_stick_volume), $CONTROL_PAR_AUTOMATION_NAME, "Rain Stick Volume")
+
+    set_control_par(get_ui_id($native_flute_position), $CONTROL_PAR_AUTOMATION_ID, 36)
+    set_control_par_str(get_ui_id($native_flute_position), $CONTROL_PAR_AUTOMATION_NAME, "Native Flute Position")
+
+    set_control_par(get_ui_id($native_flute_position_random), $CONTROL_PAR_AUTOMATION_ID, 37)
+    set_control_par_str(get_ui_id($native_flute_position_random), $CONTROL_PAR_AUTOMATION_NAME, "Native Flute Position Randomness")
+
+    set_control_par(get_ui_id($native_flute_volume), $CONTROL_PAR_AUTOMATION_ID, 38)
+    set_control_par_str(get_ui_id($native_flute_volume), $CONTROL_PAR_AUTOMATION_NAME, "Native Flute Volume")
+
+    set_control_par(get_ui_id($guitar_position), $CONTROL_PAR_AUTOMATION_ID, 39)
+    set_control_par_str(get_ui_id($guitar_position), $CONTROL_PAR_AUTOMATION_NAME, "Guitar Position")
+
+    set_control_par(get_ui_id($guitar_position_random), $CONTROL_PAR_AUTOMATION_ID, 40)
+    set_control_par_str(get_ui_id($guitar_position_random), $CONTROL_PAR_AUTOMATION_NAME, "Guitar Position Randomness")
+
+    set_control_par(get_ui_id($guitar_volume), $CONTROL_PAR_AUTOMATION_ID, 41)
+    set_control_par_str(get_ui_id($guitar_volume), $CONTROL_PAR_AUTOMATION_NAME, "Guitar Volume")
+
+    set_control_par(get_ui_id($sawpluck_position), $CONTROL_PAR_AUTOMATION_ID, 42)
+    set_control_par_str(get_ui_id($sawpluck_position), $CONTROL_PAR_AUTOMATION_NAME, "Saw Pluck Position")
+
+    set_control_par(get_ui_id($sawpluck_position_random), $CONTROL_PAR_AUTOMATION_ID, 43)
+    set_control_par_str(get_ui_id($sawpluck_position_random), $CONTROL_PAR_AUTOMATION_NAME, "Saw Pluck Position Randomness")
+
+    set_control_par(get_ui_id($sawpluck_volume), $CONTROL_PAR_AUTOMATION_ID, 44)
+    set_control_par_str(get_ui_id($sawpluck_volume), $CONTROL_PAR_AUTOMATION_NAME, "Saw Pluck Volume")
+
+    set_control_par(get_ui_id($vocal_position), $CONTROL_PAR_AUTOMATION_ID, 48)
+    set_control_par_str(get_ui_id($vocal_position), $CONTROL_PAR_AUTOMATION_NAME, "Vocal Position")
+
+    set_control_par(get_ui_id($vocal_position_random), $CONTROL_PAR_AUTOMATION_ID, 49)
+    set_control_par_str(get_ui_id($vocal_position_random), $CONTROL_PAR_AUTOMATION_NAME, "Vocal Position Randomness")
+
+    set_control_par(get_ui_id($vocal_volume), $CONTROL_PAR_AUTOMATION_ID, 50)
+    set_control_par_str(get_ui_id($vocal_volume), $CONTROL_PAR_AUTOMATION_NAME, "Vocal Volume")
+
+    set_control_par(get_ui_id($piano_position), $CONTROL_PAR_AUTOMATION_ID, 51)
+    set_control_par_str(get_ui_id($piano_position), $CONTROL_PAR_AUTOMATION_NAME, "Piano Position")
 end on
 
 
@@ -1244,12 +1564,16 @@ on persistence_changed
     %instrument_position[2] := $native_flute_position
     %instrument_position[3] := $guitar_position
     %instrument_position[4] := $sawpluck_position
+    %instrument_position[5] := $vocal_position
+    %instrument_position[6] := $piano_position
 
     ?instrument_position_randomness[0] := real($kalimba_position_random ) / 1000000.0
     ?instrument_position_randomness[1] := real($rain_stick_position_random ) / 1000000.0
     ?instrument_position_randomness[2] := real($native_flute_position_random ) / 1000000.0
     ?instrument_position_randomness[3] := real($guitar_position_random ) / 1000000.0
     ?instrument_position_randomness[4] := real($sawpluck_position_random ) / 1000000.0
+    ?instrument_position_randomness[5] := real($vocal_position_random ) / 1000000.0
+    ?instrument_position_randomness[6] := real($piano_position_random ) / 1000000.0
 
     set_engine_par($ENGINE_PAR_VOLUME, $kalimba_volume, 0, 0, -1) {Set volume for Kalimba}
     set_engine_par($ENGINE_PAR_VOLUME, $kalimba_volume, 1, 0, -1) {Set volume for Kalimba}
@@ -1265,6 +1589,12 @@ on persistence_changed
 
     set_engine_par($ENGINE_PAR_VOLUME, $sawpluck_volume, 8, 0, -1) {Set volume for Saw Pluck}
     set_engine_par($ENGINE_PAR_VOLUME, $sawpluck_volume, 9, 0, -1) {Set volume for Saw Pluck}
+
+    set_engine_par($ENGINE_PAR_VOLUME, $vocal_volume, 10, 0, -1) {Set volume for Vocal}
+    set_engine_par($ENGINE_PAR_VOLUME, $vocal_volume, 11, 0, -1) {Set volume for Vocal}
+
+    set_engine_par($ENGINE_PAR_VOLUME, $piano_volume, 12, 0, -1) {Set volume for Piano}
+    set_engine_par($ENGINE_PAR_VOLUME, $piano_volume, 13, 0, -1) {Set volume for Piano}
 
     {Activation of Instruments}
     if($kalimba_toggle_button = 1) {Activate Kalimba if the toggle button is active}
@@ -1327,6 +1657,93 @@ on persistence_changed
         %instrument_reverse[4] := 0
     end if
 
+    if($vocal_toggle_button = 1) {Activate Vocal if the toggle button is active}
+        %instrument_active[5] := 1
+    else
+        %instrument_active[5] := 0
+    end if
+
+    if($vocal_reverse_button = 1) {Activate Vocal Reverse if the toggle button is active}
+        %instrument_reverse[5] := 1
+    else
+        %instrument_reverse[5] := 0
+    end if
+
+    if($piano_toggle_button = 1) {Activate Piano if the toggle button is active}
+        %instrument_active[6] := 1
+    else
+        %instrument_active[6] := 0
+    end if
+
+    if($piano_reverse_button = 1) {Activate Piano Reverse if the toggle button is active}
+        %instrument_reverse[6] := 1
+    else
+        %instrument_reverse[6] := 0
+    end if
+
+
+    {Automation Labels}
+    set_control_par_str( get_ui_id( $grainAmount ), $CONTROL_PAR_LABEL, get_control_par(get_ui_id($grainAmount), $CONTROL_PAR_VALUE) & " GRAINS" )
+    set_control_par_str( get_ui_id( $grainDuration ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_HOLD, 0, 0, -1 ) & " ms" )
+    set_control_par_str( get_ui_id( $amp_env_attack ), $CONTROL_PAR_LABEL, get_engine_par_disp($ENGINE_PAR_ATTACK, 0, 0, -1) & " ms" )
+    set_control_par_str( get_ui_id( $amp_env_decay ), $CONTROL_PAR_LABEL, get_engine_par_disp($ENGINE_PAR_DECAY, 0, 0, -1) & " ms" )
+    set_control_par_str( get_ui_id( $width_knob ), $CONTROL_PAR_LABEL, $width_knob/10 & "%" )
+    
+    set_control_par_str(get_ui_id($lfo_freq), $CONTROL_PAR_LABEL, get_engine_par_disp($ENGINE_PAR_INTMOD_FREQUENCY, 0, get_mod_idx( 0,"LFO"), -1) & " Hz")
+    set_control_par_str(get_ui_id($lfo_depth), $CONTROL_PAR_LABEL, get_engine_par_disp($ENGINE_PAR_INTMOD_INTENSITY, 0, get_mod_idx( 0,"LFO"), -1) & " %")
+    set_control_par_str(get_ui_id($lfo_fade_in), $CONTROL_PAR_LABEL, get_engine_par_disp($ENGINE_PAR_LFO_DELAY, 0, get_mod_idx( 0,"LFO"), -1) & " ms")
+
+    set_control_par_str( get_ui_id( $reverb_amount ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_SEND_EFFECT_OUTPUT_GAIN, -1, 0, $NI_MAIN_BUS ) & " dB" )
+    set_control_par_str( get_ui_id( $reverb_pre_delay ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_RV2_PREDELAY, -1, 0, $NI_MAIN_BUS ) & " ms" )
+    set_control_par_str( get_ui_id( $reverb_time ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_RV2_TIME, -1, 0, $NI_MAIN_BUS ) & " ms" )
+    set_control_par_str( get_ui_id( $reverb_size ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_RV2_SIZE, -1, 0, $NI_MAIN_BUS ) & " %" )
+    set_control_par_str( get_ui_id( $reverb_stereo ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_RV2_STEREO, -1, 0, $NI_MAIN_BUS ) & " %" )
+    set_control_par_str( get_ui_id( $reverb_low_shelf ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_RV2_LOWSHELF, -1, 0, $NI_MAIN_BUS ) & " dB" )
+    set_control_par_str( get_ui_id( $reverb_high_cut ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_RV2_HIGHCUT, -1, 0, $NI_MAIN_BUS ) & " Hz" )
+
+    set_control_par_str( get_ui_id( $filter_lowcut ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_CUTOFF, -1, 1, $NI_MAIN_BUS ) & " Hz" )
+    set_control_par_str( get_ui_id( $filter_lowcut_resonance ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_RESONANCE, -1, 1, $NI_MAIN_BUS ) & " %" )
+    set_control_par_str( get_ui_id( $filter_highcut ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_CUTOFF, -1, 2, $NI_MAIN_BUS ) & " Hz" )
+    set_control_par_str( get_ui_id( $filter_highcut_resonance ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_RESONANCE, -1, 2, $NI_MAIN_BUS ) & " %" )
+
+    set_control_par_str( get_ui_id( $psyche_delay_amount ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_SEND_EFFECT_OUTPUT_GAIN, -1, 0, $NI_SEND_BUS ) & " dB" )
+    set_control_par_str( get_ui_id( $psyche_delay_time ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_PSYDL_TIME, -1, 0, $NI_SEND_BUS ) & " ms" )
+    set_control_par_str( get_ui_id( $psyche_delay_feedback ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_PSYDL_FEEDBACK, -1, 0, $NI_SEND_BUS ) & " %" )
+    set_control_par_str( get_ui_id( $psyche_delay_lr_offset ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_PSYDL_LR_OFFSET, -1, 0, $NI_SEND_BUS ) & " %" )
+    set_control_par_str( get_ui_id( $psyche_delay_cross_fb ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_PSYDL_CROSS_FEEDBACK, -1, 0, $NI_SEND_BUS ) & " %" )
+    set_control_par_str( get_ui_id( $psyche_delay_pitch ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_PSYDL_PITCH, -1, 0, $NI_SEND_BUS ) & " st" )
+    set_control_par_str( get_ui_id( $psyche_delay_detune ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_PSYDL_DETUNE, -1, 0, $NI_SEND_BUS ) & " cts" )
+
+    set_control_par_str( get_ui_id( $replika_delay_amount ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_SEND_EFFECT_OUTPUT_GAIN, -1, 1, $NI_SEND_BUS ) & " dB" )
+    set_control_par_str( get_ui_id( $replika_delay_time ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_RDL_TIME, -1, 1, $NI_SEND_BUS ) & " ms" )
+    set_control_par_str( get_ui_id( $replika_delay_feedback ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_RDL_FEEDBACK, -1, 1, $NI_SEND_BUS ) & " %" )
+    set_control_par_str( get_ui_id( $replika_delay_depth ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_RDL_DEPTH, -1, 1, $NI_SEND_BUS ) & " %" )
+    set_control_par_str( get_ui_id( $replika_delay_rate ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_RDL_RATE, -1, 1, $NI_SEND_BUS ) & " Hz" )
+    set_control_par_str( get_ui_id( $replika_delay_saturation ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_RDL_SATURATION, -1, 1, $NI_SEND_BUS ) & " %" )
+    set_control_par_str( get_ui_id( $replika_delay_filter ), $CONTROL_PAR_LABEL, "HC " & ((1000000 - $replika_delay_filter * 2) / 10000) & " %" )
+    set_control_par_str( get_ui_id( $replika_delay_filter ), $CONTROL_PAR_LABEL, "LC " & ($replika_delay_filter - 500000) * 2 / 10000 & " %" )
+    set_control_par_str( get_ui_id( $replika_delay_filter ), $CONTROL_PAR_LABEL, "Default" )
+
+    set_control_par_str( get_ui_id( $kalimba_position ), $CONTROL_PAR_LABEL, $kalimba_position_random / 10000 & "%" )
+    set_control_par_str( get_ui_id( $kalimba_volume ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_VOLUME, 0, 0, -1 ) & " dB" )
+
+    set_control_par_str( get_ui_id( $rain_stick_position ), $CONTROL_PAR_LABEL, $rain_stick_position_random / 10000 & "%" )
+    set_control_par_str( get_ui_id( $rain_stick_volume ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_VOLUME, 2, 0, -1 ) & " dB" )
+    
+    set_control_par_str( get_ui_id( $native_flute_position ), $CONTROL_PAR_LABEL, $native_flute_position_random / 10000 & "%" )
+    set_control_par_str( get_ui_id( $native_flute_volume ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_VOLUME, 4, 0, -1 ) & " dB" )
+    
+    set_control_par_str( get_ui_id( $guitar_position ), $CONTROL_PAR_LABEL, $guitar_position_random / 10000 & "%" )
+    set_control_par_str( get_ui_id( $guitar_volume ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_VOLUME, 6, 0, -1 ) & " dB" )
+
+    set_control_par_str( get_ui_id( $vocal_position ), $CONTROL_PAR_LABEL, $vocal_position_random / 10000 & "%" )
+    set_control_par_str( get_ui_id( $vocal_volume ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_VOLUME, 10, 0, -1 ) & " dB" )
+    
+    set_control_par_str( get_ui_id( $sawpluck_position ), $CONTROL_PAR_LABEL, $sawpluck_position_random / 10000 & "%" )
+    set_control_par_str( get_ui_id( $sawpluck_volume ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_VOLUME, 8, 0, -1 ) & " dB" )
+
+    set_control_par_str( get_ui_id( $guitar_position ), $CONTROL_PAR_LABEL, $guitar_position_random / 10000 & "%" )
+    set_control_par_str( get_ui_id( $guitar_volume ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_VOLUME, 6, 0, -1 ) & " dB" )
 end on
 
 
@@ -1394,6 +1811,7 @@ end on
 on ui_control( $grainAmount )
     %callback_ids[0] := $NI_CALLBACK_ID
     $timebetweenGrains := 1000000 / get_control_par(get_ui_id($grainAmount), $CONTROL_PAR_VALUE) {update time between grains}
+    set_control_par_str( get_ui_id( $grainAmount ), $CONTROL_PAR_LABEL, get_control_par(get_ui_id($grainAmount), $CONTROL_PAR_VALUE) & " GRAINS" )
     set_control_par_str( get_ui_id( $grainAmount_label ), $CONTROL_PAR_TEXT, get_control_par(get_ui_id($grainAmount), $CONTROL_PAR_VALUE) & " GRAINS" )
 end on
 
@@ -1405,6 +1823,7 @@ on ui_control( $grainDuration )
         inc($count)
     end while
     
+    set_control_par_str( get_ui_id( $grainDuration ), $CONTROL_PAR_LABEL, get_engine_par_disp($ENGINE_PAR_HOLD, 0, 0, -1) & " ms" )
     set_control_par_str( get_ui_id( $grainDuration_label ), $CONTROL_PAR_TEXT, get_engine_par_disp($ENGINE_PAR_HOLD, 0, 0, -1) & " ms" )
 end on
 
@@ -1417,6 +1836,7 @@ on ui_control( $amp_env_attack )
         inc($count)
     end while
 
+    set_control_par_str( get_ui_id( $amp_env_attack ), $CONTROL_PAR_LABEL, get_engine_par_disp($ENGINE_PAR_ATTACK, 0, 0, -1) & " ms" )
     set_control_par_str( get_ui_id( $amp_env_attack_label ), $CONTROL_PAR_TEXT, get_engine_par_disp($ENGINE_PAR_ATTACK, 0, 0, -1) & " ms" )
 
     wait($ui_wait)
@@ -1434,6 +1854,7 @@ on ui_control( $amp_env_decay )
         inc($count)
     end while
 
+    set_control_par_str( get_ui_id( $amp_env_decay ), $CONTROL_PAR_LABEL, get_engine_par_disp($ENGINE_PAR_DECAY, 0, 0, -1) & " ms" )
     set_control_par_str( get_ui_id( $amp_env_decay_label ), $CONTROL_PAR_TEXT, get_engine_par_disp($ENGINE_PAR_DECAY, 0, 0, -1) & " ms" )
 
     wait($ui_wait)
@@ -1444,13 +1865,14 @@ end on
 
 on ui_control( $width_knob )
     %callback_ids[4] := $NI_CALLBACK_ID
+    
+    set_control_par_str( get_ui_id( $width_knob ), $CONTROL_PAR_LABEL, $width_knob/10 & "%" )
+    set_control_par_str( get_ui_id( $width_label ), $CONTROL_PAR_TEXT, "  " & $width_knob/10 & "%" )
 
-     set_control_par_str( get_ui_id( $width_label ), $CONTROL_PAR_TEXT, "  " & $width_knob/10 & "%" )
-
-     wait( $ui_wait )
-     if( %callback_ids[4] = $NI_CALLBACK_ID )
-        set_control_par_str( get_ui_id( $width_label ), $CONTROL_PAR_TEXT, "WIDTH" )
-     end if
+    wait( $ui_wait )
+    if( %callback_ids[4] = $NI_CALLBACK_ID )
+    set_control_par_str( get_ui_id( $width_label ), $CONTROL_PAR_TEXT, "WIDTH" )
+    end if
 end on
 
 
@@ -1475,6 +1897,7 @@ on ui_control( $kalimba_position_random )
     %callback_ids[5] := $NI_CALLBACK_ID
     ?instrument_position_randomness[0] := real($kalimba_position_random ) / 1000000.0
 
+    set_control_par_str( get_ui_id( $kalimba_position ), $CONTROL_PAR_LABEL, $kalimba_position_random / 10000 & "%" )
     set_control_par_str( get_ui_id( $kalimba_position_random_label ), $CONTROL_PAR_TEXT, "    " & $kalimba_position_random / 10000 & "%" )
 
     wait($ui_wait)
@@ -1488,6 +1911,7 @@ on ui_control( $kalimba_volume)
     set_engine_par($ENGINE_PAR_VOLUME, $kalimba_volume, 0, 0, -1) {Set volume for Kalimba}
     set_engine_par($ENGINE_PAR_VOLUME, $kalimba_volume, 1, 0, -1) {Set volume for Kalimba}
 
+    set_control_par_str( get_ui_id( $kalimba_volume ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_VOLUME, 0, 0, -1 ) & " dB" )
     set_control_par_str( get_ui_id( $kalimba_volume_label ), $CONTROL_PAR_TEXT, "  " & get_engine_par_disp( $ENGINE_PAR_VOLUME, 0, 0, -1 ) & " dB" )
 
     wait($ui_wait)
@@ -1517,6 +1941,7 @@ on ui_control( $rain_stick_position_random )
     %callback_ids[7] := $NI_CALLBACK_ID
     ?instrument_position_randomness[1] := real($rain_stick_position_random ) / 1000000.0
 
+    set_control_par_str( get_ui_id( $rain_stick_position ), $CONTROL_PAR_LABEL, $rain_stick_position_random / 10000 & "%" )
     set_control_par_str( get_ui_id( $rain_stick_position_random_label ), $CONTROL_PAR_TEXT, "    " & $rain_stick_position_random / 10000 & "%" )
 
     wait($ui_wait)
@@ -1530,6 +1955,7 @@ on ui_control( $rain_stick_volume )
     set_engine_par($ENGINE_PAR_VOLUME, $rain_stick_volume, 2, 0, -1) {Set volume for Rain Stick}
     set_engine_par($ENGINE_PAR_VOLUME, $rain_stick_volume, 3, 0, -1) {Set volume for Rain Stick Reversed}
 
+    set_control_par_str( get_ui_id( $rain_stick_volume ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_VOLUME, 2, 0, -1 ) & " dB" )
     set_control_par_str( get_ui_id( $rain_stick_volume_label ), $CONTROL_PAR_TEXT, "  " & get_engine_par_disp( $ENGINE_PAR_VOLUME, 2, 0, -1 ) & " dB" )
 
     wait($ui_wait)
@@ -1559,6 +1985,7 @@ on ui_control( $native_flute_position_random )
     %callback_ids[37] := $NI_CALLBACK_ID
     ?instrument_position_randomness[2] := real($native_flute_position_random ) / 1000000.0
 
+    set_control_par_str( get_ui_id( $native_flute_position ), $CONTROL_PAR_LABEL, $native_flute_position_random / 10000 & "%" )
     set_control_par_str( get_ui_id( $native_flute_position_random_label ), $CONTROL_PAR_TEXT, "    " & $native_flute_position_random / 10000 & "%" )
 
     wait($ui_wait)
@@ -1572,6 +1999,7 @@ on ui_control( $native_flute_volume )
     set_engine_par($ENGINE_PAR_VOLUME, $native_flute_volume, 4, 0, -1) {Set volume for Native Flute}
     set_engine_par($ENGINE_PAR_VOLUME, $native_flute_volume, 5, 0, -1) {Set volume for Native Flute Reversed}
 
+    set_control_par_str( get_ui_id( $native_flute_volume ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_VOLUME, 4, 0, -1 ) & " dB" )
     set_control_par_str( get_ui_id( $native_flute_volume_label ), $CONTROL_PAR_TEXT, "  " & get_engine_par_disp( $ENGINE_PAR_VOLUME, 4, 0, -1 ) & " dB" )
 
     wait($ui_wait)
@@ -1601,6 +2029,7 @@ on ui_control( $guitar_position_random )
     %callback_ids[39] := $NI_CALLBACK_ID
     ?instrument_position_randomness[3] := real($guitar_position_random ) / 1000000.0
 
+    set_control_par_str( get_ui_id( $guitar_position ), $CONTROL_PAR_LABEL, $guitar_position_random / 10000 & "%" )
     set_control_par_str( get_ui_id( $guitar_position_random_label ), $CONTROL_PAR_TEXT, "    " & $guitar_position_random / 10000 & "%" )
 
     wait($ui_wait)
@@ -1614,6 +2043,7 @@ on ui_control( $guitar_volume )
     set_engine_par($ENGINE_PAR_VOLUME, $guitar_volume, 6, 0, -1) {Set volume for Guitar}
     set_engine_par($ENGINE_PAR_VOLUME, $guitar_volume, 7, 0, -1) {Set volume for Guitar Reversed}
 
+    set_control_par_str( get_ui_id( $guitar_volume ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_VOLUME, 6, 0, -1 ) & " dB" )
     set_control_par_str( get_ui_id( $guitar_volume_label ), $CONTROL_PAR_TEXT, "  " & get_engine_par_disp( $ENGINE_PAR_VOLUME, 6, 0, -1 ) & " dB" )
 
     wait($ui_wait)
@@ -1621,6 +2051,51 @@ on ui_control( $guitar_volume )
         set_control_par_str(get_ui_id($guitar_volume_label), $CONTROL_PAR_TEXT, "VOLUME")
     end if
 end on
+
+{Vocal Related}
+on ui_control( $vocal_toggle_button )
+    %instrument_active[5] := $vocal_toggle_button
+end on
+
+on ui_control( $vocal_reverse_button )
+    if($vocal_reverse_button = 1)
+        %instrument_reverse[5] := 1
+    else
+        %instrument_reverse[5] := 0
+    end if
+end on
+
+on ui_control( $vocal_position )
+    %instrument_position[5] := $vocal_position
+end on
+
+on ui_control( $vocal_position_random )
+    %callback_ids[43] := $NI_CALLBACK_ID
+    ?instrument_position_randomness[5] := real($vocal_position_random ) / 1000000.0
+
+    set_control_par_str( get_ui_id( $vocal_position ), $CONTROL_PAR_LABEL, $vocal_position_random / 10000 & "%" )
+    set_control_par_str( get_ui_id( $vocal_position_random_label ), $CONTROL_PAR_TEXT, "    " & $vocal_position_random / 10000 & "%" )
+
+    wait($ui_wait)
+    if(%callback_ids[43] = $NI_CALLBACK_ID)
+        set_control_par_str(get_ui_id($vocal_position_random_label), $CONTROL_PAR_TEXT, "RANDOM")
+    end if
+end on
+
+on ui_control( $vocal_volume )
+    %callback_ids[44] := $NI_CALLBACK_ID
+    set_engine_par($ENGINE_PAR_VOLUME, $vocal_volume, 10, 0, -1) {Set volume for Vocal}
+    set_engine_par($ENGINE_PAR_VOLUME, $vocal_volume, 11, 0, -1) {Set volume for Vocal Reversed}
+
+    set_control_par_str( get_ui_id( $vocal_volume ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_VOLUME, 10, 0, -1 ) & " dB" )
+    set_control_par_str( get_ui_id( $vocal_volume_label ), $CONTROL_PAR_TEXT, "  " & get_engine_par_disp( $ENGINE_PAR_VOLUME, 10, 0, -1 ) & " dB" )
+
+    wait($ui_wait)
+    if(%callback_ids[44] = $NI_CALLBACK_ID)
+        set_control_par_str(get_ui_id($vocal_volume_label), $CONTROL_PAR_TEXT, "VOLUME")
+    end if
+end on
+
 
 {Saw Pluck Related}
 on ui_control( $sawpluck_toggle_button )
@@ -1643,6 +2118,7 @@ on ui_control( $sawpluck_position_random )
     %callback_ids[41] := $NI_CALLBACK_ID
     ?instrument_position_randomness[4] := real($sawpluck_position_random ) / 1000000.0
 
+    set_control_par_str( get_ui_id( $sawpluck_position ), $CONTROL_PAR_LABEL, $sawpluck_position_random / 10000 & "%" )
     set_control_par_str( get_ui_id( $sawpluck_position_random_label ), $CONTROL_PAR_TEXT, "    " & $sawpluck_position_random / 10000 & "%" )
 
     wait($ui_wait)
@@ -1656,11 +2132,56 @@ on ui_control( $sawpluck_volume )
     set_engine_par($ENGINE_PAR_VOLUME, $sawpluck_volume, 8, 0, -1) {Set volume for Saw Pluck}
     set_engine_par($ENGINE_PAR_VOLUME, $sawpluck_volume, 9, 0, -1) {Set volume for Saw Pluck Reversed}
 
+    set_control_par_str( get_ui_id( $sawpluck_volume ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_VOLUME, 8, 0, -1 ) & " dB" )
     set_control_par_str( get_ui_id( $sawpluck_volume_label ), $CONTROL_PAR_TEXT, "  " & get_engine_par_disp( $ENGINE_PAR_VOLUME, 8, 0, -1 ) & " dB" )
 
     wait($ui_wait)
     if(%callback_ids[42] = $NI_CALLBACK_ID)
         set_control_par_str(get_ui_id($sawpluck_volume_label), $CONTROL_PAR_TEXT, "VOLUME")
+    end if
+end on
+
+{Piano Related}
+on ui_control( $piano_toggle_button )
+    %instrument_active[6] := $piano_toggle_button
+end on
+
+on ui_control( $piano_reverse_button )
+    if($piano_reverse_button = 1)
+        %instrument_reverse[6] := 1
+    else
+        %instrument_reverse[6] := 0
+    end if
+end on
+
+on ui_control( $piano_position )
+    %instrument_position[6] := $piano_position
+end on
+
+on ui_control( $piano_position_random )
+    %callback_ids[45] := $NI_CALLBACK_ID
+    ?instrument_position_randomness[6] := real($piano_position_random ) / 1000000.0
+
+    set_control_par_str( get_ui_id( $piano_position ), $CONTROL_PAR_LABEL, $piano_position_random / 10000 & "%" )
+    set_control_par_str( get_ui_id( $piano_position_random_label ), $CONTROL_PAR_TEXT, "    " & $piano_position_random / 10000 & "%" )
+
+    wait($ui_wait)
+    if(%callback_ids[45] = $NI_CALLBACK_ID)
+        set_control_par_str(get_ui_id($piano_position_random_label), $CONTROL_PAR_TEXT, "RANDOM")
+    end if
+end on
+
+on ui_control( $piano_volume )
+    %callback_ids[46] := $NI_CALLBACK_ID
+    set_engine_par($ENGINE_PAR_VOLUME, $piano_volume, 12, 0, -1) {Set volume for Piano}
+    set_engine_par($ENGINE_PAR_VOLUME, $piano_volume, 13, 0, -1) {Set volume for Piano Reversed}
+
+    set_control_par_str( get_ui_id( $piano_volume ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_VOLUME, 12, 0, -1 ) & " dB" )
+    set_control_par_str( get_ui_id( $piano_volume_label ), $CONTROL_PAR_TEXT, "  " & get_engine_par_disp( $ENGINE_PAR_VOLUME, 12, 0, -1 ) & " dB" )
+
+    wait($ui_wait)
+    if(%callback_ids[46] = $NI_CALLBACK_ID)
+        set_control_par_str(get_ui_id($piano_volume_label), $CONTROL_PAR_TEXT, "VOLUME")
     end if
 end on
 
@@ -1674,6 +2195,7 @@ on ui_control($lfo_freq)
         inc( $count )
     end while
 
+    set_control_par_str(get_ui_id($lfo_freq), $CONTROL_PAR_LABEL, get_engine_par_disp($ENGINE_PAR_INTMOD_FREQUENCY, 0, get_mod_idx( 0,"LFO"), -1) & " Hz")
     set_control_par_str(get_ui_id($lfo_freq_label), $CONTROL_PAR_TEXT, get_engine_par_disp($ENGINE_PAR_INTMOD_FREQUENCY, 0, get_mod_idx( 0,"LFO"), -1) & " Hz")
 
     wait($ui_wait)
@@ -1689,6 +2211,8 @@ on ui_control($lfo_depth)
         set_engine_par($ENGINE_PAR_INTMOD_INTENSITY, $lfo_depth, $count, get_mod_idx( $count,"LFO"), -1)
         inc( $count )
     end while
+
+    set_control_par_str(get_ui_id($lfo_depth), $CONTROL_PAR_LABEL, get_engine_par_disp($ENGINE_PAR_INTMOD_INTENSITY, 0, get_mod_idx( 0,"LFO"), -1) & " %")
     set_control_par_str(get_ui_id($lfo_depth_label), $CONTROL_PAR_TEXT, get_engine_par_disp($ENGINE_PAR_INTMOD_INTENSITY, 0, get_mod_idx( 0,"LFO"), -1) & " %")
 
     wait($ui_wait)
@@ -1705,6 +2229,7 @@ on ui_control($lfo_fade_in)
         inc( $count )
     end while
 
+    set_control_par_str(get_ui_id($lfo_fade_in), $CONTROL_PAR_LABEL, get_engine_par_disp($ENGINE_PAR_LFO_DELAY, 0, get_mod_idx( 0,"LFO"), -1) & " ms")
     set_control_par_str(get_ui_id($lfo_fade_in_label), $CONTROL_PAR_TEXT, get_engine_par_disp($ENGINE_PAR_LFO_DELAY, 0, get_mod_idx( 0,"LFO"), -1) & " ms")
 
     wait($ui_wait)
@@ -1743,6 +2268,7 @@ on ui_control( $reverb_amount )
     %callback_ids[9] := $NI_CALLBACK_ID
     set_engine_par( $ENGINE_PAR_SEND_EFFECT_OUTPUT_GAIN, $reverb_amount, -1, 0, $NI_MAIN_BUS )
 
+    set_control_par_str( get_ui_id( $reverb_amount ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_SEND_EFFECT_OUTPUT_GAIN, -1, 0, $NI_MAIN_BUS ) & " dB" )
     set_control_par_str( get_ui_id( $reverb_amount_label ), $CONTROL_PAR_TEXT, "  " & get_engine_par_disp( $ENGINE_PAR_SEND_EFFECT_OUTPUT_GAIN, -1, 0, $NI_MAIN_BUS ) & " dB" )
 
     wait($ui_wait)
@@ -1755,6 +2281,7 @@ on ui_control( $reverb_pre_delay )
     %callback_ids[10] := $NI_CALLBACK_ID
     set_engine_par( $ENGINE_PAR_RV2_PREDELAY, $reverb_pre_delay, -1, 0, $NI_MAIN_BUS )
 
+    set_control_par_str( get_ui_id( $reverb_pre_delay ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_RV2_PREDELAY, -1, 0, $NI_MAIN_BUS ) & " ms" )
     set_control_par_str( get_ui_id( $reverb_pre_delay_label ), $CONTROL_PAR_TEXT, "  " & get_engine_par_disp( $ENGINE_PAR_RV2_PREDELAY, -1, 0, $NI_MAIN_BUS ) & " ms" )
 
     wait($ui_wait)
@@ -1767,6 +2294,7 @@ on ui_control( $reverb_time )
     %callback_ids[11] := $NI_CALLBACK_ID
     set_engine_par( $ENGINE_PAR_RV2_TIME, $reverb_time, -1, 0, $NI_MAIN_BUS )
 
+    set_control_par_str( get_ui_id( $reverb_time ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_RV2_TIME, -1, 0, $NI_MAIN_BUS ) & " ms" )
     set_control_par_str( get_ui_id( $reverb_time_label ), $CONTROL_PAR_TEXT, get_engine_par_disp( $ENGINE_PAR_RV2_TIME, -1, 0, $NI_MAIN_BUS ) & " ms" )
 
     wait($ui_wait)
@@ -1779,6 +2307,7 @@ on ui_control( $reverb_size )
     %callback_ids[12] := $NI_CALLBACK_ID
     set_engine_par( $ENGINE_PAR_RV2_SIZE, $reverb_size, -1, 0, $NI_MAIN_BUS )
 
+    set_control_par_str( get_ui_id( $reverb_size ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_RV2_SIZE, -1, 0, $NI_MAIN_BUS ) & " %" )
     set_control_par_str( get_ui_id( $reverb_size_label ), $CONTROL_PAR_TEXT, get_engine_par_disp( $ENGINE_PAR_RV2_SIZE, -1, 0, $NI_MAIN_BUS ) & " %" )
 
     wait($ui_wait)
@@ -1791,6 +2320,7 @@ on ui_control( $reverb_stereo )
     %callback_ids[13] := $NI_CALLBACK_ID
     set_engine_par( $ENGINE_PAR_RV2_STEREO, $reverb_stereo, -1, 0, $NI_MAIN_BUS )
 
+    set_control_par_str( get_ui_id( $reverb_stereo ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_RV2_STEREO, -1, 0, $NI_MAIN_BUS ) & " %" )
     set_control_par_str( get_ui_id( $reverb_stereo_label ), $CONTROL_PAR_TEXT, get_engine_par_disp( $ENGINE_PAR_RV2_STEREO, -1, 0, $NI_MAIN_BUS ) & " %" )
 
     wait($ui_wait)
@@ -1803,6 +2333,7 @@ on ui_control( $reverb_low_shelf )
     %callback_ids[14] := $NI_CALLBACK_ID
     set_engine_par( $ENGINE_PAR_RV2_LOWSHELF, $reverb_low_shelf, -1, 0, $NI_MAIN_BUS )
 
+    set_control_par_str( get_ui_id( $reverb_low_shelf ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_RV2_LOWSHELF, -1, 0, $NI_MAIN_BUS ) & " dB" )
     set_control_par_str( get_ui_id( $reverb_low_shelf_label ), $CONTROL_PAR_TEXT, "   " & get_engine_par_disp( $ENGINE_PAR_RV2_LOWSHELF, -1, 0, $NI_MAIN_BUS ) & " dB" )
 
     wait($ui_wait)
@@ -1815,6 +2346,7 @@ on ui_control( $reverb_high_cut )
     %callback_ids[15] := $NI_CALLBACK_ID
     set_engine_par( $ENGINE_PAR_RV2_HIGHCUT, 1000000 - $reverb_high_cut, -1, 0, $NI_MAIN_BUS )
 
+    set_control_par_str( get_ui_id( $reverb_high_cut ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_RV2_HIGHCUT, -1, 0, $NI_MAIN_BUS ) & " Hz" )
     set_control_par_str( get_ui_id( $reverb_high_cut_label ), $CONTROL_PAR_TEXT, "   " & get_engine_par_disp( $ENGINE_PAR_RV2_HIGHCUT, -1, 0, $NI_MAIN_BUS ) & " Hz" )
 
     wait($ui_wait)
@@ -1836,7 +2368,10 @@ end on
 on ui_control( $filter_lowcut )
     %callback_ids[16] := $NI_CALLBACK_ID
     set_engine_par( $ENGINE_PAR_CUTOFF, $filter_lowcut, -1, 1, $NI_MAIN_BUS )
+
+    set_control_par_str( get_ui_id( $filter_lowcut ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_CUTOFF, -1, 1, $NI_MAIN_BUS ) & " Hz" )
     set_control_par_str( get_ui_id( $filter_lowcut_label ), $CONTROL_PAR_TEXT, get_engine_par_disp( $ENGINE_PAR_CUTOFF, -1, 1, $NI_MAIN_BUS ) & " Hz" )
+    
     wait($ui_wait)
     if(%callback_ids[16] = $NI_CALLBACK_ID)
         set_control_par_str(get_ui_id($filter_lowcut_label), $CONTROL_PAR_TEXT, "LOW CUT")
@@ -1846,7 +2381,10 @@ end on
 on ui_control( $filter_lowcut_resonance )
     %callback_ids[17] := $NI_CALLBACK_ID
     set_engine_par( $ENGINE_PAR_RESONANCE, $filter_lowcut_resonance, -1, 1, $NI_MAIN_BUS )
+
+    set_control_par_str( get_ui_id( $filter_lowcut_resonance ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_RESONANCE, -1, 1, $NI_MAIN_BUS ) & " %" )
     set_control_par_str( get_ui_id( $filter_lowcut_resonance_label ), $CONTROL_PAR_TEXT, get_engine_par_disp( $ENGINE_PAR_RESONANCE, -1, 1, $NI_MAIN_BUS ) & " %" )
+    
     wait($ui_wait)
     if(%callback_ids[17] = $NI_CALLBACK_ID)
         set_control_par_str(get_ui_id($filter_lowcut_resonance_label), $CONTROL_PAR_TEXT, "LC RES")
@@ -1856,7 +2394,10 @@ end on
 on ui_control( $filter_highcut )
     %callback_ids[18] := $NI_CALLBACK_ID
     set_engine_par( $ENGINE_PAR_CUTOFF, $filter_highcut, -1, 2, $NI_MAIN_BUS )
+
+    set_control_par_str( get_ui_id( $filter_highcut ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_CUTOFF, -1, 2, $NI_MAIN_BUS ) & " Hz" )
     set_control_par_str( get_ui_id( $filter_highcut_label ), $CONTROL_PAR_TEXT, get_engine_par_disp( $ENGINE_PAR_CUTOFF, -1, 2, $NI_MAIN_BUS ) & " Hz" )
+
     wait($ui_wait)
     if(%callback_ids[18] = $NI_CALLBACK_ID)
         set_control_par_str(get_ui_id($filter_highcut_label), $CONTROL_PAR_TEXT, "HIGH CUT")
@@ -1866,7 +2407,10 @@ end on
 on ui_control( $filter_highcut_resonance )
     %callback_ids[19] := $NI_CALLBACK_ID
     set_engine_par( $ENGINE_PAR_RESONANCE, $filter_highcut_resonance, -1, 2, $NI_MAIN_BUS )
+
+    set_control_par_str( get_ui_id( $filter_highcut_resonance ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_RESONANCE, -1, 2, $NI_MAIN_BUS ) & " %" )
     set_control_par_str( get_ui_id( $filter_highcut_resonance_label ), $CONTROL_PAR_TEXT, get_engine_par_disp( $ENGINE_PAR_RESONANCE, -1, 2, $NI_MAIN_BUS ) & " %" )
+    
     wait($ui_wait)
     if(%callback_ids[19] = $NI_CALLBACK_ID)
         set_control_par_str(get_ui_id($filter_highcut_resonance_label), $CONTROL_PAR_TEXT, "HC RES")
@@ -1921,6 +2465,7 @@ on ui_control( $psyche_delay_amount )
     %callback_ids[20] := $NI_CALLBACK_ID
     set_engine_par( $ENGINE_PAR_SEND_EFFECT_OUTPUT_GAIN, $psyche_delay_amount, -1, 0, $NI_SEND_BUS )
 
+    set_control_par_str( get_ui_id( $psyche_delay_amount ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_SEND_EFFECT_OUTPUT_GAIN, -1, 0, $NI_SEND_BUS ) & " dB" )
     set_control_par_str( get_ui_id( $psyche_delay_amount_label ), $CONTROL_PAR_TEXT, get_engine_par_disp( $ENGINE_PAR_SEND_EFFECT_OUTPUT_GAIN, -1, 0, $NI_SEND_BUS ) & " dB" )
 
     wait($ui_wait)
@@ -1933,6 +2478,7 @@ on ui_control( $psyche_delay_time )
     %callback_ids[21] := $NI_CALLBACK_ID
     set_engine_par( $ENGINE_PAR_PSYDL_TIME, $psyche_delay_time, -1, 0, $NI_SEND_BUS )
 
+    set_control_par_str( get_ui_id( $psyche_delay_time ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_PSYDL_TIME, -1, 0, $NI_SEND_BUS ) & " ms" )
     set_control_par_str( get_ui_id( $psyche_delay_time_label ), $CONTROL_PAR_TEXT, get_engine_par_disp( $ENGINE_PAR_PSYDL_TIME, -1, 0, $NI_SEND_BUS ) & " ms" )
 
     wait($ui_wait)
@@ -1945,6 +2491,7 @@ on ui_control( $psyche_delay_feedback )
     %callback_ids[22] := $NI_CALLBACK_ID
     set_engine_par( $ENGINE_PAR_PSYDL_FEEDBACK, $psyche_delay_feedback, -1, 0, $NI_SEND_BUS )
 
+    set_control_par_str( get_ui_id( $psyche_delay_feedback ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_PSYDL_FEEDBACK, -1, 0, $NI_SEND_BUS ) & " %" )
     set_control_par_str( get_ui_id( $psyche_delay_feedback_label ), $CONTROL_PAR_TEXT, "    " & get_engine_par_disp( $ENGINE_PAR_PSYDL_FEEDBACK, -1, 0, $NI_SEND_BUS ) & " %" )
 
     wait($ui_wait)
@@ -1957,6 +2504,7 @@ on ui_control( $psyche_delay_lr_offset )
     %callback_ids[23] := $NI_CALLBACK_ID
     set_engine_par( $ENGINE_PAR_PSYDL_LR_OFFSET, $psyche_delay_lr_offset, -1, 0, $NI_SEND_BUS )
 
+    set_control_par_str( get_ui_id( $psyche_delay_lr_offset ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_PSYDL_LR_OFFSET, -1, 0, $NI_SEND_BUS ) & " %" )
     set_control_par_str( get_ui_id( $psyche_delay_lr_offset_label ), $CONTROL_PAR_TEXT, "    " & get_engine_par_disp( $ENGINE_PAR_PSYDL_LR_OFFSET, -1, 0, $NI_SEND_BUS ) & " %" )
 
     wait($ui_wait)
@@ -1969,6 +2517,7 @@ on ui_control( $psyche_delay_cross_fb )
     %callback_ids[24] := $NI_CALLBACK_ID
     set_engine_par( $ENGINE_PAR_PSYDL_CROSS_FEEDBACK, $psyche_delay_cross_fb, -1, 0, $NI_SEND_BUS )
 
+    set_control_par_str( get_ui_id( $psyche_delay_cross_fb ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_PSYDL_CROSS_FEEDBACK, -1, 0, $NI_SEND_BUS ) & " %" )
     set_control_par_str( get_ui_id( $psyche_delay_cross_fb_label ), $CONTROL_PAR_TEXT, "    " & get_engine_par_disp( $ENGINE_PAR_PSYDL_CROSS_FEEDBACK, -1, 0, $NI_SEND_BUS ) & " %" )
 
     wait($ui_wait)
@@ -1981,6 +2530,7 @@ on ui_control( $psyche_delay_pitch )
     %callback_ids[25] := $NI_CALLBACK_ID
     set_engine_par( $ENGINE_PAR_PSYDL_PITCH, $psyche_delay_pitch, -1, 0, $NI_SEND_BUS )
 
+    set_control_par_str( get_ui_id( $psyche_delay_pitch ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_PSYDL_PITCH, -1, 0, $NI_SEND_BUS ) & " st" )
     set_control_par_str( get_ui_id( $psyche_delay_pitch_label ), $CONTROL_PAR_TEXT, " " & get_engine_par_disp( $ENGINE_PAR_PSYDL_PITCH, -1, 0, $NI_SEND_BUS ) & " st" )
 
     wait($ui_wait)
@@ -1993,6 +2543,7 @@ on ui_control( $psyche_delay_detune )
     %callback_ids[26] := $NI_CALLBACK_ID
     set_engine_par( $ENGINE_PAR_PSYDL_DETUNE, $psyche_delay_detune, -1, 0, $NI_SEND_BUS )
 
+    set_control_par_str( get_ui_id( $psyche_delay_detune ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_PSYDL_DETUNE, -1, 0, $NI_SEND_BUS ) & " cts" )
     set_control_par_str( get_ui_id( $psyche_delay_detune_label ), $CONTROL_PAR_TEXT, " " & get_engine_par_disp( $ENGINE_PAR_PSYDL_DETUNE, -1, 0, $NI_SEND_BUS ) & " cts" )
 
     wait($ui_wait)
@@ -2052,6 +2603,7 @@ on ui_control( $replika_delay_amount )
     %callback_ids[30] := $NI_CALLBACK_ID
     set_engine_par( $ENGINE_PAR_SEND_EFFECT_OUTPUT_GAIN, $replika_delay_amount, -1, 1, $NI_SEND_BUS )
 
+    set_control_par_str( get_ui_id( $replika_delay_amount ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_SEND_EFFECT_OUTPUT_GAIN, -1, 1, $NI_SEND_BUS ) & " dB" )
     set_control_par_str( get_ui_id( $replika_delay_amount_label ), $CONTROL_PAR_TEXT, "  " & get_engine_par_disp( $ENGINE_PAR_SEND_EFFECT_OUTPUT_GAIN, -1, 1, $NI_SEND_BUS ) & " dB" )
 
     wait($ui_wait)
@@ -2064,6 +2616,7 @@ on ui_control( $replika_delay_time )
     %callback_ids[31] := $NI_CALLBACK_ID
     set_engine_par( $ENGINE_PAR_RDL_TIME, $replika_delay_time, -1, 1, $NI_SEND_BUS )
 
+    set_control_par_str( get_ui_id( $replika_delay_time ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_RDL_TIME, -1, 1, $NI_SEND_BUS ) & " ms" )
     set_control_par_str( get_ui_id( $replika_delay_time_label ), $CONTROL_PAR_TEXT, get_engine_par_disp( $ENGINE_PAR_RDL_TIME, -1, 1, $NI_SEND_BUS ) & " ms" )
 
     wait($ui_wait)
@@ -2076,6 +2629,7 @@ on ui_control( $replika_delay_feedback )
     %callback_ids[32] := $NI_CALLBACK_ID
     set_engine_par( $ENGINE_PAR_RDL_FEEDBACK, $replika_delay_feedback, -1, 1, $NI_SEND_BUS )
 
+    set_control_par_str( get_ui_id( $replika_delay_feedback ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_RDL_FEEDBACK, -1, 1, $NI_SEND_BUS ) & " %" )
     set_control_par_str( get_ui_id( $replika_delay_feedback_label ), $CONTROL_PAR_TEXT, "    " & get_engine_par_disp( $ENGINE_PAR_RDL_FEEDBACK, -1, 1, $NI_SEND_BUS ) & " %" )
 
     wait($ui_wait)
@@ -2088,6 +2642,7 @@ on ui_control( $replika_delay_depth )
     %callback_ids[33] := $NI_CALLBACK_ID
     set_engine_par( $ENGINE_PAR_RDL_DEPTH, $replika_delay_depth, -1, 1, $NI_SEND_BUS )
 
+    set_control_par_str( get_ui_id( $replika_delay_depth ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_RDL_DEPTH, -1, 1, $NI_SEND_BUS ) & " %" )
     set_control_par_str( get_ui_id( $replika_delay_depth_label ), $CONTROL_PAR_TEXT, " " & get_engine_par_disp( $ENGINE_PAR_RDL_DEPTH, -1, 1, $NI_SEND_BUS ) & " %" )
 
     wait($ui_wait)
@@ -2100,6 +2655,7 @@ on ui_control( $replika_delay_rate )
     %callback_ids[34] := $NI_CALLBACK_ID
     set_engine_par( $ENGINE_PAR_RDL_RATE, $replika_delay_rate, -1, 1, $NI_SEND_BUS )
 
+    set_control_par_str( get_ui_id( $replika_delay_rate ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_RDL_RATE, -1, 1, $NI_SEND_BUS ) & " Hz" )
     set_control_par_str( get_ui_id( $replika_delay_rate_label ), $CONTROL_PAR_TEXT, get_engine_par_disp( $ENGINE_PAR_RDL_RATE, -1, 1, $NI_SEND_BUS ) & " Hz" )
 
     wait($ui_wait)
@@ -2112,6 +2668,7 @@ on ui_control( $replika_delay_saturation )
     %callback_ids[35] := $NI_CALLBACK_ID
     set_engine_par( $ENGINE_PAR_RDL_SATURATION, $replika_delay_saturation, -1, 1, $NI_SEND_BUS )
 
+    set_control_par_str( get_ui_id( $replika_delay_saturation ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_RDL_SATURATION, -1, 1, $NI_SEND_BUS ) & " %" )
     set_control_par_str( get_ui_id( $replika_delay_saturation_label ), $CONTROL_PAR_TEXT, "      " & get_engine_par_disp( $ENGINE_PAR_RDL_SATURATION, -1, 1, $NI_SEND_BUS ) & " %" )
 
     wait($ui_wait)
@@ -2125,14 +2682,17 @@ on ui_control( $replika_delay_filter )
     
     if($replika_delay_filter < 500000)
         set_engine_par( $ENGINE_PAR_RDL_HIGHCUT, $replika_delay_filter * 2, -1, 1, $NI_SEND_BUS )
+        set_control_par_str( get_ui_id( $replika_delay_filter ), $CONTROL_PAR_LABEL, "HC " & ((1000000 - $replika_delay_filter * 2) / 10000) & " %" )
         set_control_par_str( get_ui_id( $replika_delay_filter_label ), $CONTROL_PAR_TEXT, "HC " & ((1000000 - $replika_delay_filter * 2) / 10000) & " %" )
     end if
     if($replika_delay_filter > 500000)
         set_engine_par( $ENGINE_PAR_RDL_LOWCUT,  ($replika_delay_filter - 500000) * 2, -1, 1, $NI_SEND_BUS )
+        set_control_par_str( get_ui_id( $replika_delay_filter ), $CONTROL_PAR_LABEL, "LC " & ($replika_delay_filter - 500000) * 2 / 10000 & " %" )
         set_control_par_str( get_ui_id( $replika_delay_filter_label ), $CONTROL_PAR_TEXT, "LC " & ($replika_delay_filter - 500000) * 2 / 10000 & " %" )
     end if
 
     if( $replika_delay_filter = 500000 )
+        set_control_par_str( get_ui_id( $replika_delay_filter ), $CONTROL_PAR_LABEL, "Default" )
         set_control_par_str( get_ui_id( $replika_delay_filter_label ), $CONTROL_PAR_TEXT, "Default" )
     end if
 
@@ -2154,17 +2714,6 @@ end on
 
 
 
-
-
-
-
-on ui_control( $test )
-    $count := 0
-    while ( $count < $instrument_number * 2 )
-        message(%bypassed[$count])
-        inc( $count )
-    end while
-end on
 
 on listener
     if($animation = get_control_par( get_ui_id($animation), $CONTROL_PAR_MAX_VALUE ))
