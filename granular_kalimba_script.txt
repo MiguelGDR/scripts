@@ -10,8 +10,9 @@ Modified: July 38th, 2025
     - Move reverb to a main effect      OK!
     - Add the replika delay             OK!
     
-    - Add american flute
-    - Add electric guitar
+    - Add american flute                OK!
+    - Add electric guitar               OK!
+    - Add Saw Pluck
     - Add piano
 }
 
@@ -20,7 +21,7 @@ on init
     {message( "Granular Kalimba Loaded" )}
     set_script_title( "Granular Synth Script" )
 
-    set_snapshot_type( 0 ) {0 = load the entire init callback, 1 = loads only the on persistence_changed callback}
+    set_snapshot_type( 1 ) {0 = load the entire init callback, 1 = loads only the on persistence_changed callback}
 
     declare ui_slider $test(0,1000000)
 
@@ -42,11 +43,11 @@ on init
 
 
     {Group Declarations}
-    declare $instrument_number := 4
+    declare $instrument_number := 5
     declare $a
     declare $b
 
-    declare %group[8]
+    declare %group[10]
     %group[0] := 0              {Kalimba Group}
     %group[1] := 1              {Reverse Kalimba Group}
     %group[2] := 2              {Rain Effect Group}
@@ -55,30 +56,36 @@ on init
     %group[5] := 5              {Reverse Native American Flute Group}
     %group[6] := 6              {Guitar Group}
     %group[7] := 7              {Reverse Guitar Group}
+    %group[8] := 8              {Saw Pluck Group}
+    %group[9] := 9              {Reverse Saw Pluck Group}
  
-    declare %instrument_active[4]
+    declare %instrument_active[5]
     %instrument_active[0] := 1  {Kalimba Active}
     %instrument_active[1] := 0  {Rain Effect Active}
     %instrument_active[2] := 0  {Native American Flute Active}
     %instrument_active[3] := 0  {Guitar Active}
+    %instrument_active[4] := 0  {Saw Pluck Active}
 
-    declare %instrument_reverse[4]
+    declare %instrument_reverse[5]
     %instrument_reverse[0] := 0  {Kalimba Reverse}
     %instrument_reverse[1] := 0  {Rain Effect Reverse}
     %instrument_reverse[2] := 0  {Native American Flute Reverse}
     %instrument_reverse[3] := 0  {Guitar Reverse}
+    %instrument_reverse[4] := 0  {Saw Pluck Reverse}
 
-    declare %instrument_position[4]
+    declare %instrument_position[5]
     %instrument_position[0] := 0 {Kalimba Position}
     %instrument_position[1] := 0 {Rain Effect Position}
     %instrument_position[2] := 0 {Native American Flute Position}
     %instrument_position[3] := 0 {Guitar Position}
+    %instrument_position[4] := 0 {Saw Pluck Position}
 
-    declare ?instrument_position_randomness[4]
+    declare ?instrument_position_randomness[5]
     ?instrument_position_randomness[0] := 0.0 {Kalimba Position Randomness}
     ?instrument_position_randomness[1] := 0.0 {Rain Effect Position Randomness}
     ?instrument_position_randomness[2] := 0.0 {Native American Flute Position Randomness}
     ?instrument_position_randomness[3] := 0.0 {Guitar Position Randomness}
+    ?instrument_position_randomness[4] := 0.0 {Saw Pluck Position Randomness}
 
 
     {Kalimba Group}
@@ -320,8 +327,65 @@ on init
     set_control_par( get_ui_id( $guitar_volume_label ), $CONTROL_PAR_POS_X, 296)
     set_control_par( get_ui_id( $guitar_volume_label ), $CONTROL_PAR_POS_Y, 50 )
 
+    {Saw Pluck (MF_P1)}
+    declare ui_button $sawpluck_toggle_button
+    set_control_par( get_ui_id( $sawpluck_toggle_button ), $CONTROL_PAR_WIDTH, 60 )
+    set_control_par_str( get_ui_id( $sawpluck_toggle_button ), $CONTROL_PAR_TEXT, "Saw Pluck" )
 
+    declare ui_button $sawpluck_reverse_button
+    set_control_par( get_ui_id( $sawpluck_reverse_button ), $CONTROL_PAR_WIDTH, 55 )
+    set_control_par_str( get_ui_id( $sawpluck_reverse_button ), $CONTROL_PAR_TEXT, "Reversed" )
 
+    declare ui_slider $sawpluck_position(0, 1000000 )         { slider for grain playback}    
+    declare ui_label $sawpluck_position_label( 1, 1 )
+    set_control_par_str( get_ui_id( $sawpluck_position_label ), $CONTROL_PAR_TEXT, "POSITION" )
+
+    declare ui_slider $sawpluck_position_random(0, 1000000 )         {kalimba_position slider for grain playback}
+    declare ui_label $sawpluck_position_random_label( 1, 1 )
+    set_control_par_str( get_ui_id( $sawpluck_position_random_label ), $CONTROL_PAR_TEXT, "RANDOM" )
+
+    declare ui_slider $sawpluck_volume(0, 1000000)                  {Volume knob for Saw Pluck}
+    declare ui_label $sawpluck_volume_label( 1, 1 )
+    set_control_par_str( get_ui_id( $sawpluck_volume_label ), $CONTROL_PAR_TEXT, "VOLUME" )
+
+    declare ui_panel $sawpluck_panel
+    set_control_par( get_ui_id( $sawpluck_panel ), $CONTROL_PAR_POS_X, 630 )
+    set_control_par( get_ui_id( $sawpluck_panel ), $CONTROL_PAR_POS_Y, 50 )
+
+    set_control_par( get_ui_id( $sawpluck_toggle_button ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $sawpluck_panel ) )
+    set_control_par( get_ui_id( $sawpluck_toggle_button ), $CONTROL_PAR_POS_X, 0 )
+    set_control_par( get_ui_id( $sawpluck_toggle_button ), $CONTROL_PAR_POS_Y, 25 )
+
+    set_control_par( get_ui_id( $sawpluck_reverse_button ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $sawpluck_panel ) )
+    set_control_par( get_ui_id( $sawpluck_reverse_button ), $CONTROL_PAR_POS_X, 70 )
+    set_control_par( get_ui_id( $sawpluck_reverse_button ), $CONTROL_PAR_POS_Y, 25 )
+
+    set_control_par( get_ui_id( $sawpluck_position ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $sawpluck_panel ) )
+    set_control_par( get_ui_id( $sawpluck_position ), $CONTROL_PAR_POS_X, 165 )
+    set_control_par( get_ui_id( $sawpluck_position ), $CONTROL_PAR_POS_Y, 15 )
+
+    set_control_par( get_ui_id( $sawpluck_position_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $sawpluck_panel ) )
+    hide_part( $sawpluck_position_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $sawpluck_position_label ), $CONTROL_PAR_POS_X, 156)
+    set_control_par( get_ui_id( $sawpluck_position_label ), $CONTROL_PAR_POS_Y, 50 )
+
+    set_control_par( get_ui_id( $sawpluck_position_random ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $sawpluck_panel ) )
+    set_control_par( get_ui_id( $sawpluck_position_random ), $CONTROL_PAR_POS_X, 235 )
+    set_control_par( get_ui_id( $sawpluck_position_random ), $CONTROL_PAR_POS_Y, 15 )
+
+    set_control_par( get_ui_id( $sawpluck_position_random_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $sawpluck_panel ) )
+    hide_part( $sawpluck_position_random_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $sawpluck_position_random_label ), $CONTROL_PAR_POS_X, 226)
+    set_control_par( get_ui_id( $sawpluck_position_random_label ), $CONTROL_PAR_POS_Y, 50 )
+
+    set_control_par( get_ui_id( $sawpluck_volume ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $sawpluck_panel ) )
+    set_control_par( get_ui_id( $sawpluck_volume ), $CONTROL_PAR_POS_X, 305 )
+    set_control_par( get_ui_id( $sawpluck_volume ), $CONTROL_PAR_POS_Y, 15 )
+
+    set_control_par( get_ui_id( $sawpluck_volume_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $sawpluck_panel ) )
+    hide_part( $sawpluck_volume_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $sawpluck_volume_label ), $CONTROL_PAR_POS_X, 296)
+    set_control_par( get_ui_id( $sawpluck_volume_label ), $CONTROL_PAR_POS_Y, 50 )
 
 
     {Granular Engine Parameters}
@@ -851,8 +915,9 @@ on init
 
     set_control_par( get_ui_id( $kalimba_volume ), $CONTROL_PAR_DEFAULT_VALUE, 629961 ) {Default volume for Kalimba (629961 corresponds to 0.0 dB)}
     set_control_par( get_ui_id( $rain_stick_volume ), $CONTROL_PAR_DEFAULT_VALUE, 629961 ) {Default volume for Rain Stick (629961 corresponds to 0.0 dB)}
-    set_control_par( get_ui_id( $native_flute_volume ), $CONTROL_PAR_DEFAULT_VALUE, 629961 ) {Default volume for Wind Chimes (629961 corresponds to 0.0 dB)}
-    set_control_par( get_ui_id( $guitar_volume ), $CONTROL_PAR_DEFAULT_VALUE, 629961 ) {Default volume for Wind Chimes (629961 corresponds to 0.0 dB)}
+    set_control_par( get_ui_id( $native_flute_volume ), $CONTROL_PAR_DEFAULT_VALUE, 629961 ) {Default volume for nat flute (629961 corresponds to 0.0 dB)}
+    set_control_par( get_ui_id( $guitar_volume ), $CONTROL_PAR_DEFAULT_VALUE, 629961 ) {Default volume for guitar (629961 corresponds to 0.0 dB)}
+    set_control_par( get_ui_id( $sawpluck_volume ), $CONTROL_PAR_DEFAULT_VALUE, 629961 ) {Default volume for guitar (629961 corresponds to 0.0 dB)}
 
         {LFO}
     set_control_par( get_ui_id( $lfo_freq ), $CONTROL_PAR_DEFAULT_VALUE, 0 ) {Default LFO frequency}
@@ -967,6 +1032,11 @@ on init
     set_control_par_str(get_ui_id($guitar_position_random), $CONTROL_PAR_PICTURE, "attack_decay_knob")
     set_control_par_str(get_ui_id($guitar_volume), $CONTROL_PAR_PICTURE, "attack_decay_knob")
 
+        {Saw Pluck}
+    set_control_par_str(get_ui_id($sawpluck_position), $CONTROL_PAR_PICTURE, "attack_decay_knob")
+    set_control_par_str(get_ui_id($sawpluck_position_random), $CONTROL_PAR_PICTURE, "attack_decay_knob")
+    set_control_par_str(get_ui_id($sawpluck_volume), $CONTROL_PAR_PICTURE, "attack_decay_knob")
+
 
         {LFO}
     set_control_par_str(get_ui_id($lfo_freq), $CONTROL_PAR_PICTURE, "attack_decay_knob")
@@ -1031,6 +1101,10 @@ on init
     set_control_par(get_ui_id($guitar_position), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
     set_control_par(get_ui_id($guitar_position_random), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
     set_control_par(get_ui_id($guitar_volume), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+
+    set_control_par(get_ui_id($sawpluck_position), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+    set_control_par(get_ui_id($sawpluck_position_random), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+    set_control_par(get_ui_id($sawpluck_volume), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
 
 
         {LFO}
@@ -1108,6 +1182,12 @@ on init
     make_persistent( $guitar_position_random )
     make_persistent( $guitar_volume )
 
+    make_persistent( $sawpluck_toggle_button )
+    make_persistent( $sawpluck_reverse_button )
+    make_persistent( $sawpluck_position )
+    make_persistent( $sawpluck_position_random )
+    make_persistent( $sawpluck_volume )
+
     make_persistent( $lfo_freq )
     make_persistent( $lfo_depth )
     make_persistent( $lfo_fade_in )
@@ -1163,11 +1243,13 @@ on persistence_changed
     %instrument_position[1] := $rain_stick_position
     %instrument_position[2] := $native_flute_position
     %instrument_position[3] := $guitar_position
+    %instrument_position[4] := $sawpluck_position
 
     ?instrument_position_randomness[0] := real($kalimba_position_random ) / 1000000.0
     ?instrument_position_randomness[1] := real($rain_stick_position_random ) / 1000000.0
     ?instrument_position_randomness[2] := real($native_flute_position_random ) / 1000000.0
     ?instrument_position_randomness[3] := real($guitar_position_random ) / 1000000.0
+    ?instrument_position_randomness[4] := real($sawpluck_position_random ) / 1000000.0
 
     set_engine_par($ENGINE_PAR_VOLUME, $kalimba_volume, 0, 0, -1) {Set volume for Kalimba}
     set_engine_par($ENGINE_PAR_VOLUME, $kalimba_volume, 1, 0, -1) {Set volume for Kalimba}
@@ -1180,6 +1262,9 @@ on persistence_changed
 
     set_engine_par($ENGINE_PAR_VOLUME, $guitar_volume, 6, 0, -1) {Set volume for Guitar}
     set_engine_par($ENGINE_PAR_VOLUME, $guitar_volume, 7, 0, -1) {Set volume for Guitar}
+
+    set_engine_par($ENGINE_PAR_VOLUME, $sawpluck_volume, 8, 0, -1) {Set volume for Saw Pluck}
+    set_engine_par($ENGINE_PAR_VOLUME, $sawpluck_volume, 9, 0, -1) {Set volume for Saw Pluck}
 
     {Activation of Instruments}
     if($kalimba_toggle_button = 1) {Activate Kalimba if the toggle button is active}
@@ -1228,6 +1313,18 @@ on persistence_changed
         %instrument_reverse[3] := 1
     else
         %instrument_reverse[3] := 0
+    end if
+
+    if($sawpluck_toggle_button = 1) {Activate Saw Pluck if the toggle button is active}
+        %instrument_active[4] := 1
+    else
+        %instrument_active[4] := 0
+    end if
+
+    if($sawpluck_reverse_button = 1) {Activate Saw Pluck Reverse if the toggle button is active}
+        %instrument_reverse[4] := 1
+    else
+        %instrument_reverse[4] := 0
     end if
 
 end on
@@ -1525,7 +1622,47 @@ on ui_control( $guitar_volume )
     end if
 end on
 
+{Saw Pluck Related}
+on ui_control( $sawpluck_toggle_button )
+    %instrument_active[4] := $sawpluck_toggle_button
+end on
 
+on ui_control( $sawpluck_reverse_button )
+    if($sawpluck_reverse_button = 1)
+        %instrument_reverse[4] := 1
+    else
+        %instrument_reverse[4] := 0
+    end if
+end on
+
+on ui_control( $sawpluck_position )
+    %instrument_position[4] := $sawpluck_position
+end on
+
+on ui_control( $sawpluck_position_random )
+    %callback_ids[41] := $NI_CALLBACK_ID
+    ?instrument_position_randomness[4] := real($sawpluck_position_random ) / 1000000.0
+
+    set_control_par_str( get_ui_id( $sawpluck_position_random_label ), $CONTROL_PAR_TEXT, "    " & $sawpluck_position_random / 10000 & "%" )
+
+    wait($ui_wait)
+    if(%callback_ids[41] = $NI_CALLBACK_ID)
+        set_control_par_str(get_ui_id($sawpluck_position_random_label), $CONTROL_PAR_TEXT, "RANDOM")
+    end if
+end on
+
+on ui_control( $sawpluck_volume )
+    %callback_ids[42] := $NI_CALLBACK_ID
+    set_engine_par($ENGINE_PAR_VOLUME, $sawpluck_volume, 8, 0, -1) {Set volume for Saw Pluck}
+    set_engine_par($ENGINE_PAR_VOLUME, $sawpluck_volume, 9, 0, -1) {Set volume for Saw Pluck Reversed}
+
+    set_control_par_str( get_ui_id( $sawpluck_volume_label ), $CONTROL_PAR_TEXT, "  " & get_engine_par_disp( $ENGINE_PAR_VOLUME, 8, 0, -1 ) & " dB" )
+
+    wait($ui_wait)
+    if(%callback_ids[42] = $NI_CALLBACK_ID)
+        set_control_par_str(get_ui_id($sawpluck_volume_label), $CONTROL_PAR_TEXT, "VOLUME")
+    end if
+end on
 
 
 {LFO Related}
