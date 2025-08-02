@@ -6,14 +6,7 @@ Modified: July 38th, 2025
 
 {
     Tasks:                          
-    - Change filter slot                OK!
-    - Move reverb to a main effect      OK!
-    - Add the replika delay             OK!
-    
-    - Add american flute                OK!
-    - Add electric guitar               OK!
-    - Add Saw Pluck                     OK!
-    - Add piano                         OK!     
+       
 }   
 
 on init
@@ -42,11 +35,11 @@ on init
 
 
     {Group Declarations}
-    declare $instrument_number := 7
+    declare $instrument_number := 10
     declare $a
     declare $b
 
-    declare %group[14]
+    declare %group[20]
     %group[0] := 0              {Kalimba Group}
     %group[1] := 1              {Reverse Kalimba Group}
     %group[2] := 2              {Rain Effect Group}
@@ -61,8 +54,14 @@ on init
     %group[11] := 11            {Reverse Vocal Group}
     %group[12] := 12            {Piano Group}
     %group[13] := 13            {Reverse Piano Group}
+    %group[14] := 14            {Ethereal Group}
+    %group[15] := 15            {Reverse Ethereal Group}
+    %group[16] := 16            {Sine Pluck Group}
+    %group[17] := 17            {Reverse Sine Pluck Group}
+    %group[18] := 18            {Water Drop Group}
+    %group[19] := 19            {Reverse Water Drop Group}
  
-    declare %instrument_active[7]
+    declare %instrument_active[10]
     %instrument_active[0] := 1  {Kalimba Active}
     %instrument_active[1] := 0  {Rain Effect Active}
     %instrument_active[2] := 0  {Native American Flute Active}
@@ -70,8 +69,11 @@ on init
     %instrument_active[4] := 0  {Saw Pluck Active}
     %instrument_active[5] := 0  {Vocal Active}
     %instrument_active[6] := 0  {Piano Active}
+    %instrument_active[7] := 0  {Ethereal Active}
+    %instrument_active[8] := 0  {Sine Pluck Active}
+    %instrument_active[9] := 0  {Water Drop Active}
 
-    declare %instrument_reverse[7]
+    declare %instrument_reverse[10]
     %instrument_reverse[0] := 0  {Kalimba Reverse}
     %instrument_reverse[1] := 0  {Rain Effect Reverse}
     %instrument_reverse[2] := 0  {Native American Flute Reverse}
@@ -79,8 +81,11 @@ on init
     %instrument_reverse[4] := 0  {Saw Pluck Reverse}
     %instrument_reverse[5] := 0  {Vocal Reverse}
     %instrument_reverse[6] := 0  {Piano Reverse}
+    %instrument_reverse[7] := 0  {Ethereal Reverse}
+    %instrument_reverse[8] := 0  {Sine Pluck Reverse}
+    %instrument_reverse[9] := 0  {Water Drop Reverse}
 
-    declare %instrument_position[7]
+    declare %instrument_position[10]
     %instrument_position[0] := 0 {Kalimba Position}
     %instrument_position[1] := 0 {Rain Effect Position}
     %instrument_position[2] := 0 {Native American Flute Position}
@@ -88,8 +93,11 @@ on init
     %instrument_position[4] := 0 {Saw Pluck Position}
     %instrument_position[5] := 0 {Vocal Position}
     %instrument_position[6] := 0 {Piano Position}
+    %instrument_position[7] := 0 {Ethereal Position}
+    %instrument_position[8] := 0 {Sine Pluck Position}
+    %instrument_position[9] := 0 {Water Drop Position}
 
-    declare ?instrument_position_randomness[7]
+    declare ?instrument_position_randomness[10]
     ?instrument_position_randomness[0] := 0.0 {Kalimba Position Randomness}
     ?instrument_position_randomness[1] := 0.0 {Rain Effect Position Randomness}
     ?instrument_position_randomness[2] := 0.0 {Native American Flute Position Randomness}
@@ -97,6 +105,9 @@ on init
     ?instrument_position_randomness[4] := 0.0 {Saw Pluck Position Randomness}
     ?instrument_position_randomness[5] := 0.0 {Vocal Position Randomness}
     ?instrument_position_randomness[6] := 0.0 {Piano Position Randomness}
+    ?instrument_position_randomness[7] := 0.0 {Ethereal Position Randomness}
+    ?instrument_position_randomness[8] := 0.0 {Sine Pluck Position Randomness}
+    ?instrument_position_randomness[9] := 0.0 {Water Drop Position Randomness}
 
 
     declare $height := 10
@@ -519,6 +530,186 @@ on init
     set_control_par( get_ui_id( $piano_volume_label ), $CONTROL_PAR_POS_X, 296)
     set_control_par( get_ui_id( $piano_volume_label ), $CONTROL_PAR_POS_Y, 50 )
 
+    {Ethereal Lead Group}
+    declare ui_button $ethereal_toggle_button
+    set_control_par( get_ui_id( $ethereal_toggle_button ), $CONTROL_PAR_WIDTH, 75 )
+    set_control_par_str( get_ui_id( $ethereal_toggle_button ), $CONTROL_PAR_TEXT, "Ethereal Lead" )
+
+    declare ui_button $ethereal_reverse_button
+    set_control_par( get_ui_id( $ethereal_reverse_button ), $CONTROL_PAR_WIDTH, 55 )
+    set_control_par_str( get_ui_id( $ethereal_reverse_button ), $CONTROL_PAR_TEXT, "Reversed" )
+
+    declare ui_slider $ethereal_position(0, 1000000 )         { slider for grain playback}
+    declare ui_label $ethereal_position_label( 1, 1 )
+        set_control_par_str( get_ui_id( $ethereal_position_label ), $CONTROL_PAR_TEXT, "POSITION" )
+
+    declare ui_slider $ethereal_position_random(0, 1000000 )         {kalimba_position slider for grain playback}
+    declare ui_label $ethereal_position_random_label( 1, 1 )
+        set_control_par_str( get_ui_id( $ethereal_position_random_label ), $CONTROL_PAR_TEXT, "RANDOM" )
+    
+    declare ui_slider $ethereal_volume(0, 1000000)                  {Volume knob for Ethereal Lead}
+    declare ui_label $ethereal_volume_label( 1, 1 )
+        set_control_par_str( get_ui_id( $ethereal_volume_label ), $CONTROL_PAR_TEXT, "VOLUME" )
+
+    declare ui_panel $ethereal_panel
+    set_control_par( get_ui_id( $ethereal_panel ), $CONTROL_PAR_POS_X, 620 )
+    set_control_par( get_ui_id( $ethereal_panel ), $CONTROL_PAR_POS_Y, 70 )
+
+    set_control_par( get_ui_id( $ethereal_toggle_button ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $ethereal_panel ) )
+    set_control_par( get_ui_id( $ethereal_toggle_button ), $CONTROL_PAR_POS_X, 0 )
+    set_control_par( get_ui_id( $ethereal_toggle_button ), $CONTROL_PAR_POS_Y, 25 )
+
+    set_control_par( get_ui_id( $ethereal_reverse_button ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $ethereal_panel ) )
+    set_control_par( get_ui_id( $ethereal_reverse_button ), $CONTROL_PAR_POS_X, 70 + $height)
+    set_control_par( get_ui_id( $ethereal_reverse_button ), $CONTROL_PAR_POS_Y, 25 )
+
+    set_control_par( get_ui_id( $ethereal_position ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $ethereal_panel ) )
+    set_control_par( get_ui_id( $ethereal_position ), $CONTROL_PAR_POS_X, 165 + $height)
+    set_control_par( get_ui_id( $ethereal_position ), $CONTROL_PAR_POS_Y, 15 )
+
+    set_control_par( get_ui_id( $ethereal_position_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $ethereal_panel ) )
+    hide_part( $ethereal_position_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $ethereal_position_label ), $CONTROL_PAR_POS_X, 156 + $height)
+    set_control_par( get_ui_id( $ethereal_position_label ), $CONTROL_PAR_POS_Y, 50 )
+
+    set_control_par( get_ui_id( $ethereal_position_random ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $ethereal_panel ) )
+    set_control_par( get_ui_id( $ethereal_position_random ), $CONTROL_PAR_POS_X, 235 + $height)
+    set_control_par( get_ui_id( $ethereal_position_random ), $CONTROL_PAR_POS_Y, 15 )
+
+    set_control_par( get_ui_id( $ethereal_position_random_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $ethereal_panel ) )
+    hide_part( $ethereal_position_random_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $ethereal_position_random_label ), $CONTROL_PAR_POS_X, 226 + $height)
+    set_control_par( get_ui_id( $ethereal_position_random_label ), $CONTROL_PAR_POS_Y, 50 )
+
+    set_control_par( get_ui_id( $ethereal_volume ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $ethereal_panel ) )
+    set_control_par( get_ui_id( $ethereal_volume ), $CONTROL_PAR_POS_X, 305 + $height)
+    set_control_par( get_ui_id( $ethereal_volume ), $CONTROL_PAR_POS_Y, 15 )
+
+    set_control_par( get_ui_id( $ethereal_volume_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $ethereal_panel ) )
+    hide_part( $ethereal_volume_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $ethereal_volume_label ), $CONTROL_PAR_POS_X, 296 + $height)
+    set_control_par( get_ui_id( $ethereal_volume_label ), $CONTROL_PAR_POS_Y, 50 )
+
+    {Sine Pluck}
+    declare ui_button $sinepluck_toggle_button
+    set_control_par( get_ui_id( $sinepluck_toggle_button ), $CONTROL_PAR_WIDTH, 60 )
+    set_control_par_str( get_ui_id( $sinepluck_toggle_button ), $CONTROL_PAR_TEXT, "Sine Pluck" )
+
+    declare ui_button $sinepluck_reverse_button
+    set_control_par( get_ui_id( $sinepluck_reverse_button ), $CONTROL_PAR_WIDTH, 55 )
+    set_control_par_str( get_ui_id( $sinepluck_reverse_button ), $CONTROL_PAR_TEXT, "Reversed" )
+
+    declare ui_slider $sinepluck_position(0, 1000000 )         { slider for grain playback}
+    declare ui_label $sinepluck_position_label( 1, 1 )
+        set_control_par_str( get_ui_id( $sinepluck_position_label ), $CONTROL_PAR_TEXT, "POSITION" )
+
+    declare ui_slider $sinepluck_position_random(0, 1000000 )         {kalimba_position slider for grain playback}
+    declare ui_label $sinepluck_position_random_label( 1, 1 )
+        set_control_par_str( get_ui_id( $sinepluck_position_random_label ), $CONTROL_PAR_TEXT, "RANDOM" )
+
+    declare ui_slider $sinepluck_volume(0, 1000000)                  {Volume knob for Sine Pluck}
+    declare ui_label $sinepluck_volume_label( 1, 1 )
+        set_control_par_str( get_ui_id( $sinepluck_volume_label ), $CONTROL_PAR_TEXT, "VOLUME" )
+
+    declare ui_panel $sinepluck_panel
+    set_control_par( get_ui_id( $sinepluck_panel ), $CONTROL_PAR_POS_X, 630 )
+    set_control_par( get_ui_id( $sinepluck_panel ), $CONTROL_PAR_POS_Y, 130 )
+
+    set_control_par( get_ui_id( $sinepluck_toggle_button ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $sinepluck_panel ) )
+    set_control_par( get_ui_id( $sinepluck_toggle_button ), $CONTROL_PAR_POS_X, 0 )
+    set_control_par( get_ui_id( $sinepluck_toggle_button ), $CONTROL_PAR_POS_Y, 25 )
+
+    set_control_par( get_ui_id( $sinepluck_reverse_button ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $sinepluck_panel ) )
+    set_control_par( get_ui_id( $sinepluck_reverse_button ), $CONTROL_PAR_POS_X, 70 )
+    set_control_par( get_ui_id( $sinepluck_reverse_button ), $CONTROL_PAR_POS_Y, 25 )
+
+    set_control_par( get_ui_id( $sinepluck_position ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $sinepluck_panel ) )
+    set_control_par( get_ui_id( $sinepluck_position ), $CONTROL_PAR_POS_X, 165 )
+    set_control_par( get_ui_id( $sinepluck_position ), $CONTROL_PAR_POS_Y, 15 )
+
+    set_control_par( get_ui_id( $sinepluck_position_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $sinepluck_panel ) )
+    hide_part( $sinepluck_position_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $sinepluck_position_label ), $CONTROL_PAR_POS_X, 156)
+    set_control_par( get_ui_id( $sinepluck_position_label ), $CONTROL_PAR_POS_Y, 50 )
+
+    set_control_par( get_ui_id( $sinepluck_position_random ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $sinepluck_panel ) )
+    set_control_par( get_ui_id( $sinepluck_position_random ), $CONTROL_PAR_POS_X, 235 )
+    set_control_par( get_ui_id( $sinepluck_position_random ), $CONTROL_PAR_POS_Y, 15 )
+
+    set_control_par( get_ui_id( $sinepluck_position_random_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $sinepluck_panel ) )
+    hide_part( $sinepluck_position_random_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $sinepluck_position_random_label ), $CONTROL_PAR_POS_X, 226)
+    set_control_par( get_ui_id( $sinepluck_position_random_label ), $CONTROL_PAR_POS_Y, 50 )
+
+    set_control_par( get_ui_id( $sinepluck_volume ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $sinepluck_panel ) )
+    set_control_par( get_ui_id( $sinepluck_volume ), $CONTROL_PAR_POS_X, 305 )
+    set_control_par( get_ui_id( $sinepluck_volume ), $CONTROL_PAR_POS_Y, 15 )
+
+    set_control_par( get_ui_id( $sinepluck_volume_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $sinepluck_panel ) )
+    hide_part( $sinepluck_volume_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $sinepluck_volume_label ), $CONTROL_PAR_POS_X, 296)
+    set_control_par( get_ui_id( $sinepluck_volume_label ), $CONTROL_PAR_POS_Y, 50 )
+
+    {Water Drop Group}
+    declare ui_button $waterdrop_toggle_button
+    set_control_par( get_ui_id( $waterdrop_toggle_button ), $CONTROL_PAR_WIDTH, 62 )
+    set_control_par_str( get_ui_id( $waterdrop_toggle_button ), $CONTROL_PAR_TEXT, "Water Drop" )
+
+    declare ui_button $waterdrop_reverse_button
+    set_control_par( get_ui_id( $waterdrop_reverse_button ), $CONTROL_PAR_WIDTH, 55 )
+    set_control_par_str( get_ui_id( $waterdrop_reverse_button ), $CONTROL_PAR_TEXT, "Reversed" )
+
+    declare ui_slider $waterdrop_position(0, 1000000 )         { slider for grain playback}
+    declare ui_label $waterdrop_position_label( 1, 1 )
+        set_control_par_str( get_ui_id( $waterdrop_position_label ), $CONTROL_PAR_TEXT, "POSITION" )
+
+    declare ui_slider $waterdrop_position_random(0, 1000000 )         {kalimba_position slider for grain playback}
+    declare ui_label $waterdrop_position_random_label( 1, 1 )
+        set_control_par_str( get_ui_id( $waterdrop_position_random_label ), $CONTROL_PAR_TEXT, "RANDOM" )
+
+    declare ui_slider $waterdrop_volume(0, 1000000)                  {Volume knob for Water Drop}
+    declare ui_label $waterdrop_volume_label( 1, 1 )
+        set_control_par_str( get_ui_id( $waterdrop_volume_label ), $CONTROL_PAR_TEXT, "VOLUME" )
+
+    declare ui_panel $waterdrop_panel
+    set_control_par( get_ui_id( $waterdrop_panel ), $CONTROL_PAR_POS_X, 630 )
+    set_control_par( get_ui_id( $waterdrop_panel ), $CONTROL_PAR_POS_Y, 250 )
+
+    set_control_par( get_ui_id( $waterdrop_toggle_button ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $waterdrop_panel ) )
+    set_control_par( get_ui_id( $waterdrop_toggle_button ), $CONTROL_PAR_POS_X, 0 )
+    set_control_par( get_ui_id( $waterdrop_toggle_button ), $CONTROL_PAR_POS_Y, 25 )
+
+    set_control_par( get_ui_id( $waterdrop_reverse_button ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $waterdrop_panel ) )
+    set_control_par( get_ui_id( $waterdrop_reverse_button ), $CONTROL_PAR_POS_X, 70 )
+    set_control_par( get_ui_id( $waterdrop_reverse_button ), $CONTROL_PAR_POS_Y, 25 )
+
+    set_control_par( get_ui_id( $waterdrop_position ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $waterdrop_panel ) )
+    set_control_par( get_ui_id( $waterdrop_position ), $CONTROL_PAR_POS_X, 165 )
+    set_control_par( get_ui_id( $waterdrop_position ), $CONTROL_PAR_POS_Y, 15 )
+
+    set_control_par( get_ui_id( $waterdrop_position_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $waterdrop_panel ) )
+    hide_part( $waterdrop_position_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $waterdrop_position_label ), $CONTROL_PAR_POS_X, 156)
+    set_control_par( get_ui_id( $waterdrop_position_label ), $CONTROL_PAR_POS_Y, 50 )
+
+    set_control_par( get_ui_id( $waterdrop_position_random ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $waterdrop_panel ) )
+    set_control_par( get_ui_id( $waterdrop_position_random ), $CONTROL_PAR_POS_X, 235 )
+    set_control_par( get_ui_id( $waterdrop_position_random ), $CONTROL_PAR_POS_Y, 15 )
+
+    set_control_par( get_ui_id( $waterdrop_position_random_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $waterdrop_panel ) )
+    hide_part( $waterdrop_position_random_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $waterdrop_position_random_label ), $CONTROL_PAR_POS_X, 226)
+    set_control_par( get_ui_id( $waterdrop_position_random_label ), $CONTROL_PAR_POS_Y, 50 )
+
+    set_control_par( get_ui_id( $waterdrop_volume ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $waterdrop_panel ) )
+    set_control_par( get_ui_id( $waterdrop_volume ), $CONTROL_PAR_POS_X, 305 )
+    set_control_par( get_ui_id( $waterdrop_volume ), $CONTROL_PAR_POS_Y, 15 )
+
+    set_control_par( get_ui_id( $waterdrop_volume_label ), $CONTROL_PAR_PARENT_PANEL, get_ui_id( $waterdrop_panel ) )
+    hide_part( $waterdrop_volume_label, $HIDE_PART_BG )
+    set_control_par( get_ui_id( $waterdrop_volume_label ), $CONTROL_PAR_POS_X, 296)
+    set_control_par( get_ui_id( $waterdrop_volume_label ), $CONTROL_PAR_POS_Y, 50 )
+
 
     {Granular Engine Parameters}
     declare ui_slider $grainAmount(1,100)               {Grains per second}
@@ -594,8 +785,6 @@ on init
     hide_part( $lfo_fade_in_label, $HIDE_PART_BG )
     set_control_par( get_ui_id( $lfo_fade_in_label ), $CONTROL_PAR_POS_X, 249 )
     set_control_par( get_ui_id( $lfo_fade_in_label ), $CONTROL_PAR_POS_Y, 60 )
-
-
 
 
     {Effect Settings}
@@ -1052,6 +1241,9 @@ on init
     set_control_par( get_ui_id( $vocal_volume ), $CONTROL_PAR_DEFAULT_VALUE, 629961 ) {Default volume for guitar (629961 corresponds to 0.0 dB)}
     set_control_par( get_ui_id( $sawpluck_volume ), $CONTROL_PAR_DEFAULT_VALUE, 629961 ) {Default volume for guitar (629961 corresponds to 0.0 dB)}
     set_control_par( get_ui_id( $piano_volume ), $CONTROL_PAR_DEFAULT_VALUE, 629961 ) {Default volume for guitar (629961 corresponds to 0.0 dB)}
+    set_control_par( get_ui_id( $ethereal_volume ), $CONTROL_PAR_DEFAULT_VALUE, 629961 ) {Default volume for synth (629961 corresponds to 0.0 dB)}
+    set_control_par( get_ui_id( $sinepluck_volume ), $CONTROL_PAR_DEFAULT_VALUE, 629961 ) {Default volume for synth (629961 corresponds to 0.0 dB)}
+    set_control_par( get_ui_id( $waterdrop_volume ), $CONTROL_PAR_DEFAULT_VALUE, 629961 ) {Default volume for synth (629961 corresponds to 0.0 dB)}
 
         {LFO}
     set_control_par( get_ui_id( $lfo_freq ), $CONTROL_PAR_DEFAULT_VALUE, 0 ) {Default LFO frequency}
@@ -1181,6 +1373,21 @@ on init
     set_control_par_str(get_ui_id($piano_position_random), $CONTROL_PAR_PICTURE, "attack_decay_knob")
     set_control_par_str(get_ui_id($piano_volume), $CONTROL_PAR_PICTURE, "attack_decay_knob")
 
+        {Ethereal Lead}
+    set_control_par_str(get_ui_id($ethereal_position), $CONTROL_PAR_PICTURE, "attack_decay_knob")
+    set_control_par_str(get_ui_id($ethereal_position_random), $CONTROL_PAR_PICTURE, "attack_decay_knob")
+    set_control_par_str(get_ui_id($ethereal_volume), $CONTROL_PAR_PICTURE, "attack_decay_knob")
+
+        {Sine Pluck}
+    set_control_par_str(get_ui_id($sinepluck_position), $CONTROL_PAR_PICTURE, "attack_decay_knob")
+    set_control_par_str(get_ui_id($sinepluck_position_random), $CONTROL_PAR_PICTURE, "attack_decay_knob")
+    set_control_par_str(get_ui_id($sinepluck_volume), $CONTROL_PAR_PICTURE, "attack_decay_knob")
+
+        {Water Drop}
+    set_control_par_str(get_ui_id($waterdrop_position), $CONTROL_PAR_PICTURE, "attack_decay_knob")
+    set_control_par_str(get_ui_id($waterdrop_position_random), $CONTROL_PAR_PICTURE, "attack_decay_knob")
+    set_control_par_str(get_ui_id($waterdrop_volume), $CONTROL_PAR_PICTURE, "attack_decay_knob")
+
         {LFO}
     set_control_par_str(get_ui_id($lfo_freq), $CONTROL_PAR_PICTURE, "attack_decay_knob")
     set_control_par_str(get_ui_id($lfo_depth), $CONTROL_PAR_PICTURE, "knob")
@@ -1256,6 +1463,18 @@ on init
     set_control_par(get_ui_id($piano_position), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
     set_control_par(get_ui_id($piano_position_random), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
     set_control_par(get_ui_id($piano_volume), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+
+    set_control_par(get_ui_id($ethereal_position), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+    set_control_par(get_ui_id($ethereal_position_random), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+    set_control_par(get_ui_id($ethereal_volume), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+
+    set_control_par(get_ui_id($sinepluck_position), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+    set_control_par(get_ui_id($sinepluck_position_random), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+    set_control_par(get_ui_id($sinepluck_volume), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+
+    set_control_par(get_ui_id($waterdrop_position), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+    set_control_par(get_ui_id($waterdrop_position_random), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
+    set_control_par(get_ui_id($waterdrop_volume), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
 
         {LFO}
     set_control_par(get_ui_id($lfo_freq), $CONTROL_PAR_MOUSE_BEHAVIOUR, $mouse_behaviour)
@@ -1349,6 +1568,24 @@ on init
     make_persistent( $piano_position )
     make_persistent( $piano_position_random )
     make_persistent( $piano_volume )
+
+    make_persistent( $ethereal_toggle_button )
+    make_persistent( $ethereal_reverse_button )
+    make_persistent( $ethereal_position )
+    make_persistent( $ethereal_position_random )
+    make_persistent( $ethereal_volume )
+
+    make_persistent( $sinepluck_toggle_button )
+    make_persistent( $sinepluck_reverse_button )
+    make_persistent( $sinepluck_position )
+    make_persistent( $sinepluck_position_random )
+    make_persistent( $sinepluck_volume )
+
+    make_persistent( $waterdrop_toggle_button )
+    make_persistent( $waterdrop_reverse_button )
+    make_persistent( $waterdrop_position )
+    make_persistent( $waterdrop_position_random )
+    make_persistent( $waterdrop_volume )
 
     make_persistent( $lfo_freq )
     make_persistent( $lfo_depth )
@@ -1544,8 +1781,40 @@ on init
 
     set_control_par(get_ui_id($piano_position), $CONTROL_PAR_AUTOMATION_ID, 51)
     set_control_par_str(get_ui_id($piano_position), $CONTROL_PAR_AUTOMATION_NAME, "Piano Position")
-end on
 
+    set_control_par(get_ui_id($piano_position_random), $CONTROL_PAR_AUTOMATION_ID, 52)
+    set_control_par_str(get_ui_id($piano_position_random), $CONTROL_PAR_AUTOMATION_NAME, "Piano Position Randomness")
+
+    set_control_par(get_ui_id($piano_volume), $CONTROL_PAR_AUTOMATION_ID, 53)
+    set_control_par_str(get_ui_id($piano_volume), $CONTROL_PAR_AUTOMATION_NAME, "Piano Volume")
+
+    set_control_par(get_ui_id($ethereal_position), $CONTROL_PAR_AUTOMATION_ID, 54)
+    set_control_par_str(get_ui_id($ethereal_position), $CONTROL_PAR_AUTOMATION_NAME, "Ethereal Position")
+
+    set_control_par(get_ui_id($ethereal_position_random), $CONTROL_PAR_AUTOMATION_ID, 55)
+    set_control_par_str(get_ui_id($ethereal_position_random), $CONTROL_PAR_AUTOMATION_NAME, "Ethereal Position Randomness")
+
+    set_control_par(get_ui_id($ethereal_volume), $CONTROL_PAR_AUTOMATION_ID, 56)
+    set_control_par_str(get_ui_id($ethereal_volume), $CONTROL_PAR_AUTOMATION_NAME, "Ethereal Volume")
+
+    set_control_par(get_ui_id($sinepluck_position), $CONTROL_PAR_AUTOMATION_ID, 57)
+    set_control_par_str(get_ui_id($sinepluck_position), $CONTROL_PAR_AUTOMATION_NAME, "Sine Pluck Position")
+
+    set_control_par(get_ui_id($sinepluck_position_random), $CONTROL_PAR_AUTOMATION_ID, 58)
+    set_control_par_str(get_ui_id($sinepluck_position_random), $CONTROL_PAR_AUTOMATION_NAME, "Sine Pluck Position Randomness")
+
+    set_control_par(get_ui_id($sinepluck_volume), $CONTROL_PAR_AUTOMATION_ID, 59)
+    set_control_par_str(get_ui_id($sinepluck_volume), $CONTROL_PAR_AUTOMATION_NAME, "Sine Pluck Volume")
+
+    set_control_par(get_ui_id($waterdrop_position), $CONTROL_PAR_AUTOMATION_ID, 60)
+    set_control_par_str(get_ui_id($waterdrop_position), $CONTROL_PAR_AUTOMATION_NAME, "Water Drop Position")
+
+    set_control_par(get_ui_id($waterdrop_position_random), $CONTROL_PAR_AUTOMATION_ID, 61)
+    set_control_par_str(get_ui_id($waterdrop_position_random), $CONTROL_PAR_AUTOMATION_NAME, "Water Drop Position Randomness")
+
+    set_control_par(get_ui_id($waterdrop_volume), $CONTROL_PAR_AUTOMATION_ID, 62)
+    set_control_par_str(get_ui_id($waterdrop_volume), $CONTROL_PAR_AUTOMATION_NAME, "Water Drop Volume")
+end on
 
 
 
@@ -1566,6 +1835,9 @@ on persistence_changed
     %instrument_position[4] := $sawpluck_position
     %instrument_position[5] := $vocal_position
     %instrument_position[6] := $piano_position
+    %instrument_position[7] := $ethereal_position
+    %instrument_position[8] := $sinepluck_position
+    %instrument_position[9] := $waterdrop_position
 
     ?instrument_position_randomness[0] := real($kalimba_position_random ) / 1000000.0
     ?instrument_position_randomness[1] := real($rain_stick_position_random ) / 1000000.0
@@ -1574,6 +1846,9 @@ on persistence_changed
     ?instrument_position_randomness[4] := real($sawpluck_position_random ) / 1000000.0
     ?instrument_position_randomness[5] := real($vocal_position_random ) / 1000000.0
     ?instrument_position_randomness[6] := real($piano_position_random ) / 1000000.0
+    ?instrument_position_randomness[7] := real($ethereal_position_random ) / 1000000.0
+    ?instrument_position_randomness[8] := real($sinepluck_position_random ) / 1000000.0
+    ?instrument_position_randomness[9] := real($waterdrop_position_random ) / 1000000.0
 
     set_engine_par($ENGINE_PAR_VOLUME, $kalimba_volume, 0, 0, -1) {Set volume for Kalimba}
     set_engine_par($ENGINE_PAR_VOLUME, $kalimba_volume, 1, 0, -1) {Set volume for Kalimba}
@@ -1595,6 +1870,15 @@ on persistence_changed
 
     set_engine_par($ENGINE_PAR_VOLUME, $piano_volume, 12, 0, -1) {Set volume for Piano}
     set_engine_par($ENGINE_PAR_VOLUME, $piano_volume, 13, 0, -1) {Set volume for Piano}
+
+    set_engine_par($ENGINE_PAR_VOLUME, $ethereal_volume, 14, 0, -1) {Set volume for Ethereal}
+    set_engine_par($ENGINE_PAR_VOLUME, $ethereal_volume, 15, 0, -1) {Set volume for Ethereal}
+
+    set_engine_par($ENGINE_PAR_VOLUME, $sinepluck_volume, 16, 0, -1) {Set volume for Sine Pluck}
+    set_engine_par($ENGINE_PAR_VOLUME, $sinepluck_volume, 17, 0, -1) {Set volume for Sine Pluck}
+
+    set_engine_par($ENGINE_PAR_VOLUME, $waterdrop_volume, 18, 0, -1) {Set volume for Water Drop}
+    set_engine_par($ENGINE_PAR_VOLUME, $waterdrop_volume, 19, 0, -1) {Set volume for Water Drop}
 
     {Activation of Instruments}
     if($kalimba_toggle_button = 1) {Activate Kalimba if the toggle button is active}
@@ -1681,6 +1965,41 @@ on persistence_changed
         %instrument_reverse[6] := 0
     end if
 
+    if($ethereal_toggle_button = 1) {Activate Ethereal if the toggle button is active}
+        %instrument_active[7] := 1
+    else
+        %instrument_active[7] := 0
+    end if
+
+    if($ethereal_reverse_button = 1) {Activate Ethereal Reverse if the toggle button is active}
+        %instrument_reverse[7] := 1
+    else
+        %instrument_reverse[7] := 0
+    end if
+
+    if($sinepluck_toggle_button = 1) {Activate Sine Pluck if the toggle button is active}
+        %instrument_active[8] := 1
+    else
+        %instrument_active[8] := 0
+    end if
+
+    if($sinepluck_reverse_button = 1) {Activate Sine Pluck Reverse if the toggle button is active}
+        %instrument_reverse[8] := 1
+    else
+        %instrument_reverse[8] := 0
+    end if
+
+    if($waterdrop_toggle_button = 1) {Activate Water Drop if the toggle button is active}
+        %instrument_active[9] := 1
+    else
+        %instrument_active[9] := 0
+    end if
+
+    if($waterdrop_reverse_button = 1) {Activate Water Drop Reverse if the toggle button is active}
+        %instrument_reverse[9] := 1
+    else
+        %instrument_reverse[9] := 0
+    end if
 
     {Automation Labels}
     set_control_par_str( get_ui_id( $grainAmount ), $CONTROL_PAR_LABEL, get_control_par(get_ui_id($grainAmount), $CONTROL_PAR_VALUE) & " GRAINS" )
@@ -1744,6 +2063,18 @@ on persistence_changed
 
     set_control_par_str( get_ui_id( $guitar_position ), $CONTROL_PAR_LABEL, $guitar_position_random / 10000 & "%" )
     set_control_par_str( get_ui_id( $guitar_volume ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_VOLUME, 6, 0, -1 ) & " dB" )
+
+    set_control_par_str( get_ui_id( $piano_position ), $CONTROL_PAR_LABEL, $piano_position_random / 10000 & "%" )
+    set_control_par_str( get_ui_id( $piano_volume ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_VOLUME, 12, 0, -1 ) & " dB" )
+
+    set_control_par_str( get_ui_id( $ethereal_position ), $CONTROL_PAR_LABEL, $ethereal_position_random / 10000 & "%" )
+    set_control_par_str( get_ui_id( $ethereal_volume ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_VOLUME, 14, 0, -1 ) & " dB" )
+
+    set_control_par_str( get_ui_id( $sinepluck_position ), $CONTROL_PAR_LABEL, $sinepluck_position_random / 10000 & "%" )
+    set_control_par_str( get_ui_id( $sinepluck_volume ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_VOLUME, 16, 0, -1 ) & " dB" )
+
+    set_control_par_str( get_ui_id( $waterdrop_position ), $CONTROL_PAR_LABEL, $waterdrop_position_random / 10000 & "%" )
+    set_control_par_str( get_ui_id( $waterdrop_volume ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_VOLUME, 18, 0, -1 ) & " dB" )
 end on
 
 
@@ -1783,8 +2114,6 @@ on note
             end while
 
             {Set position (+ random) per isntrumnet}
-            
-            
             
         
             $new_id := play_note($EVENT_NOTE, $EVENT_VELOCITY, $offset, 0)
@@ -2185,6 +2514,137 @@ on ui_control( $piano_volume )
     end if
 end on
 
+{Ethereal Related}
+on ui_control( $ethereal_toggle_button )
+    %instrument_active[7] := $ethereal_toggle_button
+end on
+
+on ui_control( $ethereal_reverse_button )
+    if($ethereal_reverse_button = 1)
+        %instrument_reverse[7] := 1
+    else
+        %instrument_reverse[7] := 0
+    end if
+end on
+
+on ui_control( $ethereal_position )
+    %instrument_position[7] := $ethereal_position
+end on
+
+on ui_control( $ethereal_position_random )
+    %callback_ids[47] := $NI_CALLBACK_ID
+    ?instrument_position_randomness[7] := real($ethereal_position_random ) / 1000000.0
+
+    set_control_par_str( get_ui_id( $ethereal_position ), $CONTROL_PAR_LABEL, $ethereal_position_random / 10000 & "%" )
+    set_control_par_str( get_ui_id( $ethereal_position_random_label ), $CONTROL_PAR_TEXT, "    " & $ethereal_position_random / 10000 & "%" )
+
+    wait($ui_wait)
+    if(%callback_ids[47] = $NI_CALLBACK_ID)
+        set_control_par_str(get_ui_id($ethereal_position_random_label), $CONTROL_PAR_TEXT, "RANDOM")
+    end if
+end on
+
+on ui_control( $ethereal_volume )
+    %callback_ids[48] := $NI_CALLBACK_ID
+    set_engine_par($ENGINE_PAR_VOLUME, $ethereal_volume, 14, 0, -1) {Set volume for Ethereal}
+    set_engine_par($ENGINE_PAR_VOLUME, $ethereal_volume, 15, 0, -1) {Set volume for Ethereal Reversed}
+
+    set_control_par_str( get_ui_id( $ethereal_volume ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_VOLUME, 14, 0, -1 ) & " dB" )
+    set_control_par_str( get_ui_id( $ethereal_volume_label ), $CONTROL_PAR_TEXT, "  " & get_engine_par_disp( $ENGINE_PAR_VOLUME, 14, 0, -1 ) & " dB" )
+
+    wait($ui_wait)
+    if(%callback_ids[48] = $NI_CALLBACK_ID)
+        set_control_par_str(get_ui_id($ethereal_volume_label), $CONTROL_PAR_TEXT, "VOLUME")
+    end if
+end on
+
+{Sine Pluck Related}
+on ui_control( $sinepluck_toggle_button )
+    %instrument_active[8] := $sinepluck_toggle_button
+end on
+
+on ui_control( $sinepluck_reverse_button )
+    if($sinepluck_reverse_button = 1)
+        %instrument_reverse[8] := 1
+    else
+        %instrument_reverse[8] := 0
+    end if
+end on
+
+on ui_control( $sinepluck_position )
+    %instrument_position[8] := $sinepluck_position
+end on
+
+on ui_control( $sinepluck_position_random )
+    %callback_ids[49] := $NI_CALLBACK_ID
+    ?instrument_position_randomness[8] := real($sinepluck_position_random ) / 1000000.0
+
+    set_control_par_str( get_ui_id( $sinepluck_position ), $CONTROL_PAR_LABEL, $sinepluck_position_random / 10000 & "%" )
+    set_control_par_str( get_ui_id( $sinepluck_position_random_label ), $CONTROL_PAR_TEXT, "    " & $sinepluck_position_random / 10000 & "%" )
+
+    wait($ui_wait)
+    if(%callback_ids[49] = $NI_CALLBACK_ID)
+        set_control_par_str(get_ui_id($sinepluck_position_random_label), $CONTROL_PAR_TEXT, "RANDOM")
+    end if
+end on
+
+on ui_control( $sinepluck_volume )
+    %callback_ids[50] := $NI_CALLBACK_ID
+    set_engine_par($ENGINE_PAR_VOLUME, $sinepluck_volume, 16, 0, -1) {Set volume for Sine Pluck}
+    set_engine_par($ENGINE_PAR_VOLUME, $sinepluck_volume, 17, 0, -1) {Set volume for Sine Pluck Reversed}
+
+    set_control_par_str( get_ui_id( $sinepluck_volume ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_VOLUME, 16, 0, -1 ) & " dB" )
+    set_control_par_str( get_ui_id( $sinepluck_volume_label ), $CONTROL_PAR_TEXT, "  " & get_engine_par_disp( $ENGINE_PAR_VOLUME, 16, 0, -1 ) & " dB" )
+
+    wait($ui_wait)
+    if(%callback_ids[50] = $NI_CALLBACK_ID)
+        set_control_par_str(get_ui_id($sinepluck_volume_label), $CONTROL_PAR_TEXT, "VOLUME")
+    end if
+end on
+
+{Water Drop Related}
+on ui_control( $waterdrop_toggle_button )
+    %instrument_active[9] := $waterdrop_toggle_button
+end on
+
+on ui_control( $waterdrop_reverse_button )
+    if($waterdrop_reverse_button = 1)
+        %instrument_reverse[9] := 1
+    else
+        %instrument_reverse[9] := 0
+    end if
+end on
+
+on ui_control( $waterdrop_position )
+    %instrument_position[9] := $waterdrop_position
+end on
+
+on ui_control( $waterdrop_position_random )
+    %callback_ids[51] := $NI_CALLBACK_ID
+    ?instrument_position_randomness[9] := real($waterdrop_position_random ) / 1000000.0
+
+    set_control_par_str( get_ui_id( $waterdrop_position ), $CONTROL_PAR_LABEL, $waterdrop_position_random / 10000 & "%" )
+    set_control_par_str( get_ui_id( $waterdrop_position_random_label ), $CONTROL_PAR_TEXT, "    " & $waterdrop_position_random / 10000 & "%" )
+
+    wait($ui_wait)
+    if(%callback_ids[51] = $NI_CALLBACK_ID)
+        set_control_par_str(get_ui_id($waterdrop_position_random_label), $CONTROL_PAR_TEXT, "RANDOM")
+    end if
+end on
+
+on ui_control( $waterdrop_volume )
+    %callback_ids[52] := $NI_CALLBACK_ID
+    set_engine_par($ENGINE_PAR_VOLUME, $waterdrop_volume, 18, 0, -1) {Set volume for Water Drop}
+    set_engine_par($ENGINE_PAR_VOLUME, $waterdrop_volume, 19, 0, -1) {Set volume for Water Drop Reversed}
+
+    set_control_par_str( get_ui_id( $waterdrop_volume ), $CONTROL_PAR_LABEL, get_engine_par_disp( $ENGINE_PAR_VOLUME, 18, 0, -1 ) & " dB" )
+    set_control_par_str( get_ui_id( $waterdrop_volume_label ), $CONTROL_PAR_TEXT, "  " & get_engine_par_disp( $ENGINE_PAR_VOLUME, 18, 0, -1 ) & " dB" )
+
+    wait($ui_wait)
+    if(%callback_ids[52] = $NI_CALLBACK_ID)
+        set_control_par_str(get_ui_id($waterdrop_volume_label), $CONTROL_PAR_TEXT, "VOLUME")
+    end if
+end on
 
 {LFO Related}
 on ui_control($lfo_freq)
