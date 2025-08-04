@@ -1,13 +1,8 @@
 {***************************************************
 Granular Kalimba Script
 Author: Miguel González del Río
-Modified: July 38th, 2025
+Finished: 4th August, 2025
 ****************************************************}
-
-{
-    Tasks:                          
-       
-}   
 
 on init
     load_performance_view( "perfView.nckp" )
@@ -793,7 +788,7 @@ on init
     set_control_par( get_ui_id( $effects_bypass_all ), $CONTROL_PAR_WIDTH, 69 )
     set_control_par_str( get_ui_id( $effects_bypass_all ), $CONTROL_PAR_TEXT, "BYPASS ALL" )
     set_control_par( get_ui_id( $effects_bypass_all ), $CONTROL_PAR_POS_X, 926)
-    set_control_par( get_ui_id( $effects_bypass_all ), $CONTROL_PAR_POS_Y, 327 )
+    set_control_par( get_ui_id( $effects_bypass_all ), $CONTROL_PAR_POS_Y, 330 )
 
         {Reverb}
     declare ui_slider $reverb_amount(0, 1000000) {Reverb amount}
